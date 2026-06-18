@@ -5,7 +5,7 @@
     ./modules/user/base.nix
     ./modules/user/apps.nix
     ./modules/user/graphical.nix
-    # ./modules/user/terminal.nix (Pending: Alacritty, Tmux, Starship)
+    ./modules/user/terminal.nix
   ];
 
   home.username = "kiskaadee";
