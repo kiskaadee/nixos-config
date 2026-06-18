@@ -19,7 +19,7 @@
     ports = [ 22 ];
     settings.PermitRootLogin = "no";
   };
-  
+
   # Ensure Wayland variables are globally set
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 }

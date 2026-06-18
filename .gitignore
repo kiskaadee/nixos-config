@@ -5,6 +5,4 @@ result-*
 # Direnv environments
 .direnv/
 
-# Local debugging/diff logs
-diff.txt
 

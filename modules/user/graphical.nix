@@ -8,7 +8,7 @@
   programs.neovim = {
     enable = true;
     defaultEditor = true;
-    viAlias = true; 
+    viAlias = true;
     vimAlias = true;
 
     ## Core settings
@@ -21,7 +21,7 @@
       vim.opt.smartindent = true
       vim.opt.wrap = false
       vim.opt.termguicolors = true
-      
+
       -- Apply colorscheme after plugins load
       vim.cmd("colorscheme catppuccin-mocha")
     '';
@@ -29,7 +29,7 @@
     ## Declarative Plugin Management
     plugins = with pkgs.vimPlugins; [
       # Color scheme
-      catppuccin-nvim 
+      catppuccin-nvim
 
       # Advanced Syntax Highlighting for Python, Rust and Nix
       {
@@ -52,4 +52,3 @@
     ];
   };
 }
-

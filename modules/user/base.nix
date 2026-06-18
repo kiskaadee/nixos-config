@@ -4,7 +4,7 @@
   programs = {
     # Version Control
     git = {
-      enable = true; 
+      enable = true;
       settings = {
 	user = {
 	  name = "kiskaadee";
@@ -14,6 +14,17 @@
 	  st = "status";
 	  co = "checkout";
 	  br = "branch";
+
+	  # Undo/Modify
+	  unstage = "reset HEAD --";
+	  amend = "commit --amend --no-edit";
+	  undo = "reset --soft HEAD~1";
+
+	  # Workflow
+	  sync = "!git fetch -p && git pull";
+	  main = "checkout main";
+	  last = "log -1 HEAD~1";
+
 	};
 	core.editor = "nvim";
 	init.defaultBranch = "main";
@@ -53,9 +64,9 @@
 	  vw = "repo view --web";
 	};
       };
-    }; 
+    };
 
-    ### Navigation 
+    ### Navigation
     zoxide = {
       enable = true;
       enableBashIntegration = true;
@@ -67,13 +78,13 @@
     };
 
     eza = {
-      enable = true; 
+      enable = true;
       enableBashIntegration = true;
       extraOptions = ["--group-directories-first" "--header" "--icons"];
     };
 
     tealdeer = {
-      enable = true; 
+      enable = true;
       settings.updates.auto_update = true;
     };
   };
@@ -84,4 +95,3 @@
     bc qpdf tty-clock grim slurp swappy libnotify fastfetch
   ];
 }
-

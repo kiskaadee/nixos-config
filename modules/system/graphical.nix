@@ -12,11 +12,11 @@
     systemd.enable = true;
     systemd.restartIfChanged = true;
 
-    
+
     ## see: https://danklinux.com/docs/dgop/
     # dgop.package = inputs.dgop.packages.${pkgs.stdenv.hostPlatform.system}.default;
     enableSystemMonitoring = true;
     enableDynamicTheming = true;
-    enableClipboardPaste = true; 
+    enableClipboardPaste = true;
   };
 }
