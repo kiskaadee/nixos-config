@@ -1,0 +1,10 @@
+# Nix build artifacts
+result
+result-*
+
+# Direnv environments
+.direnv/
+
+# Local debugging/diff logs
+diff.txt
+
