@@ -1,26 +1,34 @@
+# 🎨 User Graphical Module
+# Configures graphical workspace tools, text editors, and session unit targets.
+
 { inputs, pkgs, ...}:
 {
+  # Mount custom Hyprland configuration file declaratively
+  home.file.".config/hypr/hyprland.conf".text = builtins.readFile ./config/hyprland.conf;
+
+  # Graphical packages managed via Home Manager
   home.packages = with pkgs; [
-    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
-    zed-editor
+    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default # Modern browser build
+    zed-editor # GPU-accelerated desktop text editor
   ];
 
+  # Neovim configuration
   programs.neovim = {
     enable = true;
-    defaultEditor = true;
-    viAlias = true;
-    vimAlias = true;
+    defaultEditor = true; # Make neovim the default `$EDITOR`
+    viAlias = true;       # Symlink `vi` to `nvim`
+    vimAlias = true;      # Symlink `vim` to `nvim`
 
-    ## Core settings
+    ## Core Editor Settings (Lua-based)
     initLua = ''
-      vim.opt.number = true
-      vim.opt.relativenumber = true
-      vim.opt.shiftwidth = 2
-      vim.opt.tabstop = 2
-      vim.opt.expandtab = true
-      vim.opt.smartindent = true
-      vim.opt.wrap = false
-      vim.opt.termguicolors = true
+      vim.opt.number = true          -- Show line numbers
+      vim.opt.relativenumber = true  -- Relative line numbers for easier navigation jumps
+      vim.opt.shiftwidth = 2         -- 2-space indents
+      vim.opt.tabstop = 2            -- Tab spacing
+      vim.opt.expandtab = true       -- Convert tabs to spaces
+      vim.opt.smartindent = true     -- Intelligent auto-indenting based on file syntax
+      vim.opt.wrap = false           -- Disable automatic line wrapping
+      vim.opt.termguicolors = true   -- Enable 24-bit RGB terminal colors
     '';
 
     ## Declarative Plugin Management
@@ -33,9 +41,9 @@
           vim.cmd("packadd catppuccin-nvim")
           vim.cmd("colorscheme catppuccin-mocha")
         '';
-        }
+      }
 
-      # Advanced Syntax Highlighting for Python, Rust and Nix
+      # Advanced Syntax Highlighting for developer workflows (Python, Rust, Java, Nix)
       (nvim-treesitter.withPlugins (p: with p; [
         python
         rust
@@ -48,6 +56,9 @@
     ];
   };
 
+  # ⚙️ Systemd user session targets for window managers
+  # This target allows user services (like background daemons, screenshot helpers) to bind 
+  # to the graphical workspace startup cycle correctly.
   systemd.user.targets.hyprland-session = {
     Unit = {
       Description = "Hyprland graphical session";

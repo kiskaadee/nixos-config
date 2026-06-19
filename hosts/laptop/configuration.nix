@@ -1,13 +1,14 @@
-# 🖥️ Desktop Machine Configuration
-# This file defines host-specific system configurations for the Desktop environment.
+# 💻 Laptop Machine Configuration
+# This file defines host-specific system configurations for the Laptop environment.
+# Sharing 100% of base shell, neovim, apps, and terminal settings with desktop,
+# but swapping the graphical compositor stack to Niri.
 
 { config, lib, pkgs, ... }:
 
 {
   imports = [
-      ./hardware-configuration.nix        # Desktop-specific disk and CPU configuration
-      ../../modules/system/graphical.nix  # System-wide graphical stack settings (DMS daemon)
-      ../../modules/system/base.nix       # General hardware-agnostic OS settings
+      ./hardware-configuration.nix
+      ../../modules/system/base.nix # General hardware-agnostic OS settings
     ];
 
   # Enable experimental Nix features (required for Flakes and newer command line tools)
@@ -35,7 +36,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   # Network identification
-  networking.hostName = "desktop";
+  networking.hostName = "laptop";
 
   # Define the main user profile
   users.users.kiskaadee = {
@@ -47,10 +48,11 @@
     ];
   };
 
-  # Host-specific graphical compositor (Hyprland window manager for desktop)
-  programs = {
-    hyprland.enable = true;
-  };
+  # Host-specific graphical compositor (Niri window manager for laptop)
+  programs.niri.enable = true;
+
+  # Override greetd to launch Niri compositor instead of Hyprland on the laptop
+  services.greetd.settings.default_session.command = lib.mkForce "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-session --asterisks --greeting '❄️ Declarative NixOS Workstation' --cmd niri";
 
   # Rebuild/State version. Do not modify.
   system.stateVersion = "26.05";

@@ -1,11 +1,15 @@
-# --- Git Automation ---
+# 🌟 Custom Git Automation & Helper Utilities
+# Sourced in .bashrc to streamline gitignore modifications, commit-push workflows, and new repo setups.
 
+# 1. gitignore: Quickly appends patterns to the repository's root .gitignore file
+# then automatically commits and pushes the change.
 gitignore() {
     if [ $# -eq 0 ]; then
         echo "Usage: gitignore <pattern> [pattern...]"
         return 1
     fi
 
+    # Find the top-level repository directory path
     local GIT_ROOT=$(git rev-parse --show-toplevel 2> /dev/null)
     if [ -z "$GIT_ROOT" ]; then
         echo "Error: Not a Git repository."
@@ -18,6 +22,7 @@ gitignore() {
         touch "$GIT_IGNORE_FILE"
     fi
 
+    # Ensure the gitignore file ends with a trailing newline if it has content
     if [ -s "$GIT_IGNORE_FILE" ] && [ "$(tail -c1 "$GIT_IGNORE_FILE" | wc -l)" -eq 0 ]; then
         echo "" >> "$GIT_IGNORE_FILE"
     fi
@@ -26,6 +31,7 @@ gitignore() {
     local commit_msg_list=""
 
     for pattern in "$@"; do
+        # Check if the pattern is already present in the .gitignore file
         if rg -Fxq "$pattern" "$GIT_IGNORE_FILE"; then
             echo "Skipping '$pattern' (already in .gitignore)"
         else
@@ -36,6 +42,7 @@ gitignore() {
         fi
     done
 
+    # If any patterns were added, commit and push them automatically
     if [ $added_count -gt 0 ]; then
         commit_msg_list="${commit_msg_list%, }"
         echo "Committing and pushing changes..."
@@ -47,6 +54,8 @@ gitignore() {
     fi
 }
 
+# 2. gacp: Git Add, Commit, and Push shorthand
+# Performs a global staging, commits with the specified message, and pushes to origin on the active branch.
 gacp() {
     if [ -z "$1" ]; then
         echo "Usage: gacp <commit-message>"
@@ -59,6 +68,7 @@ gacp() {
     echo "Pushed to origin/${branch_name}"
 }
 
+# 3. new-repo: Initializes a new directory, git repository, and pushes it to GitHub via 'gh' CLI.
 new-repo() {
     if [ -z "$1" ]; then
         echo "Usage: new-repo <repository-name>"
@@ -71,5 +81,6 @@ new-repo() {
     echo "# $repo_name" > README.md
     touch .gitignore LICENSE
     git add -A && git commit -m "Initial commit"
+    # Call the GitHub CLI tool to create the repository on GitHub
     gh repo create "$repo_name" --public --source=. --remote=origin --push
 }

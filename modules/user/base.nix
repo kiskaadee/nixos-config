@@ -1,8 +1,13 @@
+# 🛠️ User Base Shell & Git Environment
+# This module defines the foundation of the interactive user shell, command line utilities,
+# custom shell scripts, aliases, and Git workflows.
+
 { pkgs, ...}:
 
 {
   programs = {
-    # Version Control
+    # 🌟 Git Version Control Configuration
+    # Declares default user identity, global conflict styles, and highly optimized git aliases
     git = {
       enable = true;
       settings = {
@@ -53,7 +58,8 @@
       };
     };
 
-    # Core Environment Management
+    # ⚡ Direnv - Automatic environment loading
+    # Automatically activates nix development shells when entering project directories containing .envrc
     direnv = {
       enable = true;
       enableBashIntegration = true;
@@ -75,7 +81,8 @@
       };
     };
 
-    ### Navigation
+    # 🗺️ Navigation & Directory Listing
+    # Modern replacements for traditional cd, ls, and grep tools.
     zoxide = {
       enable = true;
       enableBashIntegration = true;
@@ -105,11 +112,13 @@
       enable = true;
     };
 
-    # Bash Shell Config
+    # 🐚 Bash Shell Configuration
+    # Bridges the Arch 'bash-custom' environment to NixOS, defining aliases and sourcing modular scripts.
     bash = {
       enable = true;
-      enableCompletion = true;
+      enableCompletion = true; # Enable programmable auto-completion for system commands
 
+      # Shell Aliases for speed, productivity, and command overrides
       shellAliases = {
         zed = "zeditor";
         reload = "exec bash";
@@ -164,14 +173,17 @@
         gadc = "git add -A && git diff --staged | wl-copy";
       };
 
+      # Inject modular shell helper scripts directly into .bashrc.
+      # This allows us to keep discrete logic files without cluttering home.nix or base.nix.
       bashrcExtra = ''
-        ${builtins.readFile ./shell/wayland.sh}
-        ${builtins.readFile ./shell/git.sh}
-        ${builtins.readFile ./shell/pdf.sh}
-        ${builtins.readFile ./shell/quicklinks.sh}
-        ${builtins.readFile ./shell/jump.sh}
+        ${builtins.readFile ./shell/wayland.sh}    # Wayland clipboard helper (wlc)
+        ${builtins.readFile ./shell/git.sh}        # Git workflow automations (gacp, gitignore)
+        ${builtins.readFile ./shell/pdf.sh}        # Command line PDF decryption helper
+        ${builtins.readFile ./shell/quicklinks.sh}  # Interactive fzf web launcher
+        ${builtins.readFile ./shell/jump.sh}       # Directory jumper & interactive fuzzy navigation
 
         # --- Visual Entry ---
+        # Display system information dashboard upon opening interactive shells
         if [[ $- == *i* ]]; then
             fastfetch --logo none
         fi
@@ -179,7 +191,8 @@
     };
   };
 
-  # Custom Catnap-style Fastfetch
+  # 📊 Custom Catnap-style Fastfetch
+  # A stylized, minimalist system information dashboard displayed on shell startup
   programs.fastfetch = {
     enable = true;
     settings = {
