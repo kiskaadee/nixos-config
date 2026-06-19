@@ -21,34 +21,30 @@
       vim.opt.smartindent = true
       vim.opt.wrap = false
       vim.opt.termguicolors = true
-
-      -- Apply colorscheme after plugins load
-      vim.cmd("colorscheme catppuccin-mocha")
     '';
 
     ## Declarative Plugin Management
     plugins = with pkgs.vimPlugins; [
-      # Color scheme
-      catppuccin-nvim
+      # Color scheme loaded dynamically
+      {
+        plugin = catppuccin-nvim;
+        type = "lua";
+        config = ''
+          vim.cmd("packadd catppuccin-nvim")
+          vim.cmd("colorscheme catppuccin-mocha")
+        '';
+        }
 
       # Advanced Syntax Highlighting for Python, Rust and Nix
-      {
-	plugin = nvim-treesitter.withPlugins (p: with p; [
-	  python
-	  rust
-	  nix
-	  lua
-	  java
-	  javascript
-	  markdown
-	]);
-	type = "lua";
-	config = ''
-	  require('nvim-treesitter.configs').setup({
-	    highlight = {enable = true },
-	  })
-	'';
-      }
+      (nvim-treesitter.withPlugins (p: with p; [
+        python
+        rust
+        nix
+        lua
+        java
+        javascript
+        markdown
+      ]))
     ];
   };
 }
