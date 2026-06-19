@@ -30,8 +30,7 @@
     };
   };
 
-
-  outputs = { self, nixpkgs, home-manager, dms, dgop, zen-browser, antigravity, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, dms, dgop, zen-browser, antigravity, ...}@inputs: {
     nixosConfigurations = {
       desktop = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
@@ -39,6 +38,23 @@
         modules = [
           ./hosts/desktop/hardware-configuration.nix
           ./hosts/desktop/configuration.nix
+
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.users.kiskaadee = import ./home.nix;
+          }
+        ];
+      };
+
+      laptop = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/laptop/hardware-configuration.nix
+          ./hosts/laptop/configuration.nix
 
           home-manager.nixosModules.home-manager
           {
