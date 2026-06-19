@@ -26,7 +26,7 @@
       settings = {
         default_session = {
           # This will default to Hyprland. We will override this on the laptop later.
-          command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd start-hyprland";
+          command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd start-hyprland";
         };
       };
     };
