@@ -2,24 +2,23 @@
 # Sourced in .bashrc to provide quick file operations on PDF documents.
 
 # 1. pdf_dc: Decrypts a password-protected PDF document.
-# Uses 'qpdf' under the hood. Automatically searches for a default password ("defpass") 
-# in the user's local secrets environment file (`~/Secrets/.env`) if no password argument is supplied.
+# Uses 'qpdf' under the hood. Automatically searches for a default password
+# decrypted securely by sops-nix in `/run/secrets/pdf_decrypt_password`
+# if no password argument is supplied.
 pdf_dc() {
-    local env_file="$HOME/Secrets/.env"
+    local secret_file="/run/secrets/pdf_decrypt_password"
     local input_file="$1"
     local password="$2"
 
-    # Attempt to auto-load password from environment if none was provided on the CLI
+    # Attempt to auto-load password from sops secret if none was provided on the CLI
     if [[ -z "$password" ]]; then
-        if [[ -f "$env_file" ]]; then
-            local defpass
-            defpass=$(rg "^defpass=" "$env_file" | cut -d'=' -f2- | tr -d '"' | tr -d "'")
-            password="${defpass}"
+        if [[ -f "$secret_file" ]]; then
+            password=$(cat "$secret_file")
         fi
     fi
 
     if [[ -z "$password" ]]; then
-        echo "Error: No password provided and 'defpass' not found in .env" >&2
+        echo "Error: No password provided and default secret not found" >&2
         return 1
     fi
 

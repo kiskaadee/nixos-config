@@ -18,6 +18,9 @@ in
   sops.secrets.dynu_user = { };
   sops.secrets.dynu_domain = { };
   sops.secrets.dynu_password = { };
+  sops.secrets.pdf_decrypt_password = {
+    owner = "kiskaadee";
+  };
 
   # Assemble the ddclient config file securely at boot time in /run/secrets/
   # Defaults to owner root:root (which avoids dynamic user evaluation issues)
