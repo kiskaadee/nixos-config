@@ -3,8 +3,7 @@
 
 { inputs, pkgs, ...}:
 {
-  # Mount custom Hyprland configuration file declaratively
-  home.file.".config/hypr/hyprland.conf".text = builtins.readFile ./config/hyprland.conf;
+
 
   # Graphical packages managed via Home Manager
   home.packages = with pkgs; [

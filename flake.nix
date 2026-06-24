@@ -64,7 +64,12 @@
             home-manager.useUserPackages = true;
             home-manager.backupFileExtension = "backup"; # Auto-back up conflicting files
             home-manager.extraSpecialArgs = { inherit inputs; };
-            home-manager.users.kiskaadee = import ./home.nix; # Mount home configuration
+            home-manager.users.kiskaadee = {
+              imports = [
+                ./home.nix
+                ./hosts/desktop/home.nix
+              ];
+            };
           }
         ];
       };
@@ -84,7 +89,12 @@
             home-manager.useUserPackages = true;
             home-manager.backupFileExtension = "backup"; # Auto-back up conflicting files
             home-manager.extraSpecialArgs = { inherit inputs; };
-            home-manager.users.kiskaadee = import ./home.nix;
+            home-manager.users.kiskaadee = {
+              imports = [
+                ./home.nix
+                ./hosts/laptop/home.nix
+              ];
+            };
           }
         ];
       };
