@@ -12,6 +12,22 @@
     zed-editor # GPU-accelerated desktop text editor
   ];
 
+  # Firefox configuration
+  programs.firefox = {
+    enable = true;
+    profiles.default = {
+      settings = {
+        # Force hardware acceleration
+        "layers.acceleration.force-enabled" = true;
+        "gfx.webrender.all" = true;
+
+        # Disable pocket-telemetry
+        "extensions.pocket.enabled" = false;
+        "datareporting.healthreport.uploadEnabled" = false;
+        };
+      };
+    };
+
   # Neovim configuration
   programs.neovim = {
     enable = true;
