@@ -1,0 +1,11 @@
+keys:
+  - &kiskaadee age16nr2t9jrw09kakuxy2vtvtgtwa9jvy5dmtge25rzlqelf5cjy4es46alu9
+  - &desktop age18q3lr2z4yeg2f86my42ym4hx0dvcwgjshmchyhdkgwvf4k37dsyq3mcjse
+
+creation_rules:
+  - path_regex: hosts/desktop/secrets\.yaml$
+    key_groups:
+      - pgp: []
+        age:
+          - *kiskaadee
+          - *desktop
