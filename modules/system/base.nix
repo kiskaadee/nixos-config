@@ -8,6 +8,9 @@
   time.timeZone = "America/Bogota";
   i18n.defaultLocale = "en_US.UTF-8";
 
+  # Allow installation of unfree packages (e.g., Obsidian)
+  nixpkgs.config.allowUnfree = true;
+
   # Enable network management daemon
   networking.networkmanager.enable = true;
 
