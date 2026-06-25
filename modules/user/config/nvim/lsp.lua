@@ -1,15 +1,15 @@
-local lspconfig = require('lspconfig')
-
 -- Python LSP: Pyright (Type checking and navigation)
-lspconfig.pyright.setup{}
+vim.lsp.config('pyright', {})
+vim.lsp.enable('pyright')
 
 -- Python LSP: Ruff (Ultra-fast Linting and Auto-formatting)
-lspconfig.ruff.setup{
+vim.lsp.config('ruff', {
   on_attach = function(client, bufnr)
     -- Disable hover provider in Ruff so it doesn't conflict with Pyright
     client.server_capabilities.hoverProvider = false
   end,
-}
+})
+vim.lsp.enable('ruff')
 
 -- Configure LSP Keybindings on attach
 vim.api.nvim_create_autocmd('LspAttach', {
