@@ -9,6 +9,14 @@
   home.packages = with pkgs; [
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default # Modern browser build
     zed-editor # GPU-accelerated desktop text editor
+
+    # Language Servers for Zed (and general dev use)
+    rust-analyzer
+    pyright
+    nil
+    nixd
+    jdt-language-server
+    typescript-language-server
   ];
 
   # Firefox configuration
@@ -70,6 +78,10 @@
       ]))
     ];
   };
+
+  # Declarative configuration files for Zed editor
+  home.file.".config/zed/settings.json".source = ./config/zed/settings.json;
+  home.file.".config/zed/themes".source = ./config/zed/themes;
 
   # ⚙️ Systemd user session targets for window managers
   # This target allows user services (like background daemons, screenshot helpers) to bind 
