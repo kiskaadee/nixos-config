@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Screen Recording script for Hyprland using wf-recorder
-# Usage: record.sh [area|window|output|screen]
+# Usage: record.sh [area|window|output|screen] [audio]
 
 PID_FILE="/tmp/wf-recorder.pid"
 TYPE_FILE="/tmp/wf-recorder.type"
@@ -42,12 +42,10 @@ fi
 
 # Determine type
 MODE="${1:-area}"
-FILENAME="recording_$(date +%Y-%m-%d_%H-%M-%S).mp4"
-FILEPATH="$OUTPUT_DIR/$FILENAME"
-
-GEOM=""
+AUDIO_DEVICE=""
 TYPE_DESC="Screen Recording"
 
+# Get recording parameters
 case "$MODE" in
     area)
         # Select area using slurp
@@ -79,13 +77,41 @@ case "$MODE" in
         ;;
 esac
 
+# If the second argument is "audio", enable system audio recording
+if [ "$2" = "audio" ]; then
+    # Dynamically find the default output sink's monitor name from PipeWire/WirePlumber
+    SINK_ID=$(wpctl status | sed -n '/Sinks:/,/Sources:/p' | grep '*' | awk '{print $3}' | tr -d '.')
+    if [ -n "$SINK_ID" ]; then
+        NODE_NAME=$(wpctl inspect "$SINK_ID" | grep 'node.name' | awk -F'"' '{print $2}')
+        if [ -n "$NODE_NAME" ]; then
+            AUDIO_DEVICE="${NODE_NAME}.monitor"
+        fi
+    fi
+    # Fallback to default system source if we couldn't resolve the node name
+    if [ -z "$AUDIO_DEVICE" ]; then
+        AUDIO_DEVICE="default"
+    fi
+    TYPE_DESC="${TYPE_DESC} (with Audio)"
+fi
+
+FILENAME="recording_$(date +%Y-%m-%d_%H-%M-%S).mp4"
+FILEPATH="$OUTPUT_DIR/$FILENAME"
+
 # Start recording
 notify-send -t 2000 -u low "Screen Recorder" "Starting $TYPE_DESC..."
 
-if [ -n "$GEOM" ]; then
-    wf-recorder -g "$GEOM" -f "$FILEPATH" &
+if [ -n "$AUDIO_DEVICE" ]; then
+    if [ -n "$GEOM" ]; then
+        wf-recorder -a "$AUDIO_DEVICE" -g "$GEOM" -f "$FILEPATH" &
+    else
+        wf-recorder -a "$AUDIO_DEVICE" -f "$FILEPATH" &
+    fi
 else
-    wf-recorder -f "$FILEPATH" &
+    if [ -n "$GEOM" ]; then
+        wf-recorder -g "$GEOM" -f "$FILEPATH" &
+    else
+        wf-recorder -f "$FILEPATH" &
+    fi
 fi
 
 PID=$!

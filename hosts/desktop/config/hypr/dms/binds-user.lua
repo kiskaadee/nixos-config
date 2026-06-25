@@ -8,6 +8,6 @@ hl.bind("SUPER + SHIFT + CTRL + S", hl.dsp.exec_cmd("grimblast --notify copysave
 
 -- Screen video recordings (SUPER + W series)
 hl.bind("SUPER + W", hl.dsp.exec_cmd("~/.config/hypr/scripts/record.sh area"))
-hl.bind("SUPER + SHIFT + W", hl.dsp.exec_cmd("~/.config/hypr/scripts/record.sh window"))
-hl.bind("SUPER + CTRL + W", hl.dsp.exec_cmd("~/.config/hypr/scripts/record.sh output"))
-hl.bind("SUPER + SHIFT + CTRL + W", hl.dsp.exec_cmd("~/.config/hypr/scripts/record.sh screen"))
+hl.bind("SUPER + SHIFT + W", hl.dsp.exec_cmd("~/.config/hypr/scripts/record.sh output"))
+hl.bind("SUPER + CTRL + W", hl.dsp.exec_cmd("~/.config/hypr/scripts/record.sh area audio"))
+hl.bind("SUPER + SHIFT + CTRL + W", hl.dsp.exec_cmd("~/.config/hypr/scripts/record.sh output audio"))
