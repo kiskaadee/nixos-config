@@ -8,9 +8,10 @@
     # Custom Flake injections: Google Antigravity CLI helper
     inputs.antigravity.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-cli
 
-    # Media & Image editing
+    # Media, Note-taking & Graphical Tools
     mpv         # Fast, scriptable, keyboard-driven CLI media player
     gimp        # GNU Image Manipulation Program for graphical assets
+    obsidian    # Markdown-based personal knowledge wiki and note-taking app
 
     # Cloud CLI, Database Management & Archive tools
     google-cloud-sdk # GCP administration utilities
