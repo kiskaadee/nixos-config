@@ -227,5 +227,6 @@
   home.packages = with pkgs; [
     ripgrep fd glow jq tree wl-clipboard sqlite python3 nodejs
     bc qpdf tty-clock grim slurp swappy libnotify uv
+    curl parallel tuxedo
   ];
 }
