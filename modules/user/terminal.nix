@@ -43,19 +43,7 @@
       vim-tmux-navigator  # Seamless navigation switching between Vim panes and Tmux splits (Ctrl+h/j/k/l)
     ];
     
-    extraConfig = ''
-      # Enable True Color (24-bit RGB) support inside Tmux for editor colorschemes
-      set -ag terminal-overrides ",xterm-256color:RGB"
-
-      # Vim-style bindings for switching between active Tmux panes
-      bind h select-pane -L
-      bind j select-pane -D
-      bind k select-pane -U
-      bind l select-pane -R
-
-      # Place status bar at the top of the terminal screen rather than the bottom
-      set-option -g status-position top
-    '';
+    extraConfig = builtins.readFile ./config/tmux.conf;
   };
 
   # Cross-Shell Prompt (Starship)

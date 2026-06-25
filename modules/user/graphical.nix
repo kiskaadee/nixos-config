@@ -44,16 +44,7 @@
     vimAlias = true;      # Symlink `vim` to `nvim`
 
     ## Core Editor Settings (Lua-based)
-    initLua = ''
-      vim.opt.number = true          -- Show line numbers
-      vim.opt.relativenumber = true  -- Relative line numbers for easier navigation jumps
-      vim.opt.shiftwidth = 2         -- 2-space indents
-      vim.opt.tabstop = 2            -- Tab spacing
-      vim.opt.expandtab = true       -- Convert tabs to spaces
-      vim.opt.smartindent = true     -- Intelligent auto-indenting based on file syntax
-      vim.opt.wrap = false           -- Disable automatic line wrapping
-      vim.opt.termguicolors = true   -- Enable 24-bit RGB terminal colors
-    '';
+    initLua = builtins.readFile ./config/nvim/init.lua;
 
     ## Declarative Plugin Management
     plugins = with pkgs.vimPlugins; [
@@ -61,10 +52,7 @@
       {
         plugin = catppuccin-nvim;
         type = "lua";
-        config = ''
-          vim.cmd("packadd catppuccin-nvim")
-          vim.cmd("colorscheme catppuccin-mocha")
-        '';
+        config = builtins.readFile ./config/nvim/catppuccin.lua;
       }
 
       # Advanced Syntax Highlighting for developer workflows (Python, Rust, Java, Nix)
@@ -77,6 +65,13 @@
         javascript
         markdown
       ]))
+
+      # LSP Configuration & Python Language Servers
+      {
+        plugin = nvim-lspconfig;
+        type = "lua";
+        config = builtins.readFile ./config/nvim/lsp.lua;
+      }
     ];
   };
 
