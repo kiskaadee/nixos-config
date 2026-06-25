@@ -1,3 +1,15 @@
+"""
+Dynu DDNS Smart IP Change Monitor and Updater.
+
+This script determines the current public IPv4 address by querying multiple external
+resolvers sequentially. It compares the discovered IP against the last recorded
+successful IP in a local history log. If a change is detected, it triggers the
+`ddclient.service` on-demand to perform the DNS record update.
+
+This local-first state verification prevents making redundant API requests to the
+DNS provider, avoiding potential rate-limiting, IP bans, or API abuse flags.
+"""
+
 import urllib.request
 import re
 import json
@@ -6,7 +18,11 @@ import subprocess
 import sys
 from datetime import datetime
 
+# History file location storing the transition log of public IP states.
+# Defaults to a state directory managed securely by the systemd service unit.
 HISTORY_FILE = os.environ.get("HISTORY_FILE", "/var/lib/dynu/ip_history.jsonl")
+
+# Fallback sequence of external reflection services to discover the public WAN IP.
 PROVIDERS = [
     "https://api.ipify.org",
     "https://ifconfig.me/ip",
@@ -16,6 +32,12 @@ PROVIDERS = [
 
 
 def is_valid_public_ipv4(ip):
+    """
+    Validates that a string is a properly formatted public IPv4 address.
+    
+    This function excludes standard private, loopback, link-local, and CGNAT blocks
+    to avoid recording temporary, local, or invalid network states.
+    """
     match = re.match(r"^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$", ip)
     if not match:
         return False
@@ -23,32 +45,47 @@ def is_valid_public_ipv4(ip):
     if any(x > 255 for x in octets):
         return False
     a, b, c, d = octets
-    # Exclude private/reserved IP blocks
+    
+    # RFC 1918 Private ranges: 10.0.0.0/8, 192.168.0.0/16, 172.16.0.0/12
     if a == 10:
         return False
     if a == 192 and b == 168:
         return False
     if a == 172 and 16 <= b <= 31:
         return False
+    
+    # Carrier-Grade NAT (CGNAT) RFC 6598: 100.64.0.0/10
     if a == 100 and 64 <= b <= 127:
         return False
+    
+    # Loopback address range: 127.0.0.0/8
     if a == 127:
         return False
+    
+    # Link-local addresses: 169.254.0.0/16
     if a == 169 and b == 254:
         return False
+        
     return True
 
 
 def get_public_ip():
+    """
+    Queries public IP providers sequentially until a valid public IPv4 is returned.
+    
+    Returns:
+        str: The validated public IP string, or None if all providers fail.
+    """
     errors = []
     for provider in PROVIDERS:
         try:
             req = urllib.request.Request(
                 provider,
                 headers={
-                    'User-Agent': 'Mozilla/5.0'
+                    'User-Agent': 'Mozilla/5.0 (NixOS WAN Monitor)'
                 }
             )
+            # Fetch content with a strict 5 second timeout to prevent hanging the systemd task
             with urllib.request.urlopen(req, timeout=5) as response:
                 ip = response.read().decode('utf-8').strip()
                 if is_valid_public_ipv4(ip):
@@ -57,6 +94,7 @@ def get_public_ip():
                     errors.append(f"{provider}: invalid public IPv4 '{ip}'")
         except Exception as e:
             errors.append(f"{provider}: {str(e)}")
+            
     print(
         f"Error: All IP discovery providers failed. Details: {errors}",
         file=sys.stderr
@@ -65,6 +103,12 @@ def get_public_ip():
 
 
 def get_last_recorded_ip():
+    """
+    Reads the history log from the bottom up to locate the last successful IP address.
+    
+    Returns:
+        str: The last successfully updated IP, or None if no log exists yet.
+    """
     if not os.path.exists(HISTORY_FILE):
         return None
     try:
@@ -72,6 +116,7 @@ def get_last_recorded_ip():
             lines = f.readlines()
             if not lines:
                 return None
+            # Search backwards to find the most recent successful transition
             for line in reversed(lines):
                 try:
                     entry = json.loads(line)
@@ -85,6 +130,9 @@ def get_last_recorded_ip():
 
 
 def record_ip(ip, status, details=None):
+    """
+    Appends a new event entry into the JSONLines history registry.
+    """
     os.makedirs(os.path.dirname(HISTORY_FILE), exist_ok=True)
     entry = {
         "timestamp": datetime.utcnow().isoformat() + "Z",
@@ -101,7 +149,14 @@ def record_ip(ip, status, details=None):
 
 
 def trigger_ddclient():
+    """
+    Invokes the systemd service unit for `ddclient` on-demand.
+    
+    Returns:
+        tuple: (bool, str) representing (success_boolean, error_details_string)
+    """
     try:
+        # Run ddclient as a one-shot activation via systemd to perform the API call
         res = subprocess.run(
             ["systemctl", "start", "ddclient.service"],
             capture_output=True,
@@ -120,17 +175,21 @@ def trigger_ddclient():
 
 
 def main():
+    """
+    Orchestrator logic for DDNS state management.
+    """
     current_ip = get_public_ip()
     if not current_ip:
         sys.exit(1)
 
     last_ip = get_last_recorded_ip()
     if current_ip == last_ip:
-        # IP matches the last recorded working IP; do nothing
+        # IP matches the last recorded working IP; do nothing to conserve API quota
         sys.exit(0)
 
     print(f"IP rotation detected! Old: {last_ip}, New: {current_ip}")
 
+    # Trigger ddclient to perform the DNS record update
     success, error_msg = trigger_ddclient()
     if success:
         print("Dynu DDNS update via ddclient triggered successfully.")
@@ -144,3 +203,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
