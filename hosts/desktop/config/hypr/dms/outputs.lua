@@ -11,7 +11,9 @@ hl.monitor({
 hl.monitor({
 	output = "HDMI-A-1",
 	mode = "1920x1080@60.0",
-	position = "2560x1820",
+	-- Shift right by the width of DP-1 (2560)
+	-- Shift down by 600 px
+	position = "2560x600",
 	scale = 1,
 	vrr = 0
 })
