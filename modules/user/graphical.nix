@@ -13,6 +13,7 @@
     # Language Servers for Zed (and general dev use)
     rust-analyzer
     pyright
+    ruff
     nil
     nixd
     jdt-language-server

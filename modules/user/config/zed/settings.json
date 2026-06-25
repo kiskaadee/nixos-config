@@ -53,6 +53,11 @@
         "path_lookup": true
       }
     },
+    "ruff": {
+      "binary": {
+        "path_lookup": true
+      }
+    },
     "basedpyright": {
       "binary": {
         "path_lookup": true
@@ -81,6 +86,19 @@
     "vtsls": {
       "binary": {
         "path_lookup": true
+      }
+    }
+  },
+  "languages": {
+    "Python": {
+      "language_servers": [
+        "pyright",
+        "ruff"
+      ],
+      "formatter": {
+        "language_server": {
+          "name": "ruff"
+        }
       }
     }
   }
