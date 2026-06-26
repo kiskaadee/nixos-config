@@ -9,6 +9,7 @@
       ../../modules/system/graphical.nix  # System-wide graphical stack settings (DMS daemon)
       ../../modules/system/base.nix       # General hardware-agnostic OS settings
       ./dynu.nix                          # Dynu DDNS update service
+      ./traefik-deployments.nix           # Traefik deployments secrets module
     ];
 
   # Enable experimental Nix features (required for Flakes and newer command line tools)
