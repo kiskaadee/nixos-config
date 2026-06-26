@@ -1,8 +1,8 @@
 { inputs, pkgs, ... }:
 
 let
-  # Declaratively compile the Python script as a user utility package
-  bundleProject = pkgs.writers.writePython3Bin "bundle-project" { } (builtins.readFile ./scripts/bundle_project.py);
+  # Declaratively compile the Python script as a user utility package using writeScriptBin
+  bundleProject = pkgs.writeScriptBin "bundle-project" (builtins.readFile ./scripts/bundle_project.py);
 in
 {
   home.packages = with pkgs; [

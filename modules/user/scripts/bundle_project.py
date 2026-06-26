@@ -36,14 +36,17 @@ def create_bundle(target_dir: Path, output_file: Path) -> None:
     """
     # 1. Generate the eza tree output
     try:
-        # --color=never ensures we don't write terminal escape codes into our text file
+        # --color=never ensures we don't write terminal escape codes
         tree_output = subprocess.check_output(
             ["eza", "--tree", "--color=never", str(target_dir)],
             text=True,
             stderr=subprocess.STDOUT,
         )
     except FileNotFoundError:
-        print("Error: 'eza' is not installed or not in your PATH.", file=sys.stderr)
+        print(
+            "Error: 'eza' is not installed or not in your PATH.",
+            file=sys.stderr,
+        )
         sys.exit(1)
     except subprocess.CalledProcessError as e:
         print(f"Error running eza: {e.output}", file=sys.stderr)
@@ -58,21 +61,22 @@ def create_bundle(target_dir: Path, output_file: Path) -> None:
             out_f.write("\n\n")
 
             # 3. Traverse directory and append file contents
-            # rglob('*') finds all files recursively. We sort them to ensure consistent ordering.
+            # rglob('*') finds all files recursively.
+            # We sort them to ensure consistent ordering.
             for filepath in sorted(target_dir.rglob("*")):
                 # Skip directories
                 if filepath.is_dir():
                     continue
 
-                # Skip the output file itself so we don't get an infinite loop or duplicate data
+                # Skip the output file itself to avoid loops/dups
                 if filepath == output_file:
                     continue
 
-                # Optional: Skip .git directory to avoid massive useless outputs
+                # Skip .git directory to avoid massive useless outputs
                 if ".git" in filepath.parts:
                     continue
 
-                # Calculate relative path for the header (e.g., bin/dep_check)
+                # Calculate relative path for the header
                 relative_path = filepath.relative_to(target_dir)
 
                 # Write the header
@@ -87,10 +91,10 @@ def create_bundle(target_dir: Path, output_file: Path) -> None:
                     with open(filepath, "r", encoding="utf-8") as in_f:
                         content = in_f.read()
 
-                    # Write the content and add spacing before the next file
+                    # Write content and add spacing before the next file
                     out_f.write(content)
 
-                    # Ensure the file ends with a newline before appending the next one
+                    # Ensure the file ends with a newline before next file
                     if not content.endswith("\n"):
                         out_f.write("\n")
                     out_f.write("\n")
@@ -109,7 +113,10 @@ def main() -> None:
     Main entry point parsing arguments and calling create_bundle.
     """
     parser = argparse.ArgumentParser(
-        description="Bundle a directory structure and its files into a single text document."
+        description=(
+            "Bundle a directory structure and its files into "
+            "a single text document."
+        )
     )
     parser.add_argument(
         "directory",
@@ -130,7 +137,10 @@ def main() -> None:
     output_file = Path(args.output).resolve()
 
     if not target_dir.is_dir():
-        print(f"Error: Target directory '{target_dir}' does not exist.", file=sys.stderr)
+        print(
+            f"Error: Target directory '{target_dir}' does not exist.",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     create_bundle(target_dir, output_file)
