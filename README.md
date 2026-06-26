@@ -101,6 +101,13 @@ flowchart TD
     *   `gacp <message>` — Shorthand to stage all edits, commit with a message, and push directly to the current branch.
     *   `new-repo <name>` — Scaffolds local files, runs git init, and pushes the project to GitHub using the `gh` CLI.
 
+### 4. Repository Bundler Utility (`bundle-project`)
+*   **Script Location:** [modules/user/scripts/bundle_project.py](modules/user/scripts/bundle_project.py)
+*   **Features:**
+    *   `bundle-project [target_dir] [-o output_file]` — Compresses the structure and contents of a target directory (defaults to `.`) into a single output file (defaults to `output.txt`).
+    *   Natively skips binary files and `.git` repositories to prevent pollution.
+    *   Automatically runs `eza --tree` and outputs it as a visual guide at the header of the bundle file.
+
 ---
 
 ## 🔒 Secrets Management (SOPS + age)
@@ -153,7 +160,11 @@ Rebuild and switch to the profile matching your active target host machine:
 
 ## 📚 Reference Documentation
 
-*   [Secrets Management Details](docs/secrets-management.md) — Secure storage configuration using `sops-nix` and `age`.
+*   [Package & Secrets Workflow Guide](docs/package-and-secrets.md) — Steps for adding custom applications and managing secrets.
+*   [System Maintenance Guide](docs/system-maintenance.md) — Instructions for safe system updates, health checking, and garbage collection.
+*   [Declarative Development Environments](docs/development-environments.md) — How to use nix-shell, devShells, direnv, and uv for project isolation.
+*   [Secrets Management Details](docs/secrets-management.md) — Secure storage bootstrapping using `sops-nix` and `age`.
 *   [Smart DDNS Updater](docs/dynu-ip-monitor.md) — Under-the-hood details of the smart IP change detector and updater.
 *   [Tmux Terminal Multiplexer](docs/tmux.md) — Fast navigation bindings, layouts, and pane splits guide.
 *   [Google Antigravity Setup](docs/antigravity.md) — Technical instructions for packaging and using the Antigravity agent CLI on NixOS.
+
