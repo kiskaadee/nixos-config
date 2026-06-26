@@ -18,7 +18,7 @@ _fuzzy_select_dir() {
     local query="$2"
     local max_depth="${3:-2}"
     [[ -d "$base" ]] || return 1
-    fd . "$base" --type d --mindepth 1 --max-depth "$max_depth" 2>/dev/null | \
+    (echo "$base"; fd . "$base" --type d --mindepth 1 --max-depth "$max_depth" 2>/dev/null) | \
         fzf --query="$query" --select-1 --exit-0
 }
 
@@ -28,7 +28,7 @@ _fuzzy_select_dir_preview() {
     local query="$2"
     local max_depth="${3:-2}"
     [[ -d "$base" ]] || return 1
-    fd . "$base" --type d --mindepth 1 --max-depth "$max_depth" 2>/dev/null | \
+    (echo "$base"; fd . "$base" --type d --mindepth 1 --max-depth "$max_depth" 2>/dev/null) | \
         fzf --query="$query" --select-1 --exit-0 \
             --preview 'eza --tree --level 2 --icons=always --color=always {}' \
             --preview-window="right:50%:rounded"
@@ -86,8 +86,9 @@ copy_dir() {
 }
 
 # 10. Shorthand Navigation Aliases
-cnf() { jump "$HOME/Config" "$1" 2; }  # Quickly jump inside ~/Config modules
-pj()  { jump "$HOME/Projects" "$1"; }   # Jump into local workspace projects
-dl()  { jump "$HOME/Downloads" "$1"; }  # Jump to Downloads
-pd()  { jump "$HOME/Production" "$1"; } # Jump to Production folder
-md()  { jump "/media"; }                # Jump to /media mounted storage
+cfg() { jump "$HOME/Config" "$1" 2; }      # Quickly jump inside ~/Config modules
+prj()  { jump "$HOME/Projects" "$1"; }     # Jump into local workspace projects
+lrn() { jump "/$HOME/Learn" "$1"; }       # Jump to ~/Learn
+dep()  { jump "$HOME/Deployments" "$1"; }  # Jump to Deployments folder
+dl()  { jump "$HOME/Downloads" "$1"; }    # Jump to Downloads
+med()  { jump "/media" "$1"; }            # Jump to /media mounted storage
