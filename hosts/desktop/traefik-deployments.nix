@@ -35,6 +35,11 @@
       # --- Excalidraw ---
       EXCALIDRAW_DOMAIN=excalidraw.arch-services.mywire.org
 
+      # --- Gitea ---
+      GITEA_DOMAIN=gitea.arch-services.mywire.org
+      GITEA_SSH_DOMAIN=gitea.arch-services.mywire.org
+      GITEA_AUTH_MIDDLEWARE=https-redirect@docker
+
       # --- Jellyfin ---
       JELLYFIN_SERVICE_NAME=jellyfin
       JELLYFIN_CONTAINER_NAME=jellyfin
