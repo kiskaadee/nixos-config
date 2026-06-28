@@ -10,6 +10,7 @@
       ../../modules/system/base.nix       # General hardware-agnostic OS settings
       ./dynu.nix                          # Dynu DDNS update service
       ./traefik-deployments.nix           # Traefik deployments secrets module
+      ./homeserver.nix                    # Homeserver core services module
     ];
 
   # Enable experimental Nix features (required for Flakes and newer command line tools)
