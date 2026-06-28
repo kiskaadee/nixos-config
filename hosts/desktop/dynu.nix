@@ -25,19 +25,14 @@ in
   # Assemble the ddclient config file securely at boot time in /run/secrets/
   # Defaults to owner root:root (which avoids dynamic user evaluation issues)
   sops.templates."ddclient.conf" = {
-    content = ''
-      # General configuration
-      daemon=0
-      syslog=yes
-      pid=/run/ddclient/ddclient.pid
-
-      # Provider definition using credentials decrypted at runtime
-      protocol=dyndns2
-      server=api.dynu.com
-      login=${config.sops.placeholder.dynu_user}
-      password=${config.sops.placeholder.dynu_password}
-      ${config.sops.placeholder.dynu_domain}
-    '';
+    content = builtins.replaceStrings
+      [ "@dynu_user@" "@dynu_password@" "@dynu_domain@" ]
+      [
+        config.sops.placeholder.dynu_user
+        config.sops.placeholder.dynu_password
+        config.sops.placeholder.dynu_domain
+      ]
+      (builtins.readFile ./ddclient.conf);
   };
 
   # 2. Enable ddclient and feed it the decrypted configuration template via systemd credentials
