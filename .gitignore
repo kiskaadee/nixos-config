@@ -6,3 +6,4 @@ result-*
 .direnv/
 
 
+.ruff_cache/
