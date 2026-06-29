@@ -15,6 +15,7 @@
     "authelia_session_secret"
     "authelia_storage_encryption_key"
     "authelia_identity_validation_reset_password_jwt_secret"
+    "authelia_user_kiskaadee_password_hash"
   ] (name: { owner = "kiskaadee"; });
 
   # 2. Generate the unified environment file at runtime in /run/secrets/homeserver.env
@@ -29,6 +30,21 @@
       AUTHELIA_STORAGE_ENCRYPTION_KEY = config.sops.placeholder.authelia_storage_encryption_key;
       AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET = config.sops.placeholder.authelia_identity_validation_reset_password_jwt_secret;
     };
+  };
+
+  # Generate the declarative Authelia user database file at runtime in /run/secrets/users.yml
+  sops.templates."users.yml" = {
+    owner = "kiskaadee";
+    content = ''
+      users:
+        kiskaadee:
+          displayname: "Kiskaadee"
+          password: "${config.sops.placeholder.authelia_user_kiskaadee_password_hash}"
+          email: "fcortesbio@gmail.com"
+          groups:
+            - admins
+            - dev
+    '';
   };
 
   # 3. Define the declarative systemd service to manage the homeserver container stack
@@ -46,4 +62,7 @@
       ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
     };
   };
+
+  # 4. Open ports in the firewall for Traefik
+  networking.firewall.allowedTCPPorts = [ 80 443 ];
 }
