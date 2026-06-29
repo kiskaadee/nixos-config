@@ -25,6 +25,7 @@ in
     wget             # Standard network file downloader
     zip              # File archiving utility
     unzip            # Extraction utility for .zip files
+    unrar            # Extraction utility for .rar files
     rsync            # Efficient incremental file transfer tool
     aria2            # High-speed multi-protocol download utility
 
