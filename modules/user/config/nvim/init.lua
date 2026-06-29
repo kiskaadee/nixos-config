@@ -6,3 +6,4 @@ vim.opt.expandtab = true       -- Convert tabs to spaces
 vim.opt.smartindent = true     -- Intelligent auto-indenting based on file syntax
 vim.opt.wrap = false           -- Disable automatic line wrapping
 vim.opt.termguicolors = true   -- Enable 24-bit RGB terminal colors
+vim.opt.completeopt = { "menu", "menuone", "noselect" } -- Smooth auto-completion behavior

@@ -18,6 +18,10 @@
     nixd
     jdt-language-server
     typescript-language-server
+    lua-language-server
+    taplo
+    marksman
+    prettier
   ];
 
   # Firefox configuration

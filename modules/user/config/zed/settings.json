@@ -87,6 +87,21 @@
       "binary": {
         "path_lookup": true
       }
+    },
+    "lua-language-server": {
+      "binary": {
+        "path_lookup": true
+      }
+    },
+    "taplo": {
+      "binary": {
+        "path_lookup": true
+      }
+    },
+    "marksman": {
+      "binary": {
+        "path_lookup": true
+      }
     }
   },
   "languages": {
