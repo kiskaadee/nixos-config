@@ -32,6 +32,11 @@ in
     httpie           # CLI alternative to curl for REST APIs
     bruno            # Open-source git-friendly GUI REST client
 
+    # Network Diagnostics & Scanning
+    openssh          # OpenSSH client and connectivity tools
+    nmap             # Network exploration tool and security / port scanner
+    arp-scan         # Address Resolution Protocol packet scanner
+
     # Python Tooling
     ruff             # Extremely fast Python linter and formatter
     mypy             # Static type checker for Python
