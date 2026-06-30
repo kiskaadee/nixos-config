@@ -31,10 +31,7 @@
   # Allows maintaining persistent shell sessions, window splitting, and tabs.
   programs.tmux = {
     enable = true;
-    shortcut = "a";     # Remaps Tmux prefix key to `Ctrl+a` (similar to GNU Screen)
-    baseIndex = 1;      # Sets starting window index to 1 (matching keyboard layout)
-    newSession = true;  # Spawns a new session automatically when calling tmux attach
-    escapeTime = 0;     # Zero latency for Vim mode transitions (removes Esc lag)
+    escapeTime = 0;     # Remove the default escape delay
     mouse = true;       # Enables scrollback navigation and pane resizing using the mouse pointer
     terminal = "tmux-256color";
     
@@ -47,12 +44,11 @@
   };
 
   # Cross-Shell Prompt (Starship)
-  # A highly customizable, language-aware shell status prompt.
   programs.starship = {
     enable = true;
     enableBashIntegration = true; # Mount prompt configuration inside Bash shells
     settings = {
-      add_newline = false; # Do not add empty lines before the prompt line
+      add_newline = true;
       character = {
         success_symbol = "[➜](bold green)";
         error_symbol = "[➜](bold red)";
