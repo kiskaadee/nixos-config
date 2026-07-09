@@ -29,6 +29,10 @@
       CERT_RESOLVER = "myresolver";
       DOMAIN_SUFFIX = "arch-services.mywire.org";
 
+      # --- Docs ---
+      DOCS_DOMAIN = "docs.arch-services.mywire.org";
+      DOCS_PROJECT_PATH = "/home/kiskaadee/Learn/backend-residency";
+
       # --- Excalidraw ---
       EXCALIDRAW_DOMAIN = "excalidraw.arch-services.mywire.org";
 
