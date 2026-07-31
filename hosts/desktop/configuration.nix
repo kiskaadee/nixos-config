@@ -53,6 +53,14 @@
   # Host-specific graphical compositor (Hyprland window manager for desktop)
   programs = {
     hyprland.enable = true;
+    nix-ld = {
+      enable = true;
+      libraries = with pkgs; [
+        stdenv.cc.cc.lib
+        zlib
+        glib
+      ];
+    };
   };
 
   # Rebuild/State version. Do not modify.
