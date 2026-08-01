@@ -63,6 +63,29 @@
     };
   };
 
+  # Specialisation for headless server mode
+  specialisation.server.configuration = {
+    # 1. Disable display manager and window manager
+    services.greetd.enable = lib.mkForce false;
+    programs.hyprland.enable = lib.mkForce false;
+    programs.dms-shell.enable = lib.mkForce false;
+
+    # 2. Disable peripheral hardware services to reduce power consumption
+    services.pipewire.enable = lib.mkForce false;
+    services.printing.enable = lib.mkForce false;
+    hardware.bluetooth.enable = lib.mkForce false;
+    services.blueman.enable = lib.mkForce false;
+
+    # 3. Disable power-saving suspend/sleep/hibernate behaviors to keep server active
+    systemd.targets.sleep.enable = lib.mkForce false;
+    systemd.targets.suspend.enable = lib.mkForce false;
+    systemd.targets.hibernate.enable = lib.mkForce false;
+    systemd.targets.hybrid-sleep.enable = lib.mkForce false;
+
+    # 4. Enable active kernel-level power management tuning
+    powerManagement.powertop.enable = lib.mkForce true;
+  };
+
   # Rebuild/State version. Do not modify.
   system.stateVersion = "26.05";
 }

@@ -133,6 +133,8 @@
 
         # System Administration
         nix-switch = "sudo nixos-rebuild switch --flake ~/Config#$(hostname)";
+        server-on = "sudo /run/current-system/specialisation/server/bin/switch-to-configuration switch";
+        server-off = "sudo /run/current-system/bin/switch-to-configuration switch";
         sys = "dgop";
         wifi = "nmtui";
         lock = "hyprlock";
