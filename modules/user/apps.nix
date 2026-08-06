@@ -16,6 +16,8 @@ in
     mpv         # Fast, scriptable, keyboard-driven CLI media player
     gimp        # GNU Image Manipulation Program for graphical assets
     imagemagick # Software suite to create, edit, compose, or convert bitmap images
+    nautilus    # Clean, modern GTK4 graphical file manager for GNOME
+    yazi        # Blazing fast console file manager written in Rust
     obsidian    # Markdown-based personal knowledge wiki and note-taking app
 
     # Cloud CLI, Database Management & Archive tools
