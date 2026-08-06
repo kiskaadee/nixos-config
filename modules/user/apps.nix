@@ -15,6 +15,7 @@ in
     # Media, Note-taking & Graphical Tools
     mpv         # Fast, scriptable, keyboard-driven CLI media player
     gimp        # GNU Image Manipulation Program for graphical assets
+    imagemagick # Software suite to create, edit, compose, or convert bitmap images
     obsidian    # Markdown-based personal knowledge wiki and note-taking app
 
     # Cloud CLI, Database Management & Archive tools
