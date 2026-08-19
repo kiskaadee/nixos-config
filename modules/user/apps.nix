@@ -48,6 +48,7 @@ in
     # Rust Tooling
     cargo            # Rust package manager
     rustc            # Rust compiler
+    gcc              # GNU Compiler Collection (provides cc linker)
 
     # Secrets Management
     rbw         # Unofficial command line client for Bitwarden
