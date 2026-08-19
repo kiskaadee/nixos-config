@@ -35,6 +35,15 @@ vim.lsp.enable('taplo')
 vim.lsp.config('marksman', {})
 vim.lsp.enable('marksman')
 
+-- KDL LSP: kdl-lsp (KDL Language Server)
+-- Note: Install the server using: cargo install kdl-lsp
+vim.lsp.config('kdl_lsp', {
+  cmd = { 'kdl-lsp' },
+  filetypes = { 'kdl' },
+  root_markers = { '.git' },
+})
+vim.lsp.enable('kdl_lsp')
+
 -- Configure LSP Keybindings and features on attach
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('UserLspConfig', {}),

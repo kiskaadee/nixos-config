@@ -59,7 +59,7 @@
         config = builtins.readFile ./config/nvim/catppuccin.lua;
       }
 
-      # Advanced Syntax Highlighting for developer workflows (Python, Rust, Java, Nix)
+      # Advanced Syntax Highlighting for developer workflows (Python, Rust, Java, Nix, KDL)
       (nvim-treesitter.withPlugins (p: with p; [
         python
         rust
@@ -68,6 +68,7 @@
         java
         javascript
         markdown
+        kdl
       ]))
 
       # LSP Configuration & Python Language Servers

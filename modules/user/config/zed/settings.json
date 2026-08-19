@@ -10,7 +10,8 @@
   "proxy": "",
   "disable_ai": true,
   "auto_install_extensions": {
-    "github-theme": true
+    "github-theme": true,
+    "kdl": true
   },
   "project_panel": {
     "hide_gitignore": false,
@@ -105,6 +106,11 @@
       "binary": {
         "path_lookup": true
       }
+    },
+    "kdl-lsp": {
+      "binary": {
+        "path_lookup": true
+      }
     }
   },
   "languages": {
@@ -118,6 +124,11 @@
           "name": "ruff"
         }
       }
+    },
+    "KDL": {
+      "language_servers": [
+        "kdl-lsp"
+      ]
     }
   }
 }

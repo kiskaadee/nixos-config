@@ -45,6 +45,10 @@ in
     ruff             # Extremely fast Python linter and formatter
     mypy             # Static type checker for Python
 
+    # Rust Tooling
+    cargo            # Rust package manager
+    rustc            # Rust compiler
+
     # Secrets Management
     rbw         # Unofficial command line client for Bitwarden
   ];
