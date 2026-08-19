@@ -8,21 +8,58 @@
   programs.alacritty = {
     enable = true;
     settings = {
-      window = {
-        padding = { x = 10; y = 10; }; # Padding to avoid text hugging window borders
-        decorations = "none";          # Frameless windows for clean tiling layouts
-        opacity = 0.95;                # Subtle background translucency
+      general = {
+        import = [
+          "~/.config/alacritty/dank-theme.toml"
+        ];
       };
+
       font = {
-        # Font settings. (Nerd Font version required for UI icons)
-        normal = { family = "JetBrainsMono Nerd Font"; style = "Regular"; };
-        size = 12.0;
+        normal = { family = "FiraCode Nerd Font"; style = "Regular"; };
+        bold = { family = "FiraCode Nerd Font"; style = "Bold"; };
+        italic = { family = "FiraCode Nerd Font"; style = "Italic"; };
+        bold_italic = { family = "FiraCode Nerd Font"; style = "Bold Italic"; };
+        size = 11.0;
       };
-      colors = {
-        primary = {
-          background = "#1e1e2e"; # Catppuccin Mocha Base (Dark Theme)
-          foreground = "#cdd6f4"; # Catppuccin Mocha Text (Light grey)
-        };
+
+      window = {
+        decorations = "None";
+        padding = { x = 12; y = 12; };
+        opacity = 1.0;
+      };
+
+      scrolling = {
+        history = 3023;
+      };
+
+      cursor = {
+        style = { shape = "Block"; blinking = "On"; };
+        blink_interval = 500;
+        unfocused_hollow = true;
+      };
+
+      mouse = {
+        hide_when_typing = true;
+      };
+
+      selection = {
+        save_to_clipboard = false;
+      };
+
+      bell = {
+        duration = 0;
+      };
+
+      keyboard = {
+        bindings = [
+          { key = "C";       mods = "Control|Shift"; action = "Copy";  }
+          { key = "V";       mods = "Control|Shift"; action = "Paste"; }
+          { key = "N";       mods = "Control|Shift"; action = "SpawnNewInstance"; }
+          { key = "Equals";  mods = "Control|Shift"; action = "IncreaseFontSize"; }
+          { key = "Minus";   mods = "Control";       action = "DecreaseFontSize"; }
+          { key = "Key0";    mods = "Control";       action = "ResetFontSize";    }
+          { key = "Enter";   mods = "Shift";         chars = "\n"; }
+        ];
       };
     };
   };
