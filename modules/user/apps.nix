@@ -38,6 +38,7 @@ in
 
     # Network Diagnostics & Scanning
     openssh          # OpenSSH client and connectivity tools
+    sshfs            # FUSE-based filesystem client for mounting remote directories over SSH
     nmap             # Network exploration tool and security / port scanner
     arp-scan         # Address Resolution Protocol packet scanner
 
