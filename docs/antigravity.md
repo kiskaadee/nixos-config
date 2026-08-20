@@ -116,7 +116,10 @@ Add `antigravity-nix` to your flake inputs in `flake.nix`. Ensure that you lock 
 You can inject the packages using standard package inputs in your configurations:
 
 #### Option A: Home Manager Integration (Recommended)
-This matches your system's user setup. Add the required package to your user packages module (e.g., `modules/user/apps.nix`):
+This matches your system's user setup. Add the required package to your user packages module (e.g., `modules/user/apps.nix`). 
+
+> [!NOTE]
+> In this repository's default configuration, only the CLI helper (`google-antigravity-cli`) is installed. The GUI apps (`google-antigravity` and `google-antigravity-no-fhs`) are optional and omitted by default.
 
 ```nix
 # modules/user/apps.nix
@@ -127,12 +130,12 @@ This matches your system's user setup. Add the required package to your user pac
     # 1. Install the CLI tool (accessible via 'agy')
     inputs.antigravity.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-cli
 
-    # 2. Install the GUI application.
+    # 2. (Optional) Install the GUI application (uncomment to enable)
     # Choose google-antigravity-no-fhs to support sudo in terminal, or google-antigravity for standard FHS.
-    inputs.antigravity.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-no-fhs
+    # inputs.antigravity.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-no-fhs
 
-    # 3. (Optional) Install the legacy IDE component
-    inputs.antigravity.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-ide-no-fhs
+    # 3. (Optional) Install the legacy IDE component (uncomment to enable)
+    # inputs.antigravity.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-ide-no-fhs
   ];
 }
 ```

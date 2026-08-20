@@ -6,7 +6,7 @@ This repository configures **Tmux** declaratively via Home Manager in [terminal.
 
 ## 🔑 Core Settings
 
-*   **Prefix Key**: Remapped from `Ctrl+b` to **`Ctrl+a`** (easier to reach).
+*   **Prefix Key**: Uses the default **`Ctrl+b`**.
 *   **Status Bar**: Anchored to the **top** of the terminal window.
 *   **Base Index**: Windows and panes start indexing at **`1`** (aligning with your physical keyboard numbers).
 *   **Mouse Support**: Enabled. You can scroll, click to select panes, and drag splits to resize them.
@@ -29,7 +29,7 @@ The configuration loads the **`vim-tmux-navigator`** plugin. This allows you to 
 
 ## 📋 Common Tmux Keybindings
 
-For the following shortcuts, press your prefix key **`Ctrl+a`** first, release it, then press the shortcut key.
+For the following shortcuts, press your prefix key **`Ctrl+b`** first, release it, then press the shortcut key.
 
 ### Sessions & Windows
 | Key | Action |
