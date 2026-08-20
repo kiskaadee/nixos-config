@@ -81,6 +81,21 @@
       };
     };
 
+    # 🔑 SSH Client Configuration
+    # Declaratively configures SSH client connections and host options
+    ssh = {
+      enable = true;
+      settings = {
+        laptop = {
+          HostName = "192.168.1.25";
+          User = "kiskaadee";
+          Port = 22;
+          ServerAliveInterval = 15;
+          ServerAliveCountMax = 3;
+        };
+      };
+    };
+
     # 🗺️ Navigation & Directory Listing
     # Modern replacements for traditional cd, ls, and grep tools.
     zoxide = {
