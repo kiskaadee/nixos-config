@@ -31,6 +31,18 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # DankCalendar - calendar daemon and UI for DMS
+    dankcalendar = {
+      url = "github:AvengeMedia/dankcalendar";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # DankSearch - fast indexed filesystem search for DMS
+    danksearch = {
+      url = "github:AvengeMedia/danksearch";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Zen Browser - modern, lightweight, community-maintained browser
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
@@ -52,7 +64,7 @@
 
   # --- System Outputs (Configuration Definitions) ---
   # Maps host machines to target environments, architecture types, and user settings.
-  outputs = { self, nixpkgs, home-manager, dms, dgop, dank-greeter, zen-browser, antigravity, ...}@inputs: {
+  outputs = { self, nixpkgs, home-manager, dms, dgop, dank-greeter, dankcalendar, danksearch, zen-browser, antigravity, ...}@inputs: {
     nixosConfigurations = {
       
       # 🖥️ DESKTOP HOST
@@ -65,6 +77,7 @@
           ./hosts/desktop/configuration.nix          # Desktop environment / system package settings
           inputs.sops-nix.nixosModules.sops          # Import Sops module
           inputs.dank-greeter.nixosModules.default   # Import Dank Greeter module
+          inputs.dankcalendar.nixosModules.default   # Import Dank Calendar module
 
           home-manager.nixosModules.home-manager {
             home-manager.useGlobalPkgs = true;
@@ -75,6 +88,7 @@
               imports = [
                 ./home.nix
                 ./hosts/desktop/home.nix
+                inputs.danksearch.homeModules.default
               ];
             };
           }
@@ -91,6 +105,7 @@
           ./hosts/laptop/hardware-configuration.nix
           ./hosts/laptop/configuration.nix
           inputs.dank-greeter.nixosModules.default
+          inputs.dankcalendar.nixosModules.default
 
           home-manager.nixosModules.home-manager {
             home-manager.useGlobalPkgs = true;
@@ -101,6 +116,7 @@
               imports = [
                 ./home.nix
                 ./hosts/laptop/home.nix
+                inputs.danksearch.homeModules.default
               ];
             };
           }

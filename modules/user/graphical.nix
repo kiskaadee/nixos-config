@@ -124,4 +124,52 @@
       After = [ "graphical-session-pre.target" ];
     };
   };
+
+  # 🔍 DankSearch - Fast Indexed Filesystem Search Service
+  programs.dsearch = {
+    enable = true;
+    config = {
+      listen_addr = "127.0.0.1:43654";
+      max_file_bytes = 2097152;
+      worker_count = 4;
+      index_all_files = true;
+      text_extensions = [
+        ".txt" ".md" ".go" ".py" ".js" ".ts"
+        ".jsx" ".tsx" ".json" ".yaml" ".yml"
+        ".toml" ".html" ".css" ".rs" ".c"
+        ".cpp" ".h" ".java" ".rb" ".php" ".sh" ".nix" ".kdl"
+      ];
+      index_paths = [
+        {
+          path = "/home/kiskaadee";
+          max_depth = 5;
+          exclude_hidden = true;
+          extract_exif = true;
+          exclude_dirs = [
+            "node_modules" "bower_components" "__pycache__" "site-packages"
+            "venv" ".venv" "target" "dist" "build" "vendor" ".cache"
+          ];
+        }
+        {
+          path = "/home/kiskaadee/Repos";
+          max_depth = 6;
+          exclude_hidden = true;
+          extract_exif = false;
+          exclude_dirs = [
+            "node_modules" "bower_components" "__pycache__" "site-packages"
+            "venv" ".venv" "target" "dist" "build" "vendor" ".cache"
+            ".git" ".idea" ".vscode"
+          ];
+        }
+        {
+          path = "/home/kiskaadee/Config";
+          max_depth = 6;
+          exclude_hidden = false;
+          extract_exif = false;
+          merge_default_exclude_dirs = true;
+          exclude_dirs = [ ".git" ];
+        }
+      ];
+    };
+  };
 }

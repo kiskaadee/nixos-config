@@ -31,5 +31,13 @@
     compositor.name = "niri";
     configHome = "/home/kiskaadee";
   };
+
+  # 📅 DankCalendar Daemon & UI
+  # Provides calendar integration (Local, CalDAV, Google, Microsoft) for DMS
+  programs.dank-calendar = {
+    enable = true;
+    systemd.enable = true;
+    systemd.target = "graphical-session.target";
+  };
 }
 
