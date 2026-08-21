@@ -69,6 +69,7 @@
     services.greetd.enable = lib.mkForce false;
     programs.hyprland.enable = lib.mkForce false;
     programs.dms-shell.enable = lib.mkForce false;
+    programs.dms-greeter.enable = lib.mkForce false;
 
     # 2. Disable peripheral hardware services to reduce power consumption
     services.pipewire.enable = lib.mkForce false;

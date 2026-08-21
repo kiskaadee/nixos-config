@@ -8,7 +8,8 @@
 {
   imports = [
       ./hardware-configuration.nix
-      ../../modules/system/base.nix # General hardware-agnostic OS settings
+      ../../modules/system/graphical.nix # System-wide graphical stack settings (DMS daemon + greeter)
+      ../../modules/system/base.nix      # General hardware-agnostic OS settings
     ];
 
   # Enable experimental Nix features (required for Flakes and newer command line tools)
@@ -50,9 +51,6 @@
 
   # Host-specific graphical compositor (Niri window manager for laptop)
   programs.niri.enable = true;
-
-  # Override greetd to launch Niri compositor instead of Hyprland on the laptop
-  services.greetd.settings.default_session.command = lib.mkForce "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-session --asterisks --greeting '❄️ Declarative NixOS Workstation' --cmd niri";
 
   # Rebuild/State version. Do not modify.
   system.stateVersion = "26.05";

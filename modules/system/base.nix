@@ -45,14 +45,12 @@
   };
   services.blueman.enable = true; # Enable Blueman DBus/Applet service integrations
 
-  # 🚪 Wayland Native TUI Greeter (greetd + tuigreet)
+  # 🚪 Greetd base configuration
   services.greetd = {
     enable = true;
     settings = {
       default_session = {
-        # Command executed when the system displays the login prompt.
-        # Customized with flags (remember user, asterisks, custom header greeting) for a cleaner login UI.
-        command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-session --asterisks --greeting '❄️ Declarative NixOS Workstation' --cmd start-hyprland";
+        user = "kiskaadee";
       };
     };
   };

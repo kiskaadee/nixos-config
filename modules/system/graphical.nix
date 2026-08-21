@@ -23,4 +23,13 @@
     enableDynamicTheming    = true; # Automatically applies system-wide material palettes to shells and apps
     enableClipboardPaste    = true; # Bridges terminal and Wayland clipboard buffers seamlessly
   };
+
+  # 🚪 Dank Material Shell Greeter (dank-greeter + greetd)
+  # Uses niri as the compositor for rendering the login screen
+  programs.dms-greeter = {
+    enable = true;
+    compositor.name = "niri";
+    configHome = "/home/kiskaadee";
+  };
 }
+
