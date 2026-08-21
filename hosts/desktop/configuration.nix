@@ -50,8 +50,9 @@
     ];
   };
 
-  # Host-specific graphical compositor (Hyprland window manager for desktop)
+  # Host graphical compositors (Niri as primary, Hyprland as secondary/fallback)
   programs = {
+    niri.enable = true;
     hyprland.enable = true;
     nix-ld = {
       enable = true;
@@ -67,6 +68,7 @@
   specialisation.server.configuration = {
     # 1. Disable display manager and window manager
     services.greetd.enable = lib.mkForce false;
+    programs.niri.enable = lib.mkForce false;
     programs.hyprland.enable = lib.mkForce false;
     programs.dms-shell.enable = lib.mkForce false;
     programs.dms-greeter.enable = lib.mkForce false;

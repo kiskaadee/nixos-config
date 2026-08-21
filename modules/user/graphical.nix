@@ -84,12 +84,26 @@
   home.file.".config/zed/settings.json".source = ./config/zed/settings.json;
   home.file.".config/zed/themes".source = ./config/zed/themes;
 
+  # Declarative configuration files for Niri window manager
+  home.file.".config/niri/config.kdl".source = ./config/niri/config.kdl;
+  home.file.".config/niri/custom.kdl".source = ./config/niri/custom.kdl;
+
   # ⚙️ Systemd user session targets for window managers
-  # This target allows user services (like background daemons, screenshot helpers) to bind 
+  # These targets allow user services (like DMS daemons, screenshot helpers) to bind 
   # to the graphical workspace startup cycle correctly.
   systemd.user.targets.hyprland-session = {
     Unit = {
       Description = "Hyprland graphical session";
+      Documentation = [ "man:systemd.special(7)" ];
+      BindsTo = [ "graphical-session.target" ];
+      Wants = [ "graphical-session-pre.target" ];
+      After = [ "graphical-session-pre.target" ];
+    };
+  };
+
+  systemd.user.targets.niri-session = {
+    Unit = {
+      Description = "Niri graphical session";
       Documentation = [ "man:systemd.special(7)" ];
       BindsTo = [ "graphical-session.target" ];
       Wants = [ "graphical-session-pre.target" ];
