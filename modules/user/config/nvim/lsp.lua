@@ -19,6 +19,10 @@ vim.lsp.enable('rust_analyzer')
 vim.lsp.config('nixd', {})
 vim.lsp.enable('nixd')
 
+-- Java LSP: Eclipse jdtls
+vim.lsp.config('jdtls', {})
+vim.lsp.enable('jdtls')
+
 -- TypeScript LSP: ts_ls
 vim.lsp.config('ts_ls', {})
 vim.lsp.enable('ts_ls')
