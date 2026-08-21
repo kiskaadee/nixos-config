@@ -68,17 +68,6 @@
   # Allows maintaining persistent shell sessions, window splitting, and tabs.
   programs.tmux = {
     enable = true;
-
-    baseIndex = 1;      # Number windows starting at 1
-    escapeTime = 0;     # Remove the default escape delay
-    mouse = true;       # Enables scrollback navigation and pane resizing using the mouse pointer
-    terminal = "tmux-256color";
-    
-    plugins = with pkgs.tmuxPlugins; [
-      catppuccin          # Visual styling matching system theme
-      vim-tmux-navigator  # Seamless navigation switching between Vim panes and Tmux splits (Ctrl+h/j/k/l)
-    ];
-    
     extraConfig = builtins.readFile ./config/tmux.conf;
   };
 

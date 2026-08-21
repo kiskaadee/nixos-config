@@ -67,18 +67,32 @@
         lua
         java
         javascript
+        typescript
         markdown
         kdl
+        toml
+        bash
       ]))
 
-      # LSP Configuration & Python Language Servers
+      # LSP Configuration & Language Servers
       {
         plugin = nvim-lspconfig;
         type = "lua";
-        config = builtins.readFile ./config/nvim/lsp.lua;
+      }
+
+      # DAP (Debug Adapter Protocol)
+      {
+        plugin = nvim-dap;
+      }
+      {
+        plugin = nvim-dap-ui;
       }
     ];
   };
+
+  # Declarative configuration files for Neovim (lsp.lua & dap.lua loaded dynamically via init.lua)
+  home.file.".config/nvim/lsp.lua".source = ./config/nvim/lsp.lua;
+  home.file.".config/nvim/dap.lua".source = ./config/nvim/dap.lua;
 
   # Declarative configuration files for Zed editor
   home.file.".config/zed/settings.json".source = ./config/zed/settings.json;
