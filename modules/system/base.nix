@@ -26,9 +26,10 @@
   # Enable printing service
   services.printing.enable = true;
 
-  # Install cups-pk-helper to register PolicyKit and DBus printer configuration policies
+  # System-wide packages
   environment.systemPackages = with pkgs; [
     cups-pk-helper
+    rclone
   ];
 
   # SSH daemon settings for secure remote command execution
