@@ -36,6 +36,7 @@ in
     # API Testing & Development
     httpie           # CLI alternative to curl for REST APIs
     bruno            # Open-source git-friendly GUI REST client
+    websocat         # Command-line client for WebSockets (like netcat for ws://)
 
     # Network Diagnostics & Scanning
     openssh          # OpenSSH client and connectivity tools
