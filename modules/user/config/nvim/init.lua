@@ -29,6 +29,30 @@ vim.keymap.set('i', '<Tab>', function()
 end, { expr = true, silent = true })
 
 -- =============================================================================
+-- Precision Word Deletion Shortcuts
+-- =============================================================================
+
+-- 1. Delete word backward: from word start to cursor (built-in <C-w> = backward-kill-word).
+--    noremap=true (default) ensures this calls Vim's native handler, NOT our custom <C-w> below.
+vim.keymap.set('i', '<C-BS>', '<C-w>', { desc = 'Delete word backward (start to cursor)' })
+vim.keymap.set('i', '<M-BS>', '<C-w>', { desc = 'Delete word backward (start to cursor)' })
+vim.keymap.set('i', '<M-BSpace>', '<C-w>', { desc = 'Delete word backward (start to cursor)' })
+
+-- 2. Delete word forward: from cursor to word end (preserves trailing whitespace)
+vim.keymap.set('i', '<C-Delete>', '<C-o>de', { desc = 'Delete word forward (cursor to end)' })
+vim.keymap.set('i', '<M-Delete>', '<C-o>de', { desc = 'Delete word forward (cursor to end)' })
+
+-- 3. Delete entire word under cursor (inner word), regardless of cursor position
+vim.keymap.set('i', '<C-w>', '<C-o>diw', { desc = 'Delete entire word under cursor' })
+
+-- Normal Mode parity
+vim.keymap.set('n', '<C-Delete>', 'de', { desc = 'Delete word forward' })
+vim.keymap.set('n', '<M-Delete>', 'de', { desc = 'Delete word forward' })
+vim.keymap.set('n', '<C-BS>',    'db', { desc = 'Delete word backward' })
+vim.keymap.set('n', '<M-BS>',    'db', { desc = 'Delete word backward' })
+vim.keymap.set('n', '<M-BSpace>', 'db', { desc = 'Delete word backward' })
+
+-- =============================================================================
 -- Window / Tmux Seamless Navigation (Ctrl-h/j/k/l)
 -- =============================================================================
 

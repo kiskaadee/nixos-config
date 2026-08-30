@@ -3,6 +3,11 @@
 
 { pkgs, ... }:
 
+let
+  # Parse true ASCII Escape (0x1b) and DEL (0x7f) bytes so TOML serialization generates real escape sequences
+  esc = builtins.fromJSON "\"\\u001b\"";
+  del = builtins.fromJSON "\"\\u007f\"";
+in
 {
   # GPU-Accelerated Terminal Emulator (Alacritty)
   programs.alacritty = {
@@ -59,6 +64,8 @@
           { key = "Minus";   mods = "Control";       action = "DecreaseFontSize"; }
           { key = "Key0";    mods = "Control";       action = "ResetFontSize";    }
           { key = "Enter";   mods = "Shift";         chars = "\n"; }
+          { key = "Delete";  mods = "Control";       chars = "${esc}[3;5~"; }
+          { key = "Back";    mods = "Control";       chars = "${esc}${del}"; }
         ];
       };
     };
