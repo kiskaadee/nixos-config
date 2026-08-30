@@ -23,12 +23,35 @@
     pulse.enable = true; # Enable legacy PulseAudio emulation wrapper
   };
 
-  # Enable printing service
-  services.printing.enable = true;
+  # 🖨️ Printing & Scanning configuration (with Epson drivers & Avahi network discovery)
+  services.printing = {
+    enable = true;
+    drivers = with pkgs; [
+      epson-escpr
+      epson-escpr2
+      gutenprint
+      gutenprintBin
+    ];
+  };
+
+  # Enable mDNS / Zeroconf discovery for Wi-Fi printers
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+  };
+
+  # SANE scanner support (includes Epson scanner backend)
+  hardware.sane = {
+    enable = true;
+    extraBackends = [ pkgs.epsonscan2 ];
+  };
 
   # System-wide packages
   environment.systemPackages = with pkgs; [
     cups-pk-helper
+    system-config-printer
+    simple-scan
     rclone
   ];
 

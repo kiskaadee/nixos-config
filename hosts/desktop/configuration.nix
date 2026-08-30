@@ -47,6 +47,8 @@
       "wheel"           # Enable sudo access for administrative tasks
       "docker"          # Allows running docker commands without sudo
       "networkmanager"  # Allows modifying network configurations
+      "lp"              # Allows managing printers and print jobs
+      "scanner"         # Allows access to scanners
     ];
   };
 
