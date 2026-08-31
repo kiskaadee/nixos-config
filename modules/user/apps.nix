@@ -20,6 +20,7 @@ in
     nautilus    # Clean, modern GTK4 graphical file manager for GNOME
     yazi        # Blazing fast console file manager written in Rust
     obsidian    # Markdown-based personal knowledge wiki and note-taking app
+    libreoffice # Comprehensive open-source office suite (Writer, Calc, Impress, Draw)
 
     # Cloud CLI, Database Management & Archive tools
     google-cloud-sdk # GCP administration utilities
