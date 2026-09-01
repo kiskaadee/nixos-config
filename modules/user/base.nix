@@ -174,7 +174,6 @@
         v = "nvim";
         clock = "tty-clock";
         ql = "quicklinks";
-        todo = "tuxedo todo.txt";
 
         # Interactive Jump helper
         zi = "zoxide query -i --preview 'eza --tree --level 2 --color=always {}'";
@@ -200,6 +199,7 @@
         ${builtins.readFile ./shell/pdf.sh}        # Command line PDF decryption helper
         ${builtins.readFile ./shell/quicklinks.sh}  # Interactive fzf web launcher
         ${builtins.readFile ./shell/jump.sh}       # Directory jumper & interactive fuzzy navigation
+        ${builtins.readFile ./shell/todo.sh}       # Todo.txt & tuxedo shortcuts and syntax highlighter
 
         # --- Word Deletion & Readline Keybindings ---
         if [[ -n "$BASH_VERSION" ]] && [[ "$-" == *i* ]]; then
