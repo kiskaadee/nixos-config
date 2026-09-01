@@ -174,6 +174,7 @@
         v = "nvim";
         clock = "tty-clock";
         ql = "quicklinks";
+        todo = "tuxedo todo.txt";
 
         # Interactive Jump helper
         zi = "zoxide query -i --preview 'eza --tree --level 2 --color=always {}'";
