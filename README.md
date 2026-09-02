@@ -40,6 +40,8 @@ graph TD
     *   [hosts/desktop/](hosts/desktop/) — Configuration for the main workstation:
         *   [configuration.nix](hosts/desktop/configuration.nix) — Main desktop NixOS config.
         *   [dynu.nix](hosts/desktop/dynu.nix) — Service settings triggering Dynu DNS.
+        *   [homeserver.nix](hosts/desktop/homeserver.nix) — Headless home server specialisation profile (`server-on` / `server-off`).
+        *   [traefik-deployments.nix](hosts/desktop/traefik-deployments.nix) — Traefik edge proxy, SSL certs, and microservice definitions (`appctl`).
         *   [monitor.py](hosts/desktop/monitor.py) — Python script checking for public WAN IP rotations.
         *   [secrets.yaml](hosts/desktop/secrets.yaml) — Encrypted host credentials.
     *   [hosts/laptop/](hosts/laptop/) — Configuration for the mobile workstation:
@@ -58,6 +60,7 @@ graph TD
             *   [jump.sh](modules/user/shell/jump.sh) — Interactive navigation helper scripts powered by `fzf` and `yazi`.
             *   [pdf.sh](modules/user/shell/pdf.sh) — Quick decryption of password-protected PDF files.
             *   [quicklinks.sh](modules/user/shell/quicklinks.sh) — Quick menu launcher for saved bookmarks and workflows.
+            *   [todo.sh](modules/user/shell/todo.sh) — Productivity shortcuts and syntax highlighter for `todo.txt` and `tuxedo`.
             *   [wayland.sh](modules/user/shell/wayland.sh) — Utility to automatically pipe program stdout/stderr to the Wayland clipboard.
 
 ---
@@ -101,7 +104,16 @@ flowchart TD
     *   `gacp <message>` — Shorthand to stage all edits, commit with a message, and push directly to the current branch.
     *   `new-repo <name>` — Scaffolds local files, runs git init, and pushes the project to GitHub using the `gh` CLI.
 
-### 4. Repository Bundler Utility (`bundle-project`)
+### 4. Todo.txt & Tuxedo Productivity Helper (`todo.sh`)
+*   **Script Location:** [modules/user/shell/todo.sh](modules/user/shell/todo.sh)
+*   **Features:**
+    *   `todo` — Launches the interactive `tuxedo` TUI for the local `./todo.txt`.
+    *   `todo n` / `todo next` — Displays only the highest-priority focus task.
+    *   `todo n <N>` / `todo next <N>` — Displays the top `N` priority tasks (e.g. `todo n 3`).
+    *   `todo dn` / `todo do-next` — Auto-completes the top priority task.
+    *   `_todo_color` — Built-in awk parser adding ANSI color formatting for priorities, `@contexts`, `+projects`, dates, and `key:value` tags without broken-pipe errors.
+
+### 5. Repository Bundler Utility (`bundle-project`)
 *   **Script Location:** [modules/user/scripts/bundle_project.py](modules/user/scripts/bundle_project.py)
 *   **Features:**
     *   `bundle-project [target_dir] [-o output_file]` — Compresses the structure and contents of a target directory (defaults to `.`) into a single output file (defaults to `output.txt`).
