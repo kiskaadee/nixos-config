@@ -1,16 +1,19 @@
 { inputs, pkgs, ... }:
 
 let
-  # Declaratively compile the Python script as a user utility package using writeScriptBin
+  # Declaratively compile scripts as user utility packages using writeScriptBin
   bundleProject = pkgs.writeScriptBin "bundle-project" (builtins.readFile ./scripts/bundle_project.py);
+  recordScript = pkgs.writeScriptBin "record" (builtins.readFile ./scripts/record.sh);
 in
 {
   home.packages = with pkgs; [
     # Custom Flake injections: Google Antigravity CLI helper
     inputs.antigravity.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-cli
 
-    # Local Python utilities
+    # Local CLI & Workflow utilities
     bundleProject
+    recordScript
+    wf-recorder # Light recorder for Wayland-based window managers
 
     # Media, Note-taking & Graphical Tools
     mpv         # Fast, scriptable, keyboard-driven CLI media player

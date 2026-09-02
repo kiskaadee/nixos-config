@@ -5,7 +5,7 @@
 # Supports capturing specific regions, active windows, focused monitors, or full displays.
 #
 # Usage: 
-#   record.sh [area | window | output | screen] [audio]
+#   record [area | window | output | screen] [audio]
 
 PID_FILE="/tmp/wf-recorder.pid"
 TYPE_FILE="/tmp/wf-recorder.type"

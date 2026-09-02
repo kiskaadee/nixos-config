@@ -84,14 +84,14 @@ flowchart TD
 *   **Script Location:** [hosts/desktop/monitor.py](hosts/desktop/monitor.py)
 *   **Systemd Integration:** Managed via [hosts/desktop/dynu.nix](hosts/desktop/dynu.nix) which triggers the monitor service every 30 minutes.
 
-### 2. GPU-Accelerated Video Recording (`record.sh`)
-*   **Script Location:** [hosts/desktop/config/hypr/scripts/record.sh](hosts/desktop/config/hypr/scripts/record.sh)
-*   **Functionality:** Uses `wf-recorder` to record Wayland outputs.
+### 2. GPU-Accelerated Video Recording (`record`)
+*   **Script Location:** [modules/user/scripts/record.sh](modules/user/scripts/record.sh)
+*   **Functionality:** Uses `wf-recorder` to record Wayland outputs across both Niri and Hyprland sessions.
 *   **Modes:**
     *   `area` — Manually drag and draw a target bounding box using `slurp`.
-    *   `window` — Target coordinates dynamically parsed from `hyprctl activewindow`.
-    *   `output` — Matches coordinates of the currently active focused monitor.
-    *   `screen` — Default full layout grab.
+    *   `window` — Target active window or interactively select via `slurp`.
+    *   `output` — Matches coordinates of the currently active focused monitor (`niri msg` / `hyprctl`).
+    *   `screen` — Full layout capture.
     *   `audio` flag — Parses `wpctl` to dynamically resolve output system loopback paths from PipeWire/WirePlumber to include sound.
 
 ### 3. Git Automation Shorthand (`git.sh`)

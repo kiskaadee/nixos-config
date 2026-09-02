@@ -27,6 +27,12 @@ binds {
     Mod+Alt+S      hotkey-overlay-title="Screenshot: Full Screen"        { screenshot-screen; }
     Mod+Ctrl+Alt+S hotkey-overlay-title="Screenshot: Full Screen"        { screenshot-screen; }
 
+    // === Screen Recording (wf-recorder toggle) ===
+    Mod+W            hotkey-overlay-title="Record: Area Selection"           { spawn "record" "area"; }
+    Mod+Shift+W      hotkey-overlay-title="Record: Focused Monitor"          { spawn "record" "output"; }
+    Mod+Ctrl+W       hotkey-overlay-title="Record: Area + Audio"             { spawn "record" "area" "audio"; }
+    Mod+Ctrl+Shift+W hotkey-overlay-title="Record: Focused Monitor + Audio"  { spawn "record" "output" "audio"; }
+
     // === Color Picker ===
     Mod+Shift+C hotkey-overlay-title="Color Picker (Eyedropper)" {
         spawn "bash" "-c" "color=$(niri msg pick-color) && [ -n \"$color\" ] && echo -n \"$color\" | wl-copy && notify-send -a 'Niri' 'Color Picker' \"Copied $color to clipboard\"";
