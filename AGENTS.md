@@ -69,6 +69,7 @@ nix build .#nixosConfigurations.laptop.config.system.build.toplevel --no-link
 - **No Spontaneous Refactoring**: An agent must not turn a feature request into a refactoring project.
 - **Report Architectural Issues Separately**: If a requested change exposes an architectural smell or problem, report it to the user rather than silently attempting to refactor surrounding code (unless strictly required for correctness).
 - **Smallest Viable Change**: Make the minimal change that satisfies the request. Do not introduce single-use abstractions, single-option wrapper modules, or arbitrary file reorganizations.
+- **Capture Out-of-Scope Ideas in Second Brain**: When the user mentions a new idea, feature request, or architectural concept unrelated to the immediate active task, record a note in `/home/kiskaadee/Brain/` (or suggest logging it) so valuable insights are preserved without disrupting current execution scope.
 
 ### 4. Package Placement Rules
 - **Shared User Applications**: Place in `modules/user/` (with `apps.nix` as the default central application module).
