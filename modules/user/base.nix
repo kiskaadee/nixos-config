@@ -87,9 +87,23 @@
       enable = true;
       settings = {
         laptop = {
-          HostName = "192.168.1.25";
+          HostName = "192.168.1.32";
           User = "kiskaadee";
           Port = 22;
+          ServerAliveInterval = 15;
+          ServerAliveCountMax = 3;
+        };
+        server-local = {
+          HostName = "192.168.1.36";
+          User = "kiskaadee";
+          Port = 22;
+          ServerAliveInterval = 15;
+          ServerAliveCountMax = 3;
+        };
+        server-remote = {
+          HostName = "roadtotech.me";
+          User = "kiskaadee";
+          Port = 2222;
           ServerAliveInterval = 15;
           ServerAliveCountMax = 3;
         };
