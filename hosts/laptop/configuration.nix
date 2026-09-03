@@ -54,6 +54,25 @@
   # Host-specific graphical compositor (Niri window manager for laptop)
   programs.niri.enable = true;
 
+  # Dynamic binary execution support (for unpatched binaries, VS Code server, language servers)
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      stdenv.cc.cc.lib
+      zlib
+      glib
+    ];
+  };
+
+  # 🔋 Laptop Power & Battery Management
+  services.power-profiles-daemon.enable = true;
+  services.upower.enable = true;
+
+  # Backlight brightness control utility
+  environment.systemPackages = with pkgs; [
+    brightnessctl
+  ];
+
   # Rebuild/State version. Do not modify.
   system.stateVersion = "26.05";
 }
