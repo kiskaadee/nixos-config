@@ -57,7 +57,7 @@
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
-      WorkingDirectory = "/home/kiskaadee/Deployments/homeserver";
+      WorkingDirectory = "/home/kiskaadee/Core";
       ExecStart = "${pkgs.docker-compose}/bin/docker-compose --env-file ${config.sops.templates."homeserver.env".path} up -d --remove-orphans";
       ExecStop = "${pkgs.docker-compose}/bin/docker-compose down";
     };

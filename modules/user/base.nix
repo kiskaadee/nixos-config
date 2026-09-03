@@ -149,7 +149,7 @@
 
       # Shell Aliases for speed, productivity, and command overrides
       shellAliases = {
-        appctl = "/home/kiskaadee/Deployments/traefik-deployments/appctl";
+        appctl = "/home/kiskaadee/Core/scripts/appctl";
         zed = "zeditor";
         reload = "exec bash";
         ff = "fastfetch --logo none";
