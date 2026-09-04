@@ -22,7 +22,7 @@
   sops.templates."homeserver.env" = {
     owner = "kiskaadee";
     content = lib.generators.toKeyValue {} {
-      DOMAIN = "arch-services.mywire.org";
+      DOMAIN = "roadtotech.me";
       DOCKER_API_VERSION = "1.40";
       DYNU_API_KEY = config.sops.placeholder.dynu_api_key;
       ACME_EMAIL = config.sops.placeholder.acme_email;

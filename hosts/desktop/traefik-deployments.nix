@@ -27,25 +27,29 @@
       # --- Core / Infrastructure Settings ---
       PROXY_NETWORK = "proxy-net";
       CERT_RESOLVER = "myresolver";
-      DOMAIN_SUFFIX = "arch-services.mywire.org";
+      DOMAIN_SUFFIX = "roadtotech.me";
+
+      # --- Dashboard & Landing ---
+      DASHBOARD_DOMAIN = "dashboard.roadtotech.me";
+      LANDING_DOMAIN = "roadtotech.me";
 
       # --- Docs ---
-      DOCS_DOMAIN = "docs.arch-services.mywire.org";
+      DOCS_DOMAIN = "docs.roadtotech.me";
       DOCS_PROJECT_PATH = "/home/kiskaadee/Learn/backend-residency";
 
       # --- Excalidraw ---
-      EXCALIDRAW_DOMAIN = "excalidraw.arch-services.mywire.org";
+      EXCALIDRAW_DOMAIN = "excalidraw.roadtotech.me";
 
       # --- Gitea ---
-      GITEA_DOMAIN = "gitea.arch-services.mywire.org";
-      GITEA_SSH_DOMAIN = "gitea.arch-services.mywire.org";
+      GITEA_DOMAIN = "gitea.roadtotech.me";
+      GITEA_SSH_DOMAIN = "gitea.roadtotech.me";
       GITEA_AUTH_MIDDLEWARE = "https-redirect@docker";
 
       # --- Jellyfin ---
       JELLYFIN_SERVICE_NAME = "jellyfin";
       JELLYFIN_CONTAINER_NAME = "jellyfin";
       JELLYFIN_IMAGE_TAG = "latest";
-      JELLYFIN_DOMAIN = "jellyfin.arch-services.mywire.org";
+      JELLYFIN_DOMAIN = "jellyfin.roadtotech.me";
       JELLYFIN_TZ = "UTC";
       JELLYFIN_PUID = "1000";
       JELLYFIN_PGID = "1000";
@@ -57,7 +61,7 @@
 
       # --- Learning Dashboard ---
       LEARNING_SERVICE_NAME = "learning-hub";
-      LEARNING_DOMAIN = "learning.arch-services.mywire.org";
+      LEARNING_DOMAIN = "learning.roadtotech.me";
       LEARNING_APP_PORT = "8000";
       LEARNING_SOCKET_PROXY_NETWORK = "socket-net";
       LEARNING_DOCKER_HOST = "tcp://socket-proxy:2375";
@@ -65,22 +69,25 @@
       TURSO_AUTH_TOKEN = config.sops.placeholder.learning_turso_auth_token;
 
       # --- Mermaid ---
-      MERMAID_DOMAIN = "mermaid.arch-services.mywire.org";
+      MERMAID_DOMAIN = "mermaid.roadtotech.me";
       MERMAID_SERVICE_NAME = "mermaid";
+
+      # --- Minecraft ---
+      MINECRAFT_DOMAIN = "minecraft.roadtotech.me";
 
       # --- MongoDB ---
       MONGO_ROOT_USERNAME = config.sops.placeholder.mongo_root_username;
       MONGO_ROOT_PASSWORD = config.sops.placeholder.mongo_root_password;
-      MONGO_DOMAIN = "mongodb.arch-services.mywire.org";
+      MONGO_DOMAIN = "mongodb.roadtotech.me";
 
       # --- PostgreSQL ---
       POSTGRES_USER = config.sops.placeholder.postgres_user;
       POSTGRES_PASSWORD = config.sops.placeholder.postgres_password;
       POSTGRES_DB = config.sops.placeholder.postgres_db;
-      POSTGRES_DOMAIN = "pgsql.arch-services.mywire.org";
+      POSTGRES_DOMAIN = "pgsql.roadtotech.me";
 
       # --- Ollama ---
-      OLLAMA_DOMAIN = "ollama.arch-services.mywire.org";
+      OLLAMA_DOMAIN = "ollama.roadtotech.me";
       OLLAMA_API_KEY = config.sops.placeholder.ollama_api_key;
       OLLAMA_REPLICAS = "1";
       OLLAMA_DATA_VOLUME = "ollama_data";
