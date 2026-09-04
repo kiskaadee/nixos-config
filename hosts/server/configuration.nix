@@ -19,7 +19,24 @@
   fonts.packages = with pkgs; [
     nerd-fonts.fira-code
     nerd-fonts.jetbrains-mono
+    nerd-fonts.fira-mono
+    inter
   ];
+
+  # Configure default fonts
+  fonts.fontconfig = {
+    enable = true;
+    defaultFonts = {
+      monospace = [ "FiraCode Nerd Font" "JetBrainsMono Nerd Font" "Fira Code" ];
+      sansSerif = [ "Inter" ];
+    };
+  };
+
+  # Console font for local TTY screen
+  console = {
+    font = "Lat2-Terminus16";
+    keyMap = "us";
+  };
 
   # EFI bootloader configuration
   boot.loader.systemd-boot.enable = true;

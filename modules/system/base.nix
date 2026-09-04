@@ -53,6 +53,8 @@
     system-config-printer
     simple-scan
     rclone
+    sops
+    age
   ];
 
   # SSH daemon settings for secure remote command execution
