@@ -35,7 +35,7 @@
 
       # --- Docs ---
       DOCS_DOMAIN = "docs.roadtotech.me";
-      DOCS_PROJECT_PATH = "/home/kiskaadee/Learn/backend-residency";
+      DOCS_PROJECT_PATH = "/home/kiskaadee/Brain";
 
       # --- Excalidraw ---
       EXCALIDRAW_DOMAIN = "excalidraw.roadtotech.me";
