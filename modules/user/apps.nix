@@ -44,6 +44,7 @@ in
     grpcurl          # Command-line tool for interacting with gRPC servers
 
     # Network Diagnostics & Scanning
+    bind.dnsutils    # DNS lookup utilities (dig, nslookup, nsupdate, delv)
     openssh          # OpenSSH client and connectivity tools
     sshfs            # FUSE-based filesystem client for mounting remote directories over SSH
     nmap             # Network exploration tool and security / port scanner
