@@ -67,8 +67,33 @@
   outputs = { self, nixpkgs, home-manager, dms, dgop, dank-greeter, dankcalendar, danksearch, zen-browser, antigravity, ...}@inputs: {
     nixosConfigurations = {
       
-      # 🖥️ DESKTOP HOST
-      # Target workstation running Hyprland as the window manager.
+      # 🌐 SERVER HOST (Dedicated Headless Homelab Node)
+      # Production server host running Docker, Traefik, SOPS secrets, and DDNS.
+      server = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
+        modules = [
+          ./hosts/server/hardware-configuration.nix
+          ./hosts/server/configuration.nix
+          inputs.sops-nix.nixosModules.sops
+
+          home-manager.nixosModules.home-manager {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "backup";
+            home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.users.kiskaadee = {
+              imports = [
+                ./home.nix
+                ./hosts/server/home.nix
+              ];
+            };
+          }
+        ];
+      };
+
+      # 🖥️ DESKTOP HOST (Legacy Dual-Mode Workstation)
+      # Workstation running Hyprland with specialisation fallback.
       desktop = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = { inherit inputs; }; # Pass flake inputs into submodules (e.g. system/base.nix)
@@ -95,9 +120,8 @@
         ];
       };
 
-      # 💻 LAPTOP HOST
-      # Target laptop workstation. Intended to run Niri window manager.
-      # Shares modules/ base, but customizes graphical desktop components.
+      # 💻 LAPTOP HOST (Mobile Workstation)
+      # Target laptop workstation running Niri window manager.
       laptop = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };

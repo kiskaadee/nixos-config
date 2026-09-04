@@ -1,10 +1,10 @@
 # 🎨 User Graphical Module
-# Configures graphical workspace tools, text editors, and session unit targets.
+# Configures graphical workspace tools, GUI applications, and window manager session unit targets.
+# Only imported by desktop and laptop profiles.
 
-{ inputs, pkgs, ...}:
+{ inputs, pkgs, ... }:
+
 {
-
-
   # Graphical packages managed via Home Manager
   home.packages = with pkgs; [
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default # Modern browser build
@@ -36,63 +36,9 @@
         # Disable pocket-telemetry
         "extensions.pocket.enabled" = false;
         "datareporting.healthreport.uploadEnabled" = false;
-        };
       };
     };
-
-  # Neovim configuration
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true; # Make neovim the default `$EDITOR`
-    viAlias = true;       # Symlink `vi` to `nvim`
-    vimAlias = true;      # Symlink `vim` to `nvim`
-
-    ## Core Editor Settings (Lua-based)
-    initLua = builtins.readFile ./config/nvim/init.lua;
-
-    ## Declarative Plugin Management
-    plugins = with pkgs.vimPlugins; [
-      # Color scheme loaded dynamically
-      {
-        plugin = catppuccin-nvim;
-        type = "lua";
-        config = builtins.readFile ./config/nvim/catppuccin.lua;
-      }
-
-      # Advanced Syntax Highlighting for developer workflows (Python, Rust, Java, Nix, KDL)
-      (nvim-treesitter.withPlugins (p: with p; [
-        python
-        rust
-        nix
-        lua
-        java
-        javascript
-        typescript
-        markdown
-        kdl
-        toml
-        bash
-      ]))
-
-      # LSP Configuration & Language Servers
-      {
-        plugin = nvim-lspconfig;
-        type = "lua";
-      }
-
-      # DAP (Debug Adapter Protocol)
-      {
-        plugin = nvim-dap;
-      }
-      {
-        plugin = nvim-dap-ui;
-      }
-    ];
   };
-
-  # Declarative configuration files for Neovim (lsp.lua & dap.lua loaded dynamically via init.lua)
-  home.file.".config/nvim/lsp.lua".source = ./config/nvim/lsp.lua;
-  home.file.".config/nvim/dap.lua".source = ./config/nvim/dap.lua;
 
   # Declarative configuration files for Zed editor
   home.file.".config/zed/settings.json".source = ./config/zed/settings.json;
@@ -103,8 +49,6 @@
   home.file.".config/niri/custom.kdl".source = ./config/niri/custom.kdl;
 
   # ⚙️ Systemd user session targets for window managers
-  # These targets allow user services (like DMS daemons, screenshot helpers) to bind 
-  # to the graphical workspace startup cycle correctly.
   systemd.user.targets.hyprland-session = {
     Unit = {
       Description = "Hyprland graphical session";

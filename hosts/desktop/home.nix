@@ -1,10 +1,15 @@
 # 🏠 Desktop Host-Specific Home Manager Configuration
-# This module defines user-space environment configs unique to the desktop host.
+# Graphical workstation environment for legacy desktop host.
 
 { config, pkgs, ... }:
 
 {
-  # Host-specific package installations for desktop (Hyprland environment only)
+  imports = [
+    ../../modules/user/apps.nix
+    ../../modules/user/graphical.nix
+  ];
+
+  # Host-specific package installations for desktop (Hyprland environment)
   home.packages = with pkgs; [
     grimblast   # Screenshot utility for Hyprland
     obs-studio  # High-feature video capture and streaming studio

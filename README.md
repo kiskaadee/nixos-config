@@ -12,19 +12,26 @@ This configuration maintains a strict separation between global system defaults,
 graph TD
     A[flake.nix Entrypoint] --> B{Host Configuration}
     
-    B -->|desktop| C[hosts/desktop]
+    B -->|server| S_HOST[hosts/server]
+    B -->|desktop (legacy)| C[hosts/desktop]
     B -->|laptop| D[hosts/laptop]
     
+    S_HOST --> S1[hardware-configuration.nix]
+    S_HOST --> S2[configuration.nix]
+    S_HOST --> S3[home.nix (CLI-only)]
+    S_HOST --> S4[dynu.nix + monitor.py]
+    S_HOST --> S5[homeserver.nix + traefik-deployments.nix]
+
     C --> C1[hardware-configuration.nix]
     C --> C2[configuration.nix]
     C --> C3[home.nix]
-    C --> C4[dynu.nix + monitor.py]
     
     D --> D1[hardware-configuration.nix]
     D --> D2[configuration.nix]
     D --> D3[home.nix]
 
-    C3 --> H[home.nix base]
+    S3 --> H[home.nix base]
+    C3 --> H
     D3 --> H
     
     H --> M[modules/user]
@@ -34,16 +41,20 @@ graph TD
 
 ### Directory Structure
 
-*   [flake.nix](flake.nix) — Main entry point defining dependencies (inputs) and system host targets.
+*   [flake.nix](flake.nix) — Main entry point defining dependencies (inputs) and system host targets (`server`, `desktop`, `laptop`).
 *   [home.nix](home.nix) — Global Home Manager declaration defining the user context (`kiskaadee`).
 *   [hosts/](hosts/) — Specific hardware configuration files and profiles.
-    *   [hosts/desktop/](hosts/desktop/) — Configuration for the main workstation:
-        *   [configuration.nix](hosts/desktop/configuration.nix) — Main desktop NixOS config.
-        *   [dynu.nix](hosts/desktop/dynu.nix) — Service settings triggering Dynu DNS.
-        *   [homeserver.nix](hosts/desktop/homeserver.nix) — Headless home server specialisation profile (`server-on` / `server-off`).
-        *   [traefik-deployments.nix](hosts/desktop/traefik-deployments.nix) — Traefik edge proxy, SSL certs, and microservice definitions (`appctl`).
-        *   [monitor.py](hosts/desktop/monitor.py) — Python script checking for public WAN IP rotations.
-        *   [secrets.yaml](hosts/desktop/secrets.yaml) — Encrypted host credentials.
+    *   [hosts/server/](hosts/server/) — Dedicated headless homelab server configuration:
+        *   [configuration.nix](hosts/server/configuration.nix) — Headless server NixOS config (power-tuned, no GUI, no greeter).
+        *   [home.nix](hosts/server/home.nix) — Pure CLI user environment with server diagnostic tools (`htop`, `iotop`, `ncdu`).
+        *   [dynu.nix](hosts/server/dynu.nix) — Service settings triggering Dynu DDNS.
+        *   [homeserver.nix](hosts/server/homeserver.nix) — Core services declarative systemd service.
+        *   [traefik-deployments.nix](hosts/server/traefik-deployments.nix) — Edge proxy secrets and microservice templates.
+        *   [monitor.py](hosts/server/monitor.py) — Python script checking for public WAN IP rotations.
+        *   [secrets.yaml](hosts/server/secrets.yaml) — Encrypted server credentials.
+    *   [hosts/desktop/](hosts/desktop/) — Legacy dual-mode workstation configuration:
+        *   [configuration.nix](hosts/desktop/configuration.nix) — Main desktop NixOS config with specialisation.
+        *   [home.nix](hosts/desktop/home.nix) — Hyprland desktop environment settings.
     *   [hosts/laptop/](hosts/laptop/) — Configuration for the mobile workstation:
         *   [configuration.nix](hosts/laptop/configuration.nix) — Main laptop NixOS config.
         *   [home.nix](hosts/laptop/home.nix) — Niri-based workspace environment settings.

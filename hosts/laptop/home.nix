@@ -1,9 +1,14 @@
 # 🏠 Laptop Host-Specific Home Manager Configuration
-# This module defines user-space environment configs unique to the laptop host.
+# Graphical workstation environment for Niri-powered mobile laptop.
 
 { config, pkgs, ... }:
 
 {
+  imports = [
+    ../../modules/user/apps.nix
+    ../../modules/user/graphical.nix
+  ];
+
   # Host-specific package installations for laptop workstation
   home.packages = with pkgs; [
     obs-studio  # High-feature video capture and streaming studio
