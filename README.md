@@ -10,33 +10,30 @@ This configuration maintains a strict separation between global system defaults,
 
 ```mermaid
 graph TD
-    A[flake.nix Entrypoint] --> B{Host Configuration}
-    
-    B -->|server| S_HOST[hosts/server]
-    B -->|desktop (legacy)| C[hosts/desktop]
-    B -->|laptop| D[hosts/laptop]
-    
-    S_HOST --> S1[hardware-configuration.nix]
-    S_HOST --> S2[configuration.nix]
-    S_HOST --> S3[home.nix (CLI-only)]
-    S_HOST --> S4[dynu.nix + monitor.py]
-    S_HOST --> S5[homeserver.nix + traefik-deployments.nix]
+    A["flake.nix"] --> B{"Host Targets"}
 
-    C --> C1[hardware-configuration.nix]
-    C --> C2[configuration.nix]
-    C --> C3[home.nix]
-    
-    D --> D1[hardware-configuration.nix]
-    D --> D2[configuration.nix]
-    D --> D3[home.nix]
+    subgraph Hosts ["Host Profiles (hosts/)"]
+        S["server<br/><i>(Headless Homelab)</i>"]
+        D["desktop<br/><i>(Hyprland Workstation)</i>"]
+        L["laptop<br/><i>(Niri Workstation)</i>"]
+    end
 
-    S3 --> H[home.nix base]
-    C3 --> H
-    D3 --> H
-    
-    H --> M[modules/user]
-    C2 --> S[modules/system]
-    D2 --> S
+    B -->|"server"| S
+    B -->|"desktop"| D
+    B -->|"laptop"| L
+
+    subgraph Shared ["Shared Modules (modules/)"]
+        SYS["modules/system/<br/><i>(Base OS & System Daemons)</i>"]
+        USER["home.nix + modules/user/<br/><i>(User Environment & Apps)</i>"]
+    end
+
+    S --> SYS
+    D --> SYS
+    L --> SYS
+
+    S --> USER
+    D --> USER
+    L --> USER
 ```
 
 ### Directory Structure
