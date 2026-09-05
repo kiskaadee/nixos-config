@@ -48,6 +48,9 @@
   # Define the main user profile
   users.users.kiskaadee = {
     isNormalUser = true;
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICAVPPMk+WApUd/fo78+lsRGnLKSlY4GDZiNGKwBAifD"
+    ];
     extraGroups = [ 
       "wheel"           # Enable sudo access
       "docker"          # Allows running docker commands without sudo
