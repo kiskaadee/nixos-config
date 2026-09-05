@@ -269,10 +269,9 @@
     };
   };
 
-  # Standalone System dependencies
+  # Standalone CLI utilities & system dependencies
   home.packages = with pkgs; [
-    ripgrep fd glow jq tree wl-clipboard sqlite python3 nodejs
-    bc qpdf tty-clock grim slurp swappy libnotify uv
-    curl parallel tuxedo sops age
+    ripgrep fd glow jq tree sqlite python3 nodejs
+    bc qpdf tty-clock uv curl parallel tuxedo sops age
   ];
 }

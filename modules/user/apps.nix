@@ -13,7 +13,6 @@ in
     # Local CLI & Workflow utilities
     bundleProject
     recordScript
-    wf-recorder # Light recorder for Wayland-based window managers
 
     # Media, Note-taking & Graphical Tools
     mpv         # Fast, scriptable, keyboard-driven CLI media player
@@ -25,7 +24,8 @@ in
     obsidian    # Markdown-based personal knowledge wiki and note-taking app
     libreoffice # Comprehensive open-source office suite (Writer, Calc, Impress, Draw)
 
-    # Cloud CLI, Database Management & Archive tools
+    # Cloud CLI, Git Forge & Database Management
+    tea              # Gitea official command line client
     google-cloud-sdk # GCP administration utilities
     turso-cli        # Management interface for Turso libSQL cloud databases
     postgresql       # PostgreSQL client utilities (psql, pg_dump)
