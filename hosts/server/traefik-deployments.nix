@@ -43,6 +43,7 @@
       # --- Gitea ---
       GITEA_DOMAIN = "gitea.roadtotech.me";
       GITEA_SSH_DOMAIN = "gitea.roadtotech.me";
+      GITEA_SSH_PORT = "2223";
       GITEA_AUTH_MIDDLEWARE = "https-redirect@docker";
 
       # --- Jellyfin ---

@@ -63,6 +63,6 @@
     };
   };
 
-  # 4. Open ports in the firewall for Traefik
-  networking.firewall.allowedTCPPorts = [ 80 443 ];
+  # 4. Open ports in the firewall for Traefik and Gitea SSH
+  networking.firewall.allowedTCPPorts = [ 80 443 2223 ];
 }
