@@ -1,11 +1,12 @@
 keys:
-  - &kiskaadee age16nr2t9jrw09kakuxy2vtvtgtwa9jvy5dmtge25rzlqelf5cjy4es46alu9
-  - &desktop age18q3lr2z4yeg2f86my42ym4hx0dvcwgjshmchyhdkgwvf4k37dsyq3mcjse
+  - &server age18q3lr2z4yeg2f86my42ym4hx0dvcwgjshmchyhdkgwvf4k37dsyq3mcjse
+  - &laptop age1pln9sxy5j93lklqklfwp3qepx7x4cs4y2w63n9y3ykt68qgra5ysqleesg 
 
 creation_rules:
-  - path_regex: hosts/(desktop|server)/secrets\.yaml$
+  - path_regex: hosts/(server|laptop)/secrets\.yaml$
     key_groups:
       - pgp: []
         age:
-          - *kiskaadee
-          - *desktop
+          - *server
+          - *laptop
+
