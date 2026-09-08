@@ -57,6 +57,9 @@ in
     # Rust Tooling
     cargo            # Rust package manager
     rustc            # Rust compiler
+    rustfmt          # Official Rust code formatter
+    clippy           # Official Rust linter
+    rust-analyzer    # Language server for IDE code intelligence
     gcc              # GNU Compiler Collection (provides cc linker)
 
     # Secrets Management
