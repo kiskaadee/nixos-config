@@ -65,7 +65,10 @@ in
       User = "root";
       Group = "root";
       StateDirectory = "dynu";
-      Environment = "HISTORY_FILE=/var/lib/dynu/ip_history.jsonl";
+      Environment = [
+        "HISTORY_FILE=/var/lib/dynu/ip_history.jsonl"
+        "STATE_FILE=/var/lib/dynu/state.json"
+      ];
       ExecStart = "${ipMonitorScript}/bin/dynu-ip-monitor";
       TimeoutSec = 30;
       
@@ -78,13 +81,13 @@ in
     };
   };
 
-  # 5. Run the smart IP change monitor periodically (every 30 minutes)
+  # 5. Run the smart IP change monitor periodically (every 30 seconds)
   systemd.timers.dynu-monitor = {
     description = "Run Dynu IP monitor periodically";
     timerConfig = {
-      OnBootSec = "5min";
-      OnUnitActiveSec = "30min";
-      AccuracySec = "1min";
+      OnBootSec = "10s";
+      OnUnitActiveSec = "30s";
+      AccuracySec = "1s";
       Persistent = true;
     };
     wantedBy = [ "timers.target" ];

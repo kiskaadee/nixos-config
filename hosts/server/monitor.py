@@ -2,82 +2,120 @@
 Dynu DDNS Smart IP Change Monitor and Updater.
 
 This script determines the current public IPv4 address by querying multiple
-external resolvers sequentially. It compares the discovered IP against the last
-recorded successful IP in a local history log. If a change is detected, it
-triggers the `ddclient.service` on-demand to perform the DNS record update.
+external resolvers in a stateful round-robin rotation. It compares the
+discovered IP against the last recorded successful IP. If a change is
+detected, it triggers `ddclient.service` on-demand to perform the DNS record
+update.
 
 This local-first state verification prevents making redundant API requests to
-the DNS provider, avoiding rate-limiting, IP bans, or API abuse flags.
+the DNS provider, avoiding rate-limiting, IP bans, or API abuse flags while
+allowing frequent polling intervals (e.g. every 30 seconds).
 """
 
-import urllib.request
-import re
 import json
 import os
+import re
 import subprocess
 import sys
-from datetime import datetime
+import urllib.request
+from datetime import datetime, timezone
 
-# History file location storing the transition log of public IP states.
-# Defaults to a state directory managed securely by the systemd service unit.
-HISTORY_FILE = os.environ.get("HISTORY_FILE", "/var/lib/dynu/ip_history.jsonl")
+# History and state file locations managed securely by the systemd service.
+HISTORY_FILE = os.environ.get(
+    "HISTORY_FILE", "/var/lib/dynu/ip_history.jsonl"
+)
+STATE_FILE = os.environ.get(
+    "STATE_FILE", "/var/lib/dynu/state.json"
+)
 
-# Fallback sequence of external services to discover the public WAN IP.
+# Pool of reputable external resolvers to discover the public WAN IP.
 PROVIDERS = [
     "https://api.ipify.org",
-    "https://ifconfig.me/ip",
     "https://icanhazip.com",
+    "https://ifconfig.me/ip",
+    "https://checkip.dynu.com",
     "https://wtfismyip.com/text"
 ]
 
 
-def is_valid_public_ipv4(ip):
+def extract_public_ipv4(text):
     """
-    Validates that a string is a properly formatted public IPv4 address.
+    Extracts and validates the first valid public IPv4 address in text.
 
     This function excludes standard private, loopback, link-local, and CGNAT
     blocks to avoid recording temporary, local, or invalid network states.
     """
-    match = re.match(r"^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$", ip)
+    match = re.search(r"\b(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\b", text)
     if not match:
-        return False
+        return None
     octets = [int(x) for x in match.groups()]
     if any(x > 255 for x in octets):
-        return False
+        return None
     a, b, c, d = octets
 
     # RFC 1918 Private ranges: 10.0.0.0/8, 192.168.0.0/16, 172.16.0.0/12
     if a == 10:
-        return False
+        return None
     if a == 192 and b == 168:
-        return False
+        return None
     if a == 172 and 16 <= b <= 31:
-        return False
+        return None
 
     # Carrier-Grade NAT (CGNAT) RFC 6598: 100.64.0.0/10
     if a == 100 and 64 <= b <= 127:
-        return False
+        return None
 
     # Loopback address range: 127.0.0.0/8
     if a == 127:
-        return False
+        return None
 
     # Link-local addresses: 169.254.0.0/16
     if a == 169 and b == 254:
-        return False
+        return None
 
-    return True
+    return ".".join(str(x) for x in octets)
 
 
-def get_public_ip():
+def load_state():
     """
-    Queries public IP providers until a valid public IPv4 is returned.
+    Loads runtime state (last provider index and last verified IP).
+    """
+    if not os.path.exists(STATE_FILE):
+        return {"last_provider_index": -1, "last_ip": None}
+    try:
+        with open(STATE_FILE, "r") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"Warning: Failed to read state file: {e}", file=sys.stderr)
+        return {"last_provider_index": -1, "last_ip": None}
+
+
+def save_state(state):
+    """
+    Persists runtime state atomically to disk.
+    """
+    os.makedirs(os.path.dirname(STATE_FILE), exist_ok=True)
+    tmp_path = f"{STATE_FILE}.tmp"
+    try:
+        with open(tmp_path, "w") as f:
+            json.dump(state, f, indent=2)
+        os.replace(tmp_path, STATE_FILE)
+    except Exception as e:
+        print(f"Error: Failed to write to state file: {e}", file=sys.stderr)
+
+
+def get_public_ip(start_index=0):
+    """
+    Queries public IP providers in circular sequence starting from start_index.
 
     Returns:
-        str: The validated public IP string, or None if all providers fail.
+        tuple: (validated_ip_string, successful_idx) or (None, None).
     """
     errors = []
-    for provider in PROVIDERS:
+    num_providers = len(PROVIDERS)
+    for i in range(num_providers):
+        idx = (start_index + i) % num_providers
+        provider = PROVIDERS[idx]
         try:
             req = urllib.request.Request(
                 provider,
@@ -85,24 +123,29 @@ def get_public_ip():
                     'User-Agent': 'Mozilla/5.0 (NixOS WAN Monitor)'
                 }
             )
-            # Fetch with 5s timeout to avoid hanging the systemd service
             with urllib.request.urlopen(req, timeout=5) as response:
-                ip = response.read().decode('utf-8').strip()
-                if is_valid_public_ipv4(ip):
-                    return ip
+                raw_text = response.read().decode(
+                    'utf-8', errors='replace'
+                ).strip()
+                ip = extract_public_ipv4(raw_text)
+                if ip:
+                    return ip, idx
                 else:
-                    errors.append(f"{provider}: invalid public IPv4 '{ip}'")
+                    snippet = raw_text[:50]
+                    errors.append(
+                        f"{provider}: no valid public IPv4 in '{snippet}'"
+                    )
         except Exception as e:
-            errors.append(f"{provider}: {str(e)}")
+            errors.append(f"{provider}: {e!s}")
 
     print(
         f"Error: All IP discovery providers failed. Details: {errors}",
         file=sys.stderr
     )
-    return None
+    return None, None
 
 
-def get_last_recorded_ip():
+def get_last_recorded_ip_from_history():
     """
     Reads the history log to locate the last successful IP address.
 
@@ -116,7 +159,6 @@ def get_last_recorded_ip():
             lines = f.readlines()
             if not lines:
                 return None
-            # Search backwards to find the most recent successful transition
             for line in reversed(lines):
                 try:
                     entry = json.loads(line)
@@ -135,7 +177,7 @@ def record_ip(ip, status, details=None):
     """
     os.makedirs(os.path.dirname(HISTORY_FILE), exist_ok=True)
     entry = {
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "ip": ip,
         "status": status
     }
@@ -156,7 +198,6 @@ def trigger_ddclient():
         tuple: (bool, str) representing (success_boolean, error_details_string)
     """
     try:
-        # Run ddclient as a one-shot activation via systemd to perform API call
         res = subprocess.run(
             ["systemctl", "start", "ddclient.service"],
             capture_output=True,
@@ -176,27 +217,45 @@ def trigger_ddclient():
 
 def main():
     """
-    Orchestrator logic for DDNS state management.
+    Orchestrator logic for DDNS state management with provider rotation.
     """
-    current_ip = get_public_ip()
+    state = load_state()
+    last_provider_idx = state.get("last_provider_index", -1)
+    next_provider_idx = (last_provider_idx + 1) % len(PROVIDERS)
+
+    current_ip, successful_idx = get_public_ip(start_index=next_provider_idx)
     if not current_ip:
         sys.exit(1)
 
-    last_ip = get_last_recorded_ip()
+    state["last_provider_index"] = successful_idx
+
+    last_ip = state.get("last_ip") or get_last_recorded_ip_from_history()
     if current_ip == last_ip:
-        # IP matches last recorded working IP; do nothing to conserve quota
+        # State matches; save provider rotation state and exit cleanly
+        save_state(state)
         sys.exit(0)
 
-    print(f"IP rotation detected! Old: {last_ip}, New: {current_ip}")
+    provider_name = PROVIDERS[successful_idx]
+    print(
+        f"IP rotation detected! Old: {last_ip}, New: {current_ip} "
+        f"(via {provider_name})"
+    )
 
     # Trigger ddclient to perform the DNS record update
     success, error_msg = trigger_ddclient()
     if success:
         print("Dynu DDNS update via ddclient triggered successfully.")
-        record_ip(current_ip, "success")
+        state["last_ip"] = current_ip
+        save_state(state)
+        record_ip(
+            current_ip,
+            "success",
+            details=f"Provider: {provider_name}"
+        )
     else:
         err_msg = f"Error: Failed to trigger ddclient update: {error_msg}"
         print(err_msg, file=sys.stderr)
+        save_state(state)
         record_ip(current_ip, "failed_update", details=error_msg)
         sys.exit(1)
 
