@@ -85,27 +85,24 @@
     # Declaratively configures SSH client connections and host options
     ssh = {
       enable = true;
+      enableDefaultConfig = false;
       settings = {
-        laptop = {
-          HostName = "192.168.1.32";
+        "*" = {
           User = "kiskaadee";
-          Port = 22;
           ServerAliveInterval = 15;
           ServerAliveCountMax = 3;
+        };
+        laptop = {
+          HostName = "192.168.1.32";
+          Port = 22;
         };
         server-local = {
           HostName = "192.168.1.36";
-          User = "kiskaadee";
           Port = 22;
-          ServerAliveInterval = 15;
-          ServerAliveCountMax = 3;
         };
         server-remote = {
           HostName = "roadtotech.me";
-          User = "kiskaadee";
           Port = 2222;
-          ServerAliveInterval = 15;
-          ServerAliveCountMax = 3;
         };
       };
     };
