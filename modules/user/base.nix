@@ -205,66 +205,21 @@
       # Inject modular shell helper scripts directly into .bashrc.
       # This allows us to keep discrete logic files without cluttering home.nix or base.nix.
       bashrcExtra = ''
-        ${builtins.readFile ./shell/wayland.sh}    # Wayland clipboard helper (wlc)
-        ${builtins.readFile ./shell/git.sh}        # Git workflow automations (gacp, gitignore)
-        ${builtins.readFile ./shell/pdf.sh}        # Command line PDF decryption helper
-        ${builtins.readFile ./shell/quicklinks.sh}  # Interactive fzf web launcher
-        ${builtins.readFile ./shell/jump.sh}       # Directory jumper & interactive fuzzy navigation
-        ${builtins.readFile ./shell/todo.sh}       # Todo.txt & tuxedo shortcuts and syntax highlighter
-
-        # --- Word Deletion & Readline Keybindings ---
-        if [[ -n "$BASH_VERSION" ]] && [[ "$-" == *i* ]]; then
-            # Ctrl+W: Delete entire word under cursor (backward-word + kill-word)
-            bind '"\C-w": "\eb\ed"' 2>/dev/null
-
-            # Ctrl+Delete: Forward word delete (matches Alacritty \e[3;5~)
-            bind '"\e[3;5~": kill-word' 2>/dev/null
-
-            # Ctrl+Backspace / Alt+Backspace: Backward word delete (start to cursor)
-            bind '"\e\x7f": backward-kill-word' 2>/dev/null
-            bind '"\e\b": backward-kill-word' 2>/dev/null
-        fi
-
-        # --- Visual Entry ---
-        # Display system information dashboard upon opening interactive shells
-        if [[ $- == *i* ]]; then
-            fastfetch --logo none
-        fi
+        ${builtins.readFile ./shell/wayland.sh}     # Wayland clipboard helper (wlc)
+        ${builtins.readFile ./shell/git.sh}         # Git workflow automations (gacp, gitignore)
+        ${builtins.readFile ./shell/pdf.sh}         # Command line PDF decryption helper
+        ${builtins.readFile ./shell/quicklinks.sh}   # Interactive fzf web launcher
+        ${builtins.readFile ./shell/jump.sh}        # Directory jumper & interactive fuzzy navigation
+        ${builtins.readFile ./shell/todo.sh}        # Todo.txt & tuxedo shortcuts and syntax highlighter
+        ${builtins.readFile ./shell/interactive.sh} # Readline word deletion keybindings & fastfetch entry
       '';
     };
   };
 
   # 📊 Custom Catnap-style Fastfetch
   # A stylized, minimalist system information dashboard displayed on shell startup
-  programs.fastfetch = {
-    enable = true;
-    settings = {
-      display = {
-        separator = " ";
-      };
-      modules = [
-        { key = "╭───────────╮"; type = "custom"; }
-        { key = "│  user    {#keys}│"; type = "title"; format = "{user-name}"; }
-        { key = "│ 󰇅 hname   {#keys}│"; type = "title"; format = "{host-name}"; }
-        { type = "command"; key = "│ 󱦟 os age  {#keys}│"; keyColor = "magenta"; text = "printf \"\\e[0m%s days\\e[0m\" \"$(( ($(date +%s) - $(stat -c %W /)) / 86400 ))\""; }
-        { key = "│ 󰅐 uptime  {#keys}│"; type = "uptime"; }
-        { key = "│ {icon} distro  {#keys}│"; type = "os"; }
-        { key = "│  kernel  {#keys}│"; type = "kernel"; }
-        { key = "│  wm      {#keys}│"; type = "wm"; }
-        { key = "│ 󰇄 desktop {#keys}│"; type = "de"; }
-        { key = "│  term    {#keys}│"; type = "terminal"; }
-        { key = "│  shell   {#keys}│"; type = "shell"; }
-        { key = "│ 󰍛 cpu     {#keys}│"; type = "cpu"; showPeCoreCount = true; }
-        { key = "│ 󰉉 root    {#keys}│"; type = "disk"; folders = "/"; }
-        { key = "│ 󰉉 home    {#keys}│"; type = "disk"; folders = "/home"; }
-        { key = "│ 󰉉 media   {#keys}│"; type = "disk"; folders = "/media"; }
-        { key = "│  memory  {#keys}│"; type = "memory"; }
-        { key = "├───────────┤"; type = "custom"; }
-        { key = "│  colors  {#keys}│"; type = "colors"; symbol = "circle"; }
-        { key = "╰───────────╯"; type = "custom"; }
-      ];
-    };
-  };
+  programs.fastfetch.enable = true;
+  home.file.".config/fastfetch/config.jsonc".source = ./config/fastfetch/config.jsonc;
 
   # Standalone CLI utilities & system dependencies
   home.packages = with pkgs; [
