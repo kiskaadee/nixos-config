@@ -18,6 +18,8 @@
   # Ensure cargo/bin (and other user binaries) are in the system PATH
   home.sessionPath = [
     "$HOME/.cargo/bin"
+    "$HOME/.local/bin"
+    "$HOME/Core/scripts"
   ];
 
   # The state version of Home Manager that this configuration is compatible with.
