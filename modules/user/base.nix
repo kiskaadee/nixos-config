@@ -204,8 +204,10 @@
       # Inject modular shell helper scripts directly into .bashrc.
       # This allows us to keep discrete logic files without cluttering home.nix or base.nix.
       bashrcExtra = ''
-        # Ensure Home Manager session variables and PATH are available in non-login / SSH shells
-        [[ -f ~/.nix-profile/etc/profile.d/hm-session-vars.sh ]] && . ~/.nix-profile/etc/profile.d/hm-session-vars.sh
+        # Ensure Home Manager session variables and user PATH are available in non-login / SSH shells
+        [[ -f /etc/profiles/per-user/$USER/etc/profile.d/hm-session-vars.sh ]] && . /etc/profiles/per-user/$USER/etc/profile.d/hm-session-vars.sh
+        [[ -f ~/.profile ]] && . ~/.profile
+        export PATH="$HOME/Core/scripts:$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 
         ${builtins.readFile ./shell/wayland.sh}     # Wayland clipboard helper (wlc)
         ${builtins.readFile ./shell/git.sh}         # Git workflow automations (gacp, gitignore)
