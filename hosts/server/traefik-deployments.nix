@@ -45,7 +45,7 @@
       GITEA_SSH_DOMAIN = "gitea.roadtotech.me";
       GITEA_SSH_PORT = "2223";
       GITEA_AUTH_MIDDLEWARE = "https-redirect@docker";
-
+      GITEA_RUNNER_TOKEN = config.sops.placeholder.gitea_runner_token;
       # --- Jellyfin ---
       JELLYFIN_SERVICE_NAME = "jellyfin";
       JELLYFIN_CONTAINER_NAME = "jellyfin";
