@@ -44,6 +44,13 @@
         init.defaultBranch = "main";
         merge.conflictstyle = "zdiff3";
         pull.rebase = true;
+
+        url."ssh://git@gitea.roadtotech.me:2223/" = {
+          insteadOf = [
+            "https://gitea.roadtotech.me/"
+            "git@gitea.roadtotech.me:"
+          ];
+        };
       };
     };
 
@@ -103,6 +110,11 @@
         server-remote = {
           HostName = "roadtotech.me";
           Port = 2222;
+        };
+        "gitea.roadtotech.me" = {
+          HostName = "gitea.roadtotech.me";
+          Port = 2223;
+          User = "git";
         };
       };
     };
