@@ -18,6 +18,7 @@
     "postgres_user"
     "postgres_password"
     "postgres_db"
+    "gitea_runner_token"
   ] (name: { owner = "kiskaadee"; });
 
   # Generate the unified environment file at runtime in /run/secrets/traefik-deployments.env
