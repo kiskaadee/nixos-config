@@ -80,7 +80,9 @@
         {
           id = "deploy";
           execute-command = "/home/kiskaadee/Core/scripts/gitops_dispatcher.py";
-          pass-stdin-to-command = true;
+          pass-arguments-to-command = [
+            { source = "entire-payload"; }
+          ];
           command-working-directory = "/home/kiskaadee/Core";
           response-message = "Deployment payload dispatched successfully.";
         }
