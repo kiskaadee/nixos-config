@@ -63,6 +63,36 @@
     };
   };
 
-  # 4. Open ports in the firewall for Traefik and Gitea SSH
-  networking.firewall.allowedTCPPorts = [ 80 443 2223 ];
+  # 4. Declarative Dynamic GitOps Webhook Service (Internal Port 9000)
+  systemd.services.homelab-gitops = {
+    description = "Dynamic Homelab GitOps Webhook Dispatcher";
+    after = [ "network-online.target" "docker.service" ];
+    wants = [ "network-online.target" ];
+    wantedBy = [ "multi-user.target" ];
+
+    path = with pkgs; [ git docker docker-compose python3 coreutils bash ];
+
+    serviceConfig = {
+      Type = "simple";
+      User = "kiskaadee";
+      WorkingDirectory = "/home/kiskaadee/Core";
+      ExecStart = "${pkgs.webhook}/bin/webhook -hooks ${pkgs.writeText "hooks.json" (builtins.toJSON [
+        {
+          id = "deploy";
+          execute-command = "${pkgs.python3}/bin/python3";
+          pass-arguments-to-command = [
+            { arg = "/home/kiskaadee/Core/scripts/gitops_dispatcher.py"; }
+          ];
+          pass-stdin-to-command = true;
+          command-working-directory = "/home/kiskaadee/Core";
+          response-message = "Deployment payload dispatched successfully.";
+        }
+      ])} -port 9000 -verbose";
+      Restart = "on-failure";
+      RestartSec = "5s";
+    };
+  };
+
+  # 5. Open ports in the firewall for Traefik, Gitea SSH, and GitOps Webhook Receiver
+  networking.firewall.allowedTCPPorts = [ 80 443 2223 9000 ];
 }
