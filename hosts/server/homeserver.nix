@@ -79,10 +79,7 @@
       ExecStart = "${pkgs.webhook}/bin/webhook -hooks ${pkgs.writeText "hooks.json" (builtins.toJSON [
         {
           id = "deploy";
-          execute-command = "${pkgs.python3}/bin/python3";
-          pass-arguments-to-command = [
-            { arg = "/home/kiskaadee/Core/scripts/gitops_dispatcher.py"; }
-          ];
+          execute-command = "/home/kiskaadee/Core/scripts/gitops_dispatcher.py";
           pass-stdin-to-command = true;
           command-working-directory = "/home/kiskaadee/Core";
           response-message = "Deployment payload dispatched successfully.";
