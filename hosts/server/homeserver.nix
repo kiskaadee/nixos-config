@@ -70,7 +70,7 @@
     wants = [ "network-online.target" ];
     wantedBy = [ "multi-user.target" ];
 
-    path = with pkgs; [ git docker docker-compose python3 coreutils bash ];
+    path = with pkgs; [ git docker docker-compose python3 coreutils bash openssh ];
 
     serviceConfig = {
       Type = "simple";
