@@ -1,9 +1,12 @@
 # ⚙️ Hardware-Agnostic Base System Configuration
 # This file contains common system configurations shared by all machines (desktop, laptop).
 
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
 {
+  # Pin system nixpkgs flake registry to the flake input to prevent ad-hoc CLI queries to GitHub
+  nix.registry.nixpkgs.flake = inputs.nixpkgs;
+
   # Regional and Language settings
   time.timeZone = "America/Bogota";
   i18n.defaultLocale = "en_US.UTF-8";

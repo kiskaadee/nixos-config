@@ -31,7 +31,9 @@ For modern Flake projects, declare your `devShell` inside your `flake.nix`:
 ```nix
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    # Official project-hosted zstd tarball (faster downloads, forge-independent)
+    # nixpkgs-unstable is ideal for standalone dev shells
+    nixpkgs.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.zst";
   };
 
   outputs = { self, nixpkgs }:

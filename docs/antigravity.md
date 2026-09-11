@@ -94,7 +94,8 @@ Add `antigravity-nix` to your flake inputs in `flake.nix`. Ensure that you lock 
   description = "My NixOS Configuration";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    # Official project-hosted channel tarball
+    nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.zst";
     
     # Community Flake for Google Antigravity
     antigravity = {

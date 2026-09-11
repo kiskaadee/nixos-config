@@ -4,8 +4,8 @@
   # --- External Repositories & Flake Inputs ---
   # These inputs specify where Nix downloads package sets, tools, and configurations.
   inputs = {
-    # NixOS Unstable channel - used for bleeding-edge package releases
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    # NixOS Unstable channel - used for bleeding-edge package releases (official project-hosted zstd tarball)
+    nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.zst";
 
     # Home Manager - manages user-space configurations, dotfiles, and shell environments
     home-manager = {
