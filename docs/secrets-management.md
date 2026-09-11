@@ -39,16 +39,16 @@ Add both the user `age` public key and the host `age` public key to the [.sops.y
 
 ```yaml
 keys:
-  - &kiskaadee age1...your_user_age_key...
-  - &desktop age1...your_host_age_key...
+  - &server age1...your_server_age_key...
+  - &laptop age1...your_laptop_age_key...
 
 creation_rules:
-  - path_regex: hosts/desktop/secrets\.yaml$
+  - path_regex: hosts/(server|laptop)/secrets\.yaml$
     key_groups:
       - pgp: []
         age:
-          - *kiskaadee
-          - *desktop
+          - *server
+          - *laptop
 ```
 
 ---
@@ -59,7 +59,7 @@ Because `sops` automatically reads from your local `~/.config/sops/age/keys.txt`
 
 ### Create/Edit an Encrypted File
 ```bash
-nix-shell -p sops --run "sops hosts/desktop/secrets.yaml"
+nix-shell -p sops --run "sops hosts/server/secrets.yaml"
 ```
 This decrypts the file, opens it in your editor defined by `$EDITOR`, and automatically re-encrypts the values when you save and exit.
 
@@ -77,6 +77,6 @@ dynu_password: your-secret-password-or-hash
 
 At boot time, `sops-nix` performs the following steps:
 1. Systemd runs the `sops-install-secrets` activation script.
-2. The script reads `/etc/ssh/ssh_host_ed25519_key` to decrypt `hosts/desktop/secrets.yaml`.
+2. The script reads `/etc/ssh/ssh_host_ed25519_key` to decrypt `hosts/server/secrets.yaml`.
 3. The values are exposed under `/run/secrets/` as individual files (or templates) with strict user/group ownership (typically restricted to `root`).
 4. Services read these paths at startup, keeping secrets secure and decoupled from the world-readable `/nix/store`.

@@ -37,10 +37,10 @@ Open [modules/user/apps.nix](file:///home/kiskaadee/Config/modules/user/apps.nix
 Verify the package builds correctly before switching system-wide:
 ```bash
 # Test build without applying
-nix build .#nixosConfigurations.desktop.config.system.build.toplevel --no-link
+nix build .#nixosConfigurations.laptop.config.system.build.toplevel --no-link
 
 # Apply configuration
-sudo nixos-rebuild switch --flake .#desktop
+sudo nixos-rebuild switch --flake .#laptop
 ```
 
 ---
@@ -50,9 +50,9 @@ sudo nixos-rebuild switch --flake .#desktop
 Sensitive credentials (like passwords, API keys, and environment variables) are managed using `sops-nix`.
 
 ### Step 1: Edit the Secrets File
-Launch `sops` inside `nix-shell` to decrypt and edit the target secrets file (e.g., [secrets.yaml](file:///home/kiskaadee/Config/hosts/desktop/secrets.yaml)):
+Launch `sops` inside `nix-shell` to decrypt and edit the target secrets file (e.g., [secrets.yaml](file:///home/kiskaadee/Config/hosts/server/secrets.yaml)):
 ```bash
-nix-shell -p sops --run "sops hosts/desktop/secrets.yaml"
+nix-shell -p sops --run "sops hosts/server/secrets.yaml"
 ```
 Add your key-value pair under the YAML structure:
 ```yaml
@@ -61,7 +61,7 @@ my_new_api_key: "secure_token_goes_here"
 *When you save and close your editor, SOPS automatically encrypts the file before saving it back to disk.*
 
 ### Step 2: Declare the Secret in Nix
-To make the decrypted secret available to services or applications at runtime, register it in your Nix configuration (e.g., in [hosts/desktop/dynu.nix](file:///home/kiskaadee/Config/hosts/desktop/dynu.nix)):
+To make the decrypted secret available to services or applications at runtime, register it in your Nix configuration (e.g., in [hosts/server/dynu.nix](file:///home/kiskaadee/Config/hosts/server/dynu.nix)):
 
 ```nix
 sops.secrets.my_new_api_key = {

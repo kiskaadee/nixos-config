@@ -105,7 +105,7 @@ Add `antigravity-nix` to your flake inputs in `flake.nix`. Ensure that you lock 
   };
 
   outputs = { self, nixpkgs, antigravity, ... }@inputs: {
-    # System outputs (e.g. nixosConfigurations.desktop)
+    # System outputs (e.g. nixosConfigurations.laptop)
   };
 }
 ```
@@ -171,12 +171,13 @@ Since Google Antigravity and Chrome are proprietary, NixOS will refuse to build 
 
 ---
 
-### Step 4: Rebuild and Apply
+## 🛠️ 4. Build and Switch
+
 Run the rebuild switch script or alias for your machine target:
 
 ```bash
 # Rebuild the system
-sudo nixos-rebuild switch --flake ~/Config#desktop
+sudo nixos-rebuild switch --flake ~/Config#laptop
 ```
 
 ---
@@ -216,5 +217,5 @@ To update your local installation to the latest available package version:
    ```
 3. Reapply your configuration:
    ```bash
-   sudo nixos-rebuild switch --flake .#desktop
+   sudo nixos-rebuild switch --flake .#laptop
    ```

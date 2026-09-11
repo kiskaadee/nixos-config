@@ -1,6 +1,6 @@
-# ❄️ Declarative NixOS Workstation Configuration
+# ❄️ Declarative NixOS Workstation & Server Configuration
 
-This repository houses a purely declarative, reproducible NixOS configuration using Nix Flakes and Home Manager. It serves as the single source of truth for provisioning and managing high-performance Wayland-native workstation environments across desktop and laptop profiles.
+This repository houses a purely declarative, reproducible NixOS configuration using Nix Flakes and Home Manager. It serves as the single source of truth for provisioning and managing a headless homelab server and high-performance Wayland-native workstation environment on laptop.
 
 ---
 
@@ -14,12 +14,10 @@ graph TD
 
     subgraph Hosts ["Host Profiles (hosts/)"]
         S["server<br/><i>(Headless Homelab)</i>"]
-        D["desktop<br/><i>(Hyprland Workstation)</i>"]
         L["laptop<br/><i>(Niri Workstation)</i>"]
     end
 
     B -->|"server"| S
-    B -->|"desktop"| D
     B -->|"laptop"| L
 
     subgraph Shared ["Shared Modules (modules/)"]
@@ -28,17 +26,15 @@ graph TD
     end
 
     S --> SYS
-    D --> SYS
     L --> SYS
 
     S --> USER
-    D --> USER
     L --> USER
 ```
 
 ### Directory Structure
 
-*   [flake.nix](flake.nix) — Main entry point defining dependencies (inputs) and system host targets (`server`, `desktop`, `laptop`).
+*   [flake.nix](flake.nix) — Main entry point defining dependencies (inputs) and system host targets (`server`, `laptop`).
 *   [home.nix](home.nix) — Global Home Manager declaration defining the user context (`kiskaadee`).
 *   [hosts/](hosts/) — Specific hardware configuration files and profiles.
     *   [hosts/server/](hosts/server/) — Dedicated headless homelab server configuration:
@@ -49,9 +45,6 @@ graph TD
         *   [traefik-deployments.nix](hosts/server/traefik-deployments.nix) — Edge proxy secrets and microservice templates.
         *   [monitor.py](hosts/server/monitor.py) — Python script checking for public WAN IP rotations.
         *   [secrets.yaml](hosts/server/secrets.yaml) — Encrypted server credentials.
-    *   [hosts/desktop/](hosts/desktop/) — Legacy dual-mode workstation configuration:
-        *   [configuration.nix](hosts/desktop/configuration.nix) — Main desktop NixOS config with specialisation.
-        *   [home.nix](hosts/desktop/home.nix) — Hyprland desktop environment settings.
     *   [hosts/laptop/](hosts/laptop/) — Configuration for the mobile workstation:
         *   [configuration.nix](hosts/laptop/configuration.nix) — Main laptop NixOS config.
         *   [home.nix](hosts/laptop/home.nix) — Niri-based workspace environment settings.
@@ -76,7 +69,7 @@ graph TD
 ## 🛠️ Specialized Shell & Script Automation
 
 ### 1. Smart Dynamic DNS Monitor
-The [monitor.py](hosts/desktop/monitor.py) daemon prevents redundant DNS updates by running a local-first check before contacting the provider API:
+The [monitor.py](hosts/server/monitor.py) daemon prevents redundant DNS updates by running a local-first check before contacting the provider API:
 
 ```mermaid
 flowchart TD
@@ -92,8 +85,8 @@ flowchart TD
     I -->|No| K[Write failed_update status & alert user]
 ```
 
-*   **Script Location:** [hosts/desktop/monitor.py](hosts/desktop/monitor.py)
-*   **Systemd Integration:** Managed via [hosts/desktop/dynu.nix](hosts/desktop/dynu.nix) which triggers the monitor service every 30 minutes.
+*   **Script Location:** [hosts/server/monitor.py](hosts/server/monitor.py)
+*   **Systemd Integration:** Managed via [hosts/server/dynu.nix](hosts/server/dynu.nix) which triggers the monitor service every 30 minutes.
 
 ### 2. GPU-Accelerated Video Recording (`record`)
 *   **Script Location:** [modules/user/scripts/record.sh](modules/user/scripts/record.sh)
@@ -145,7 +138,7 @@ graph LR
 ### Adding and Modifying Secrets
 1. Decrypt and open the host secrets file:
    ```bash
-   nix-shell -p sops --run "sops hosts/desktop/secrets.yaml"
+   nix-shell -p sops --run "sops hosts/server/secrets.yaml"
    ```
 2. Save changes and exit. `sops` will automatically re-encrypt the file with the public keys defined in the root [.sops.yaml](.sops.yaml) configuration file.
 
@@ -165,9 +158,9 @@ cd ~/Config
 ### 2. Deploy System Configurations
 Rebuild and switch to the profile matching your active target host machine:
 
-*   **Desktop Workstation:**
+*   **Server Host:**
     ```bash
-    sudo nixos-rebuild switch --flake ~/Config#desktop
+    sudo nixos-rebuild switch --flake ~/Config#server
     ```
 *   **Laptop Workstation:**
     ```bash

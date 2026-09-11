@@ -79,7 +79,7 @@ We resolve this by using systemd **`LoadCredential`**:
 
 ## ⏱️ Systemd Timers & Services Configuration
 
-The updater is divided into two systemd units defined in [dynu.nix](file:///home/kiskaadee/Config/hosts/desktop/dynu.nix):
+The updater is divided into two systemd units defined in [dynu.nix](file:///home/kiskaadee/Config/hosts/server/dynu.nix):
 
 ### 1. `dynu-monitor.timer`
 Runs every 30 minutes. It triggers the `dynu-monitor.service` which executes the Python script.
