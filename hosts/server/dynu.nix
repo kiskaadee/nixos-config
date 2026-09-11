@@ -15,10 +15,10 @@ in
   sops.defaultSopsFormat = "yaml";
 
   # Define the keys to decrypt
-  sops.secrets.dynu_user = { };
-  sops.secrets.dynu_domain = { };
-  sops.secrets.dynu_password = { };
-  sops.secrets.pdf_decrypt_password = {
+  sops.secrets."dynu/user" = { };
+  sops.secrets."dynu/domain" = { };
+  sops.secrets."dynu/password" = { };
+  sops.secrets."system/pdf_decrypt_password" = {
     owner = "kiskaadee";
   };
 
@@ -28,9 +28,9 @@ in
     content = builtins.replaceStrings
       [ "@dynu_user@" "@dynu_password@" "@dynu_domain@" ]
       [
-        config.sops.placeholder.dynu_user
-        config.sops.placeholder.dynu_password
-        config.sops.placeholder.dynu_domain
+        config.sops.placeholder."dynu/user"
+        config.sops.placeholder."dynu/password"
+        config.sops.placeholder."dynu/domain"
       ]
       (builtins.readFile ./ddclient.conf);
   };

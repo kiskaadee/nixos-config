@@ -3,6 +3,38 @@
 
 { config, lib, pkgs, ... }:
 
+let
+  # Declarative user database for Authelia
+  autheliaUsers = {
+    kiskaadee = {
+      displayName = "kiskaadee";
+      email = "fcortesbio@gmail.com";
+      groups = [ "admins" "dev" ];
+      passwordPlaceholder = config.sops.placeholder."authelia/users/kiskaadee/password_hash";
+    };
+    misa = {
+      displayName = "misa";
+      email = "icdf0728@gmail.com";
+      groups = [ "users" ];
+      passwordPlaceholder = config.sops.placeholder."authelia/users/misa/password_hash";
+    };
+    valenvg = {
+      displayName = "valenvg";
+      email = "vegavalentina069@gmail.com";
+      groups = [ "users" ];
+      passwordPlaceholder = config.sops.placeholder."authelia/users/valenvg/password_hash";
+    };
+  };
+
+  renderUser = username: user: "  " + username + ":\n"
+    + "    displayname: \"" + user.displayName + "\"\n"
+    + "    password: '" + user.passwordPlaceholder + "'\n"
+    + "    email: \"" + user.email + "\"\n"
+    + "    groups:\n"
+    + (lib.concatMapStringsSep "\n" (g: "      - " + g) user.groups);
+
+  renderedUsersYaml = "users:\n" + (lib.concatStringsSep "\n\n" (lib.mapAttrsToList renderUser autheliaUsers)) + "\n";
+in
 {
   # 1. Load the encrypted secrets file
   sops.defaultSopsFile = ./secrets.yaml;
@@ -10,12 +42,14 @@
 
   # Define the keys to decrypt from secrets.yaml
   sops.secrets = lib.genAttrs [
-    "dynu_api_key"
-    "acme_email"
-    "authelia_session_secret"
-    "authelia_storage_encryption_key"
-    "authelia_identity_validation_reset_password_jwt_secret"
-    "authelia_user_kiskaadee_password_hash"
+    "dynu/api_key"
+    "traefik/acme_email"
+    "authelia/session_secret"
+    "authelia/storage_encryption_key"
+    "authelia/jwt_secret"
+    "authelia/users/kiskaadee/password_hash"
+    "authelia/users/misa/password_hash"
+    "authelia/users/valenvg/password_hash"
   ] (name: { owner = "kiskaadee"; });
 
   # 2. Generate the unified environment file at runtime in /run/secrets/homeserver.env
@@ -24,27 +58,18 @@
     content = lib.generators.toKeyValue {} {
       DOMAIN = "roadtotech.me";
       DOCKER_API_VERSION = "1.40";
-      DYNU_API_KEY = config.sops.placeholder.dynu_api_key;
-      ACME_EMAIL = config.sops.placeholder.acme_email;
-      AUTHELIA_SESSION_SECRET = config.sops.placeholder.authelia_session_secret;
-      AUTHELIA_STORAGE_ENCRYPTION_KEY = config.sops.placeholder.authelia_storage_encryption_key;
-      AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET = config.sops.placeholder.authelia_identity_validation_reset_password_jwt_secret;
+      DYNU_API_KEY = config.sops.placeholder."dynu/api_key";
+      ACME_EMAIL = config.sops.placeholder."traefik/acme_email";
+      AUTHELIA_SESSION_SECRET = config.sops.placeholder."authelia/session_secret";
+      AUTHELIA_STORAGE_ENCRYPTION_KEY = config.sops.placeholder."authelia/storage_encryption_key";
+      AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET = config.sops.placeholder."authelia/jwt_secret";
     };
   };
 
   # Generate the declarative Authelia user database file at runtime in /run/secrets/users.yml
   sops.templates."users.yml" = {
     owner = "kiskaadee";
-    content = ''
-      users:
-        kiskaadee:
-          displayname: "Kiskaadee"
-          password: "${config.sops.placeholder.authelia_user_kiskaadee_password_hash}"
-          email: "fcortesbio@gmail.com"
-          groups:
-            - admins
-            - dev
-    '';
+    content = renderedUsersYaml;
   };
 
   # 3. Define the declarative systemd service to manage the homeserver container stack
