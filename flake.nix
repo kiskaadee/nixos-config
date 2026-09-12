@@ -1,16 +1,15 @@
 {
-  description = "Kiskaadee's Modular NixOS Configuration";
+  description = "Kiskaadee's Declarative NixOS Laptop Workstation";
 
   # --- External Repositories & Flake Inputs ---
-  # These inputs specify where Nix downloads package sets, tools, and configurations.
   inputs = {
-    # NixOS Unstable channel - used for bleeding-edge package releases (official project-hosted zstd tarball)
+    # NixOS Unstable channel - official project-hosted zstd tarball
     nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.zst";
 
     # Home Manager - manages user-space configurations, dotfiles, and shell environments
     home-manager = {
       url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs"; # Forces home-manager to use the same nixpkgs channel
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # DankMaterialShell (DMS) - core custom desktop shell environment and panel
@@ -49,11 +48,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    ## Cryptographic Secrets management
+    # Cryptographic Secrets management
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
-      };
+    };
 
     # Antigravity CLI - coding companion and local AI agent helper
     antigravity = {
@@ -62,20 +61,17 @@
     };
   };
 
-  # --- System Outputs (Configuration Definitions) ---
-  # Maps host machines to target environments, architecture types, and user settings.
-  outputs = { self, nixpkgs, home-manager, dms, dgop, dank-greeter, dankcalendar, danksearch, zen-browser, antigravity, ...}@inputs: {
+  # --- System Outputs ---
+  outputs = { self, nixpkgs, home-manager, dms, dgop, dank-greeter, dankcalendar, danksearch, zen-browser, antigravity, ... }@inputs: {
     nixosConfigurations = {
-      
-      # 🌐 SERVER HOST (Dedicated Headless Homelab Node)
-      # Production server host running Docker, Traefik, SOPS secrets, and DDNS.
-      server = nixpkgs.lib.nixosSystem {
+      # 💻 LAPTOP HOST (Mobile Workstation)
+      laptop = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [
-          ./hosts/server/hardware-configuration.nix
-          ./hosts/server/configuration.nix
-          inputs.sops-nix.nixosModules.sops
+          ./system
+          inputs.dank-greeter.nixosModules.default
+          inputs.dankcalendar.nixosModules.default
 
           home-manager.nixosModules.home-manager {
             home-manager.useGlobalPkgs = true;
@@ -84,34 +80,7 @@
             home-manager.extraSpecialArgs = { inherit inputs; };
             home-manager.users.kiskaadee = {
               imports = [
-                ./home.nix
-                ./hosts/server/home.nix
-              ];
-            };
-          }
-        ];
-      };
-
-      # 💻 LAPTOP HOST (Mobile Workstation)
-      # Target laptop workstation running Niri window manager.
-      laptop = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
-        modules = [
-          ./hosts/laptop/hardware-configuration.nix
-          ./hosts/laptop/configuration.nix
-          inputs.dank-greeter.nixosModules.default
-          inputs.dankcalendar.nixosModules.default
-
-          home-manager.nixosModules.home-manager {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.backupFileExtension = "backup"; # Auto-back up conflicting files
-            home-manager.extraSpecialArgs = { inherit inputs; };
-            home-manager.users.kiskaadee = {
-              imports = [
-                ./home.nix
-                ./hosts/laptop/home.nix
+                ./home
                 inputs.danksearch.homeModules.default
               ];
             };

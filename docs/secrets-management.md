@@ -1,14 +1,14 @@
-# 🔒 Secrets Management via sops-nix
+# 🔒 Secrets Management via SOPS & age
 
-This repository utilizes **`sops-nix`** (integrated with Mozilla SOPS and `age`) to manage all sensitive information (passwords, tokens, API keys) declaratively and securely. 
+This repository utilizes **`sops`** and **`age`** (with optional **`sops-nix`** integration) to manage sensitive information (passwords, tokens, API keys) declaratively and securely. 
 
-Secrets are stored encrypted directly in the Git repository, and decrypted dynamically at boot into memory (`/run/secrets/`), ensuring no credentials leak into the public-readable Nix store.
+Secrets are stored encrypted directly in the Git repository, and decrypted dynamically into memory (`/run/secrets/`), ensuring no credentials leak into the public-readable Nix store.
 
 ---
 
-## 🛠️ Bootstrapping Secrets on a Recreated Server
+## 🛠️ Bootstrapping Secrets on the Workstation
 
-If you are setting up a new host or rebuilding the system from scratch, follow these steps to configure your secrets key structure.
+To set up or re-initialize secrets encryption on the laptop:
 
 ### Step 1: Generate a User age Key Pair
 To encrypt and decrypt files on your local machine, generate a native `age` key pair:
@@ -39,15 +39,13 @@ Add both the user `age` public key and the host `age` public key to the [.sops.y
 
 ```yaml
 keys:
-  - &server age1...your_server_age_key...
   - &laptop age1...your_laptop_age_key...
 
 creation_rules:
-  - path_regex: hosts/(server|laptop)/secrets\.yaml$
+  - path_regex: secrets\.yaml$
     key_groups:
       - pgp: []
         age:
-          - *server
           - *laptop
 ```
 
@@ -59,17 +57,9 @@ Because `sops` automatically reads from your local `~/.config/sops/age/keys.txt`
 
 ### Create/Edit an Encrypted File
 ```bash
-nix-shell -p sops --run "sops hosts/server/secrets.yaml"
+nix-shell -p sops --run "sops secrets.yaml"
 ```
 This decrypts the file, opens it in your editor defined by `$EDITOR`, and automatically re-encrypts the values when you save and exit.
-
-### Structure of `secrets.yaml`
-Provide your keys and values as standard YAML:
-```yaml
-dynu_user: your-username
-dynu_domain: your-domain.dynu.net
-dynu_password: your-secret-password-or-hash
-```
 
 ---
 
@@ -77,6 +67,6 @@ dynu_password: your-secret-password-or-hash
 
 At boot time, `sops-nix` performs the following steps:
 1. Systemd runs the `sops-install-secrets` activation script.
-2. The script reads `/etc/ssh/ssh_host_ed25519_key` to decrypt `hosts/server/secrets.yaml`.
-3. The values are exposed under `/run/secrets/` as individual files (or templates) with strict user/group ownership (typically restricted to `root`).
+2. The script reads `/etc/ssh/ssh_host_ed25519_key` to decrypt the encrypted secrets file.
+3. The values are exposed under `/run/secrets/` as individual files (or templates) with strict user/group ownership.
 4. Services read these paths at startup, keeping secrets secure and decoupled from the world-readable `/nix/store`.

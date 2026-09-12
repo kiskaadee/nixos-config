@@ -1,13 +1,32 @@
-# 🎨 User Graphical Module
-# Configures graphical workspace tools, GUI applications, and window manager session unit targets.
-# Only imported by desktop and laptop profiles.
+# 🎨 User Desktop & Graphical Applications
+# GUI applications, Wayland capture tools, Alacritty, Firefox, DankSearch, and Niri/Zed dotfiles.
 
 { inputs, pkgs, ... }:
+
+let
+  # Declaratively compile local scripts as user utility packages
+  bundleProject = pkgs.writeScriptBin "bundle-project" (builtins.readFile ./scripts/bundle_project.py);
+  recordScript = pkgs.writeScriptBin "record" (builtins.readFile ./scripts/record.sh);
+in
 {
-  # Graphical packages managed via Home Manager
   home.packages = with pkgs; [
-    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default # Modern browser build
-    zed-editor # GPU-accelerated desktop text editor
+    # Custom scripts
+    bundleProject
+    recordScript
+
+    # Modern Web Browser
+    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
+
+    # Graphical Applications & Editors
+    zed-editor
+    obsidian
+    libreoffice
+    nautilus
+    yazi
+    mpv
+    gimp
+    imagemagick
+    eyed3
 
     # Wayland Clipboard, Screenshot & Screen Capture Utilities
     wl-clipboard
@@ -17,19 +36,6 @@
     libnotify
     wf-recorder
     obs-studio
-
-    # Language Servers for Zed (and general dev use)
-    rust-analyzer
-    pyright
-    ruff
-    nil
-    nixd
-    jdt-language-server
-    typescript-language-server
-    lua-language-server
-    taplo
-    marksman
-    prettier
   ];
 
   # GPU-Accelerated Terminal Emulator (Alacritty)
@@ -38,16 +44,13 @@
     settings = builtins.fromTOML (builtins.readFile ./config/alacritty/alacritty.toml);
   };
 
-  # Firefox configuration
+  # Firefox configuration with hardware acceleration
   programs.firefox = {
     enable = true;
     profiles.default = {
       settings = {
-        # Force hardware acceleration
         "layers.acceleration.force-enabled" = true;
         "gfx.webrender.all" = true;
-
-        # Disable pocket-telemetry
         "extensions.pocket.enabled" = false;
         "datareporting.healthreport.uploadEnabled" = false;
       };
@@ -62,7 +65,7 @@
   home.file.".config/niri/config.kdl".source = ./config/niri/config.kdl;
   home.file.".config/niri/custom.kdl".source = ./config/niri/custom.kdl;
 
-  # ⚙️ Systemd user session targets for window managers
+  # Systemd user session targets for window managers
   systemd.user.targets.hyprland-session = {
     Unit = {
       Description = "Hyprland graphical session";
@@ -83,7 +86,7 @@
     };
   };
 
-  # 🔍 DankSearch - Fast Indexed Filesystem Search Service
+  # DankSearch - Fast Indexed Filesystem Search Service
   programs.dsearch = {
     enable = true;
     config = {

@@ -42,9 +42,10 @@ Verify system health immediately after a major system switch:
     ```bash
     ls -la /run/secrets/
     ```
-4.  **Network Resolution:** Check DNS resolution and active IP rotation daemons:
+4.  **Network & Connectivity:** Verify internet connectivity and NetworkManager status:
     ```bash
-    systemctl status dynu-monitor.service
+    systemctl status NetworkManager.service
+    ping -c 3 google.com
     ```
 
 ---

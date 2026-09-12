@@ -1,13 +1,11 @@
-# 🛠️ User Base Shell & Git Environment
-# This module defines the foundation of the interactive user shell, command line utilities,
-# custom shell scripts, aliases, and Git workflows.
+# 🐚 User Shell, Terminal Multiplexing & Git Environment
+# Bash aliases, modular shell scripts, Git, Delta, Gh, Direnv, SSH client, Tmux, Starship, and Fastfetch.
 
-{ pkgs, ...}:
+{ pkgs, ... }:
 
 {
   programs = {
     # 🌟 Git Version Control Configuration
-    # Declares default user identity, global conflict styles, and highly optimized git aliases
     git = {
       enable = true;
       settings = {
@@ -54,6 +52,7 @@
       };
     };
 
+    # Syntax-highlighting pager for git
     delta = {
       enable = true;
       enableGitIntegration = true;
@@ -65,14 +64,14 @@
       };
     };
 
-    # ⚡ Direnv - Automatic environment loading
-    # Automatically activates nix development shells when entering project directories containing .envrc
+    # ⚡ Direnv - Automatic environment loading for Nix dev shells
     direnv = {
       enable = true;
       enableBashIntegration = true;
       nix-direnv.enable = true;
     };
 
+    # GitHub CLI
     gh = {
       enable = true;
       settings = {
@@ -89,7 +88,6 @@
     };
 
     # 🔑 SSH Client Configuration
-    # Declaratively configures SSH client connections and host options
     ssh = {
       enable = true;
       enableDefaultConfig = false;
@@ -120,7 +118,6 @@
     };
 
     # 🗺️ Navigation & Directory Listing
-    # Modern replacements for traditional cd, ls, and grep tools.
     zoxide = {
       enable = true;
       enableBashIntegration = true;
@@ -137,7 +134,7 @@
     eza = {
       enable = true;
       enableBashIntegration = true;
-      extraOptions = ["--group-directories-first" "--header" "--icons"];
+      extraOptions = [ "--group-directories-first" "--header" "--icons" ];
     };
 
     tealdeer = {
@@ -150,13 +147,27 @@
       enable = true;
     };
 
+    # 🖥️ Terminal Multiplexer (Tmux)
+    tmux = {
+      enable = true;
+      extraConfig = builtins.readFile ./config/tmux.conf;
+    };
+
+    # 🚀 Cross-Shell Prompt (Starship)
+    starship = {
+      enable = true;
+      enableBashIntegration = true;
+      settings = builtins.fromTOML (builtins.readFile ./config/starship.toml);
+    };
+
+    # 📊 System Information Dashboard (Fastfetch)
+    fastfetch.enable = true;
+
     # 🐚 Bash Shell Configuration
-    # Bridges the Arch 'bash-custom' environment to NixOS, defining aliases and sourcing modular scripts.
     bash = {
       enable = true;
-      enableCompletion = true; # Enable programmable auto-completion for system commands
+      enableCompletion = true;
 
-      # Shell Aliases for speed, productivity, and command overrides
       shellAliases = {
         zed = "zeditor";
         reload = "exec bash";
@@ -170,8 +181,6 @@
 
         # System Administration
         nix-switch = "sudo nixos-rebuild switch --flake ~/Config#$(hostname)";
-        server-on = "sudo /run/current-system/specialisation/server/bin/switch-to-configuration switch";
-        server-off = "sudo /run/current-system/bin/switch-to-configuration switch";
         sys = "dgop";
         wifi = "nmtui";
         lock = "hyprlock";
@@ -213,8 +222,7 @@
         gadc = "git add -A && git diff --staged | wl-copy";
       };
 
-      # Inject modular shell helper scripts directly into .bashrc.
-      # This allows us to keep discrete logic files without cluttering home.nix or base.nix.
+      # Inject modular shell helper scripts directly into .bashrc
       bashrcExtra = ''
         # Ensure Home Manager session variables and user PATH are available in non-login / SSH shells
         [[ -f /etc/profiles/per-user/$USER/etc/profile.d/hm-session-vars.sh ]] && . /etc/profiles/per-user/$USER/etc/profile.d/hm-session-vars.sh
@@ -232,14 +240,6 @@
     };
   };
 
-  # 📊 Custom Catnap-style Fastfetch
-  # A stylized, minimalist system information dashboard displayed on shell startup
-  programs.fastfetch.enable = true;
+  # Link fastfetch config
   home.file.".config/fastfetch/config.jsonc".source = ./config/fastfetch/config.jsonc;
-
-  # Standalone CLI utilities & system dependencies
-  home.packages = with pkgs; [
-    ripgrep fd glow jq tree sqlite python3 nodejs
-    bc qpdf tty-clock uv curl parallel tuxedo sops age
-  ];
 }

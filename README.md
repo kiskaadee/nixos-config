@@ -1,79 +1,60 @@
-# ❄️ Declarative NixOS Workstation & Server Configuration
+# ❄️ Declarative NixOS Laptop Workstation Configuration
 
-This repository houses a purely declarative, reproducible NixOS configuration using Nix Flakes and Home Manager. It serves as the single source of truth for provisioning and managing a headless homelab server and high-performance Wayland-native workstation environment on laptop.
+This repository houses a purely declarative, reproducible NixOS configuration using Nix Flakes and Home Manager. It serves as the single source of truth for provisioning and managing a high-performance, Wayland-native mobile workstation environment on laptop powered by the Niri scrollable window manager and DankMaterialShell.
+
+Homelab infrastructure and server services are maintained independently in the [Core](file:///home/kiskaadee/Projects/active/homelab/Core) repository.
 
 ---
 
 ## 🏗️ Repository Architecture
 
-This configuration maintains a strict separation between global system defaults, shared user configuration modules, and host-specific profiles to avoid redundancy.
+The repository enforces a clear separation between privileged system declarations (`system/`) and unprivileged user-space dotfiles and toolchains (`home/`), organized by functional domains.
 
 ```mermaid
 graph TD
-    A["flake.nix"] --> B{"Host Targets"}
+    A["flake.nix"] --> B["nixosConfigurations.laptop"]
 
-    subgraph Hosts ["Host Profiles (hosts/)"]
-        S["server<br/><i>(Headless Homelab)</i>"]
-        L["laptop<br/><i>(Niri Workstation)</i>"]
+    subgraph System ["Privileged System Layer (system/)"]
+        S_CORE["core.nix<br/><i>(Base OS, Users, Boot, Nix-LD)</i>"]
+        S_HW["hardware.nix<br/><i>(Power, PipeWire, Bluetooth, Printing)</i>"]
+        S_DESK["desktop.nix<br/><i>(Niri, DMS Daemon, Greeter, Fonts)</i>"]
     end
 
-    B -->|"server"| S
-    B -->|"laptop"| L
-
-    subgraph Shared ["Shared Modules (modules/)"]
-        SYS["modules/system/<br/><i>(Base OS & System Daemons)</i>"]
-        USER["home.nix + modules/user/<br/><i>(User Environment & Apps)</i>"]
+    subgraph User ["Unprivileged User Layer (home/)"]
+        U_DESK["desktop.nix<br/><i>(GUI Apps, Wayland Tools, Alacritty, Zed)</i>"]
+        U_DEV["dev.nix<br/><i>(Neovim, Compilers, LSPs, Antigravity)</i>"]
+        U_SH["shell.nix<br/><i>(Bash, Git, Delta, Tmux, Starship)</i>"]
     end
 
-    S --> SYS
-    L --> SYS
-
-    S --> USER
-    L --> USER
+    B --> System
+    B --> User
 ```
 
 ### Directory Structure
 
-*   [flake.nix](flake.nix) — Main entry point defining dependencies (inputs) and system host targets (`server`, `laptop`).
-*   [home.nix](home.nix) — Global Home Manager declaration defining the user context (`kiskaadee`).
-*   [hosts/](hosts/) — Specific hardware configuration files and profiles.
-    *   [hosts/server/](hosts/server/) — Dedicated headless homelab server configuration:
-        *   [configuration.nix](hosts/server/configuration.nix) — Headless server NixOS config (power-tuned, no GUI, no greeter).
-        *   [home.nix](hosts/server/home.nix) — Pure CLI user environment with server diagnostic tools (`htop`, `iotop`, `ncdu`).
-        *   [dynu.nix](hosts/server/dynu.nix) — Service settings triggering Dynu DDNS.
-        *   [homeserver.nix](hosts/server/homeserver.nix) — Core services declarative systemd service.
-        *   [traefik-deployments.nix](hosts/server/traefik-deployments.nix) — Edge proxy secrets and microservice templates.
-        *   [monitor.py](hosts/server/monitor.py) — Python script checking for public WAN IP rotations.
-        *   [secrets.yaml](hosts/server/secrets.yaml) — Encrypted server credentials.
-    *   [hosts/laptop/](hosts/laptop/) — Configuration for the mobile workstation:
-        *   [configuration.nix](hosts/laptop/configuration.nix) — Main laptop NixOS config.
-        *   [home.nix](hosts/laptop/home.nix) — Niri-based workspace environment settings.
-*   [modules/](modules/) — Reusable, modular system and user configuration files:
-    *   [modules/system/](modules/system/) — Global hardware settings, Docker, greetd, and audio:
-        *   [base.nix](modules/system/base.nix) — System-wide terminal base.
-        *   [graphical.nix](modules/system/graphical.nix) — System display and desktop styling modules.
-    *   [modules/user/](modules/user/) — User environment settings:
-        *   [base.nix](modules/user/base.nix) — Core CLI utilities, alias definitions, and fastfetch.
-        *   [apps.nix](modules/user/apps.nix) — Packages including Zen Browser, Neovim, and Cloud SDKs.
-        *   [terminal.nix](modules/user/terminal.nix) — Alacritty terminal emulator, Tmux configurations, and Starship.
-        *   [shell/](modules/user/shell/) — Modular, domain-specific shell scripts natively compiled into the shell configuration:
-            *   [git.sh](modules/user/shell/git.sh) — Automation helpers for Git staging, committing, and repositories.
-            *   [jump.sh](modules/user/shell/jump.sh) — Interactive navigation helper scripts powered by `fzf` and `yazi`.
-            *   [pdf.sh](modules/user/shell/pdf.sh) — Quick decryption of password-protected PDF files.
-            *   [quicklinks.sh](modules/user/shell/quicklinks.sh) — Quick menu launcher for saved bookmarks and workflows.
-            *   [todo.sh](modules/user/shell/todo.sh) — Productivity shortcuts and syntax highlighter for `todo.txt` and `tuxedo`.
-            *   [wayland.sh](modules/user/shell/wayland.sh) — Utility to automatically pipe program stdout/stderr to the Wayland clipboard.
+*   [flake.nix](flake.nix) — Main entry point defining dependencies (inputs) and system host target (`laptop`).
+*   [system/](system/) — Privileged NixOS system-level configuration modules:
+    *   [default.nix](system/default.nix) — System composition entrypoint.
+    *   [hardware-configuration.nix](system/hardware-configuration.nix) — Generated hardware scan (disks, CPU microcode, kernel modules).
+    *   [core.nix](system/core.nix) — Base operating system, bootloader, networking, user account, and `nix-ld`.
+    *   [hardware.nix](system/hardware.nix) — Power management (`power-profiles-daemon`, `upower`), audio (`pipewire`), printing/scanning, and Docker.
+    *   [desktop.nix](system/desktop.nix) — Niri compositor enablement, DankMaterialShell daemon, greetd login, and fonts.
+*   [home/](home/) — Home Manager user-space configuration modules (`kiskaadee`):
+    *   [default.nix](home/default.nix) — User environment entrypoint, state version, and session search paths.
+    *   [desktop.nix](home/desktop.nix) — Graphical applications (Zen Browser, Zed, media), Wayland capture tools, Alacritty, and Niri/Zed dotfiles.
+    *   [dev.nix](home/dev.nix) — Neovim editor setup, developer toolchains (Rust, Python, Node, LSPs), Antigravity CLI, and dev utilities.
+    *   [shell.nix](home/shell.nix) — Interactive Bash shell, Git/Delta configuration, SSH client profiles, Tmux, Starship, and Fastfetch.
+    *   [config/](home/config/) — Static dotfile source trees (Alacritty, Fastfetch, Niri, Neovim, Zed, Starship, Tmux).
+    *   [scripts/](home/scripts/) — Compiled standalone user scripts (`bundle_project.py`, `record.sh`).
+    *   [shell/](home/shell/) — Modular Bash helper scripts sourced into `.bashrc`.
+*   [docs/](docs/) — Maintenance runbooks and operational workflows.
 
 ---
 
 ## 🛠️ Specialized Shell & Script Automation
 
-### 1. Smart Dynamic DNS Monitor
-*   **Feature:** Smart IP monitor preventing redundant Dynu API calls by verifying WAN IP rotations locally before invoking `ddclient`.
-*   **Documentation:** Detailed flow and operational architecture are documented in the [Smart DDNS Updater Guide](docs/dynu-ip-monitor.md).
-
-### 2. GPU-Accelerated Video Recording (`record`)
-*   **Script Location:** [modules/user/scripts/record.sh](modules/user/scripts/record.sh)
+### 1. GPU-Accelerated Video Recording (`record`)
+*   **Script Location:** [home/scripts/record.sh](home/scripts/record.sh)
 *   **Functionality:** Uses `wf-recorder` to record Wayland outputs in Niri sessions.
 *   **Modes:**
     *   `area` — Manually drag and draw a target bounding box using `slurp`.
@@ -82,15 +63,15 @@ graph TD
     *   `screen` — Full layout capture.
     *   `audio` flag — Parses `wpctl` to dynamically resolve output system loopback paths from PipeWire/WirePlumber to include sound.
 
-### 3. Git Automation Shorthand (`git.sh`)
-*   **Script Location:** [modules/user/shell/git.sh](modules/user/shell/git.sh)
+### 2. Git Automation Shorthand (`git.sh`)
+*   **Script Location:** [home/shell/git.sh](home/shell/git.sh)
 *   **Features:**
     *   `gitignore <pattern>` — Appends pattern to project-root `.gitignore`, commits the change, and pushes to remote.
     *   `gacp <message>` — Shorthand to stage all edits, commit with a message, and push directly to the current branch.
     *   `new-repo <name>` — Scaffolds local files, runs git init, and pushes the project to GitHub using the `gh` CLI.
 
-### 4. Todo.txt & Tuxedo Productivity Helper (`todo.sh`)
-*   **Script Location:** [modules/user/shell/todo.sh](modules/user/shell/todo.sh)
+### 3. Todo.txt & Tuxedo Productivity Helper (`todo.sh`)
+*   **Script Location:** [home/shell/todo.sh](home/shell/todo.sh)
 *   **Features:**
     *   `todo` — Launches the interactive `tuxedo` TUI for the local `./todo.txt`.
     *   `todo n` / `todo next` — Displays only the highest-priority focus task.
@@ -98,8 +79,8 @@ graph TD
     *   `todo dn` / `todo do-next` — Auto-completes the top priority task.
     *   `_todo_color` — Built-in awk parser adding ANSI color formatting for priorities, `@contexts`, `+projects`, dates, and `key:value` tags without broken-pipe errors.
 
-### 5. Repository Bundler Utility (`bundle-project`)
-*   **Script Location:** [modules/user/scripts/bundle_project.py](modules/user/scripts/bundle_project.py)
+### 4. Repository Bundler Utility (`bundle-project`)
+*   **Script Location:** [home/scripts/bundle_project.py](home/scripts/bundle_project.py)
 *   **Features:**
     *   `bundle-project [target_dir] [-o output_file]` — Compresses the structure and contents of a target directory (defaults to `.`) into a single output file (defaults to `output.txt`).
     *   Natively skips binary files and `.git` repositories to prevent pollution.
@@ -109,49 +90,34 @@ graph TD
 
 ## 🔒 Secrets Management (SOPS + age)
 
-No plain text passwords, tokens, or private keys are committed to the public history. Secrets are stored inside encrypted `.yaml` assets decrypted dynamically on-demand at boot time using **`sops-nix`** and SSH host keys.
+Sensitive credentials (tokens, private keys) are managed using `sops` and `age`. Plaintext secrets are never committed to version control.
 
-```mermaid
-graph LR
-    A[Encrypted secrets.yaml in Git] --> B(sops-nix on system boot)
-    C[Host SSH Private Key /etc/ssh/...] --> B
-    B --> D[Decrypted RAM filesystem /run/secrets/]
-    D --> E[Services read secrets securely]
-```
-
-### Adding and Modifying Secrets
-1. Decrypt and open the host secrets file:
-   ```bash
-   nix-shell -p sops --run "sops hosts/server/secrets.yaml"
-   ```
-2. Save changes and exit. `sops` will automatically re-encrypt the file with the public keys defined in the root [.sops.yaml](.sops.yaml) configuration file.
-
-For detailed steps on bootstrapping, key generation, and service decryption, see the [Secrets Management Guide](docs/secrets-management.md).
+For bootstrapping, key generation, and decryption workflows, consult the [Secrets Management Guide](docs/secrets-management.md).
 
 ---
 
 ## 🚀 Quick Start / Deployment
 
 ### 1. Installation
-Clone the configuration workspace directly into your home folder:
+Clone the configuration repository into your home folder:
 ```bash
 git clone https://github.com/kiskaadee/nixos-config.git ~/Config
 cd ~/Config
 ```
 
-### 2. Deploy System Configurations
-Rebuild and switch to the profile matching your active target host machine:
+### 2. Validate & Test Build
+Verify flake evaluation and dry-build the derivation without switching:
+```bash
+nix flake check
+nix build .#nixosConfigurations.laptop.config.system.build.toplevel --no-link
+```
 
-*   **Server Host:**
-    ```bash
-    sudo nixos-rebuild switch --flake ~/Config#server
-    ```
-*   **Laptop Workstation:**
-    ```bash
-    sudo nixos-rebuild switch --flake ~/Config#laptop
-    ```
-
-*Note: The user environment configures `nix-switch` as an alias to automatically build and switch using the current hostname.*
+### 3. Apply Configuration
+Switch to the new generation on the laptop:
+```bash
+sudo nixos-rebuild switch --flake ~/Config#laptop
+```
+*Tip: The shell environment includes the `nix-switch` alias to automatically rebuild using the local hostname.*
 
 ---
 
@@ -161,7 +127,5 @@ Rebuild and switch to the profile matching your active target host machine:
 *   [System Maintenance Guide](docs/system-maintenance.md) — Instructions for safe system updates, health checking, and garbage collection.
 *   [Declarative Development Environments](docs/development-environments.md) — How to use nix-shell, devShells, direnv, and uv for project isolation.
 *   [Secrets Management Details](docs/secrets-management.md) — Secure storage bootstrapping using `sops-nix` and `age`.
-*   [Smart DDNS Updater](docs/dynu-ip-monitor.md) — Under-the-hood details of the smart IP change detector and updater.
 *   [Tmux Terminal Multiplexer](docs/tmux.md) — Fast navigation bindings, layouts, and pane splits guide.
 *   [Google Antigravity Setup](docs/antigravity.md) — Technical instructions for packaging and using the Antigravity agent CLI on NixOS.
-

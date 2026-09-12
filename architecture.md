@@ -1,12 +1,15 @@
-# System Architecture
+# System Architecture: Standalone Workstation
 
 ## Core Principles
 
-This repository manages a declarative NixOS configuration for multiple host targets (`server`, `laptop`) and shared user environments via Home Manager.
+This repository manages a purely declarative NixOS and Home Manager configuration for a standalone mobile workstation host (`laptop`).
 
-1. **Git is the Source of Truth**: Every persistent system configuration must be declaratively defined within this repository.
-2. **Runtime State Separation**: Runtime state (Docker volumes, dynamic IP caches, `/run/secrets/`, mutable state) must not become configuration state.
-3. **Layered Isolation**: System modules provide reusable machine infrastructure; user modules configure user environments; host directories bind hardware, secrets, and machine-specific services together.
+1. **Git is the Source of Truth**: Every persistent system setting, user dotfile, and toolchain declaration must be declaratively defined within this repository.
+2. **Domain-Driven Cohesion**: Configuration is organized by functional domain (`core`, `hardware`, `desktop`, `dev`, `shell`) rather than artificial host tiers or defensive multi-machine boundaries.
+3. **Privilege Boundary Separation**:
+   - **`system/` (Root/NixOS)**: Governs hardware, kernel, bootloader, base OS daemons, and system-level compositor enablement.
+   - **`home/` (User/Home Manager)**: Governs user dotfiles, application settings, toolchains, and desktop keybindings inside `/home/kiskaadee`.
+4. **Decoupled Homelab Infrastructure**: Production server daemons, Docker stacks, Traefik edge routing, and DDNS automation are maintained independently in the [Core](file:///home/kiskaadee/Projects/active/homelab/Core) repository.
 
 ---
 
@@ -14,43 +17,26 @@ This repository manages a declarative NixOS configuration for multiple host targ
 
 ```text
 Config/
-├── flake.nix                  # Flake inputs and nixosConfigurations public entrypoint
-├── flake.lock                 # Pinned dependencies
-├── home.nix                   # Root Home Manager shared entrypoint (Pure CLI: base, neovim, terminal)
-├── .sops.yaml                 # SOPS encryption keys and path rules
+├── flake.nix                   # Flake inputs and nixosConfigurations.laptop entrypoint
+├── flake.lock                  # Pinned dependency revisions
 │
-├── hosts/                     # Machine-specific configurations
-│   ├── server/
-│   │   ├── configuration.nix  # Server NixOS configuration (headless homelab node)
-│   │   ├── hardware-configuration.nix # Generated hardware configuration
-│   │   ├── home.nix           # Server-specific Home Manager profile (diagnostics CLI)
-│   │   ├── secrets.yaml       # Encrypted server secrets (SOPS)
-│   │   ├── dynu.nix           # Dynu DDNS update service
-│   │   ├── homeserver.nix     # Core homelab runtime services (Docker)
-│   │   └── traefik-deployments.nix # Traefik edge reverse proxy
-│   │
-│   └── laptop/
-│       ├── configuration.nix  # Laptop NixOS configuration (Niri compositor)
-│       ├── hardware-configuration.nix # Generated hardware configuration
-│       ├── home.nix           # Laptop-specific Home Manager profile (Niri dotfiles)
-│       └── secrets.yaml       # Encrypted laptop secrets (SOPS)
+├── system/                     # NixOS system-level configuration (root / privileged)
+│   ├── default.nix             # System composition entrypoint
+│   ├── hardware-configuration.nix # Generated hardware scan (disks, CPU, kernel modules)
+│   ├── core.nix                # Base OS: networking, users, locale, openssh, nix-ld
+│   ├── hardware.nix            # Laptop hardware: power daemon, upower, PipeWire, bluetooth, printing, docker
+│   └── desktop.nix             # Desktop stack: Niri compositor, DMS, greetd, fonts
 │
-├── modules/
-│   ├── system/                # Reusable system-level NixOS modules (shared across hosts)
-│   │   ├── base.nix           # Core OS settings, networking, audio, docker, bluetooth
-│   │   └── graphical.nix      # Shared display manager (greetd / DMS) & graphical daemons
-│   │
-│   └── user/                  # Reusable Home Manager modules (tiered split)
-│       ├── base.nix           # Tier 1: Pure CLI shell, utilities, Git, common environment
-│       ├── terminal.nix       # Tier 1: Pure CLI multiplexer (tmux) & prompt (starship)
-│       ├── neovim.nix         # Tier 1: Modular Neovim editor configuration
-│       ├── apps.nix           # Tier 2: Developer & user applications (Tea, Antigravity, SDKs)
-│       ├── graphical.nix      # Tier 3: Graphical user tools, Alacritty, Wayland stack, LSPs
-│       ├── shell/             # Modular shell scripts, aliases, and functions
-│       ├── scripts/           # Standalone helper scripts
-│       └── config/            # Managed application dotfiles
+├── home/                       # Home Manager user-level configuration (kiskaadee)
+│   ├── default.nix             # User session entrypoint (paths, state version)
+│   ├── desktop.nix             # Graphical apps (Zen, Zed, media), Wayland tools, DankSearch, Niri/Zed dotfiles
+│   ├── dev.nix                 # Developer toolchains (Rust, Python, Node, LSPs), Antigravity, Neovim
+│   ├── shell.nix               # Interactive shell (Bash, aliases, modular scripts), Git, Delta, Tmux, Starship
+│   ├── config/                 # Managed application dotfiles (alacritty, niri, nvim, zed, fastfetch, tmux)
+│   ├── scripts/                # Standalone helper scripts (bundle-project, record)
+│   └── shell/                  # Modular bash source scripts (git, jump, pdf, quicklinks, todo, wayland)
 │
-└── docs/                      # Procedural and operational documentation
+└── docs/                       # Operational workflows and maintenance runbooks
 ```
 
 ---
@@ -59,61 +45,43 @@ Config/
 
 ```mermaid
 graph TD
-    A[flake.nix] --> B[nixosConfigurations.server]
-    A --> D[nixosConfigurations.laptop]
+    FLAKE["flake.nix"] --> CFG["nixosConfigurations.laptop"]
 
-    subgraph Server Host ["hosts/server/"]
-        B --> S_CONF[configuration.nix]
-        S_CONF --> S_HW[hardware-configuration.nix]
-        S_CONF --> S_DY[dynu.nix]
-        S_CONF --> S_TR[traefik-deployments.nix]
-        S_CONF --> S_HS[homeserver.nix]
+    subgraph System Layer ["system/ (Privileged Root / NixOS)"]
+        CFG --> S_DEF["system/default.nix"]
+        S_DEF --> S_HW["hardware-configuration.nix"]
+        S_DEF --> S_CORE["core.nix<br/><i>(Host, Users, Boot, Nix-LD)</i>"]
+        S_DEF --> S_DEV["hardware.nix<br/><i>(Power, PipeWire, Bluetooth, Printing)</i>"]
+        S_DEF --> S_DESK["desktop.nix<br/><i>(Niri, DMS Daemon, Greeter, Fonts)</i>"]
     end
 
-    subgraph Laptop Host ["hosts/laptop/"]
-        D --> L_CONF[configuration.nix]
-        L_CONF --> L_HW[hardware-configuration.nix]
-    end
-
-    subgraph Tier1 Shared CLI HM ["home.nix (All Hosts)"]
-        B --> H[home.nix]
-        D --> H
-        H --> U1[base.nix]
-        H --> U2[neovim.nix]
-        H --> U3[terminal.nix]
-    end
-
-    subgraph Tier23 Workstation HM ["Workstation Extensions (Laptop)"]
-        D --> LH[laptop/home.nix]
-        LH --> UA[apps.nix]
-        LH --> UG[graphical.nix]
+    subgraph User Layer ["home/ (Unprivileged User / Home Manager)"]
+        CFG --> H_DEF["home/default.nix"]
+        H_DEF --> H_DESK["desktop.nix<br/><i>(GUI Apps, Wayland Tools, Alacritty, Zed, Niri Config)</i>"]
+        H_DEF --> H_DEV["dev.nix<br/><i>(Neovim, Compilers, LSPs, Antigravity, Cloud Tools)</i>"]
+        H_DEF --> H_SH["shell.nix<br/><i>(Bash, Git, Delta, Tmux, Starship, Fastfetch)</i>"]
     end
 ```
 
 ### 1. `flake.nix`
-- **Role**: Public entry point for package set pinning, external flake inputs, and host output wiring (`nixosConfigurations`).
-- **Contains**: `inputs` definitions (`nixpkgs`, `home-manager`, `dms`, `sops-nix`, `antigravity`, etc.) and system module composition via `specialArgs`.
-- **Must Not Contain**: Package lists, user configurations, shell scripts, or host-specific options.
+- **Role**: Public entry point declaring external flake inputs (`nixpkgs`, `home-manager`, `dms`, `zen-browser`, `antigravity`, etc.) and composing the single `laptop` target.
+- **Rule**: Contains only inputs and host output definitions. No package lists or host-specific options.
 
-### 2. `hosts/<host>/`
-- **Role**: Contains everything specific to an individual physical machine.
-- **Includes**:
-  - `hardware-configuration.nix`: Generated hardware and kernel parameters (managed by `nixos-generate-config`).
-  - `configuration.nix`: Hostname, bootloader, host-specific users, GPU/display drivers, and specialisations.
-  - `home.nix`: User packages and dotfiles tied to the host's desktop environment or headless role.
-  - `secrets.yaml`: SOPS-encrypted secrets for that machine.
-  - Host infrastructure services (e.g., `homeserver.nix`, `dynu.nix`, `traefik-deployments.nix` on `server`).
+### 2. `system/`
+- **Role**: Contains all system-level declarations requiring root privileges.
+- **Components**:
+  - `hardware-configuration.nix`: Generated hardware parameters (managed by `nixos-generate-config`).
+  - `core.nix`: Bootloader (`systemd-boot`), network identity, time zone, locale, main user account (`kiskaadee`), unfree license acceptance, and `nix-ld` dynamic library loader.
+  - `hardware.nix`: Power & battery management (`power-profiles-daemon`, `upower`, `brightnessctl`), PipeWire audio, Bluetooth, printing/scanning drivers, and Docker runtime.
+  - `desktop.nix`: Niri window manager enablement, DMS background daemon & greeter, greetd login manager, typography/fonts, and Wayland session environment variables.
 
-### 3. `modules/system/`
-- **Role**: Reusable system configuration shared by multiple hosts.
-- **Rule**: A module must only be placed here when its assumptions are valid for every host importing it. If a configuration is meaningful only for one host, keep it under `hosts/<host>/`.
-
-### 4. `modules/user/`
-- **Role**: Reusable Home Manager modules organized into clean, predictable layers:
-  - **Tier 1: Pure CLI Base** (`base.nix`, `terminal.nix`, `neovim.nix` via `home.nix`): Imported on all hosts (headless server, laptop). Provides pure terminal tools (`tmux`, `starship`), editor, Git, and essential CLI diagnostics.
-  - **Tier 2: Developer & User Apps** (`apps.nix`): Imported by workstation profiles. Provides developer toolchains, cloud SDKs, Git forge clients (`tea`, `gh`), and media tools.
-  - **Tier 3: Graphical Desktop Environment** (`graphical.nix`): Imported by workstation profiles. Provides Alacritty, Firefox, Zen Browser, Zed, DankSearch, Wayland capture/clipboard utilities (`wl-clipboard`, `grim`, `slurp`, `swappy`, `wf-recorder`, `obs-studio`), and Language Servers.
-  - `shell/`, `scripts/`, `config/`: Shell utility files and structured dotfiles.
+### 3. `home/`
+- **Role**: Contains all user-space declarations and dotfiles managed by Home Manager.
+- **Components**:
+  - `default.nix`: Root user environment declaration (username, home directory, state version, session paths).
+  - `desktop.nix`: Graphical productivity tools, Wayland screen capture/clipboard utilities, Alacritty terminal emulator, Firefox profile, DankSearch indexer, and declarative symlinks for Niri (`config.kdl`, `custom.kdl`) and Zed (`settings.json`, themes).
+  - `dev.nix`: Neovim editor configuration (Lua init, Tree-sitter, LSP plugins, DAP), toolchains (Rust, Python, Node), language servers, API testing tools (`httpie`, `bruno`), and Antigravity CLI.
+  - `shell.nix`: Bash shell aliases, prompt (`starship`), multiplexer (`tmux`), Git/Delta configuration, SSH client profiles, and modular shell helpers.
 
 ---
 
@@ -122,30 +90,25 @@ graph TD
 | Concern | Target Location | Placement Rule |
 | :--- | :--- | :--- |
 | **External Dependencies** | `flake.nix` | Flake inputs only; lock `inputs.nixpkgs.follows` where applicable. |
-| **Shared System Services** | `modules/system/` | Systemd services, system packages, or OS features valid for all importing hosts. |
-| **Host System Settings** | `hosts/<host>/configuration.nix` | Hostname, bootloader, user groups, machine-specific daemons. |
-| **Hardware / Disks** | `hosts/<host>/hardware-configuration.nix` | Generated configuration. Do not manually restructure or refactor. |
-| **Shared CLI Foundations** | `modules/user/base.nix`, `terminal.nix` | Tier 1 pure CLI tools (Git, tmux, starship, core utilities) shared across all hosts. |
-| **Workstation Dev Tools** | `modules/user/apps.nix` | Tier 2 developer CLI & cloud tools (`tea`, `antigravity`, compilers, SDKs). |
-| **Workstation Graphical Stack** | `modules/user/graphical.nix` | Tier 3 GUI applications, terminal emulator (`alacritty`), Wayland tools, LSPs. |
-| **Host-Specific User Apps** | `hosts/<host>/home.nix` | Tools relevant only to that host (e.g., Niri utilities on laptop). |
-| **Shared Shell Tools** | `modules/user/shell/` | Modular bash/zsh helpers, aliases, and functions. |
-| **Standalone Scripts** | `modules/user/scripts/` | Executable user shell scripts. |
-| **Application Dotfiles** | `modules/user/config/` | Managed static configuration files linked into `$HOME/.config/`. |
-| **Encrypted Secrets** | `hosts/<host>/secrets.yaml` | Encrypted with SOPS/age; referenced via `config.sops.secrets.*.path`. |
-| **Homelab Services / DDNS** | `hosts/server/` | Machine-specific homelab infrastructure, reverse proxy, and DDNS monitor. |
-| **How-To Guides** | `docs/` | Operational procedures and maintenance workflows. |
+| **Kernel / Disks / Firmware** | `system/hardware-configuration.nix` | Generated hardware scan. Do not manually restructure. |
+| **Root OS / User Groups / Boot** | `system/core.nix` | Bootloader, users, host name, locale, nix-ld. |
+| **Machine Hardware Services** | `system/hardware.nix` | Audio, power profiles, battery, bluetooth, printing, docker. |
+| **System Compositor & Greeter** | `system/desktop.nix` | Niri enablement, greetd, DMS shell daemon, system fonts. |
+| **GUI Apps & Wayland Utilities** | `home/desktop.nix` | Browser, Zed, Alacritty, clipboard, screen capture tools. |
+| **Compilers, LSPs & Editors** | `home/dev.nix` | Neovim, toolchains, language servers, developer utilities. |
+| **Shell, Aliases & Multiplexer** | `home/shell.nix` | Bash, Tmux, Starship, Fastfetch, Git, Direnv, SSH config. |
+| **Static Application Dotfiles** | `home/config/` | Application configs linked into `$HOME/.config/`. |
+| **Standalone Scripts** | `home/scripts/` | Executable user utility scripts. |
+| **Modular Shell Helpers** | `home/shell/` | Discrete `.sh` files sourced by `.bashrc`. |
+| **Encrypted Secrets** | SOPS / age | Decrypted dynamically into memory at runtime via SOPS. |
+| **Homelab Services** | `~/Projects/active/homelab/Core` | Managed independently in the Core repository. |
 
 ---
 
 ## Architectural Invariants
 
-These rules define the repository boundaries and must not be violated:
-
-1. **Flake Public Entrypoint Invariant**: `flake.nix` is the sole public entrypoint for building the repository's NixOS host configurations.
-2. **Package Ownership Invariant**: Shared user applications belong under `modules/user/` categorized by tier (`base.nix` / `terminal.nix` for pure CLI, `apps.nix` for developer tools, `graphical.nix` for GUI/Wayland). Do not introduce arbitrary package lists in `modules/system/` unless strictly required for system-wide root maintenance or core OS services.
-3. **Host Isolation Invariant**: Machine-specific homelab infrastructure (`homeserver.nix`, `traefik-deployments.nix`, `dynu.nix`) must remain isolated under their respective host directories and must never be imported into `hosts/laptop/`.
-4. **Secrets Security Invariant**: Secrets must stay encrypted in Git via SOPS. Plaintext secrets must never be committed. Configurations must refer to secrets at runtime via `/run/secrets/` or `config.sops.secrets.<name>.path`. Never decrypt secrets into tracked or persistent working-tree files. Never add, modify, or rotate SOPS/age keys unless explicitly requested.
-5. **Hardware Configuration Invariant**: `hardware-configuration.nix` is generated configuration. Do not manually restructure, clean up, or refactor it. Hardware-specific changes should normally be produced by `nixos-generate-config`; deliberate manual additions require explicit justification.
-6. **Consumer Validation Invariant**: Changes to shared modules (`modules/system/` or `modules/user/`) or composed host configurations must be evaluated against all downstream consumers in the import graph (`server` and `laptop`).
-7. **State Compatibility Invariant**: `system.stateVersion` and `home.stateVersion` (`26.05`) are compatibility declarations for stateful data and must not be bumped casually as part of routine maintenance or package updates.
+1. **Single Entrypoint Invariant**: `flake.nix` is the sole entrypoint for building the workstation system (`laptop`).
+2. **Domain Separation Invariant**: User packages belong in `home/` categorized by functional domain (`desktop.nix` for GUI/Wayland, `dev.nix` for developer tools, `shell.nix` for terminal productivity). System-level packages in `system/` are strictly reserved for root administration and core OS daemons.
+3. **Decoupled Homelab Invariant**: Server infrastructure, Traefik edge proxying, and Docker container stacks belong in the `Core` repository and must never be merged back into this workstation configuration.
+4. **Hardware Configuration Invariant**: `system/hardware-configuration.nix` is generated by `nixos-generate-config`. Do not manually alter hardware disk UUIDs or module lists without explicit verification.
+5. **State Compatibility Invariant**: `system.stateVersion` and `home.stateVersion` (`26.05`) are compatibility declarations for stateful data and must not be bumped casually.

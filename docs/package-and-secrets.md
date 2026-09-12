@@ -6,7 +6,10 @@ This guide covers the day-to-day workflow for managing user-space packages and s
 
 ## 🚀 Adding a New Package
 
-User-space applications are managed declaratively using Home Manager in [modules/user/apps.nix](file:///home/kiskaadee/Config/modules/user/apps.nix).
+User-space applications are managed declaratively using Home Manager in domain modules under `home/`:
+- Developer tools, SDKs, LSPs, compilers: [home/dev.nix](file:///home/kiskaadee/Config/home/dev.nix)
+- Desktop applications, GUI tools, Wayland utilities: [home/desktop.nix](file:///home/kiskaadee/Config/home/desktop.nix)
+- Shell utilities, terminal enhancements: [home/shell.nix](file:///home/kiskaadee/Config/home/shell.nix)
 
 ### Step 1: Find the Package Name
 Before adding a package, look up its exact attribute name:
@@ -18,8 +21,8 @@ Before adding a package, look up its exact attribute name:
     nix search nixpkgs <query>
     ```
 
-### Step 2: Update `apps.nix`
-Open [modules/user/apps.nix](file:///home/kiskaadee/Config/modules/user/apps.nix) and append the package name directly into the list inside `home.packages`:
+### Step 2: Update the Target Domain Module
+Open the appropriate module (e.g., [home/dev.nix](file:///home/kiskaadee/Config/home/dev.nix)) and append the package name into `home.packages`:
 
 ```nix
   home.packages = with pkgs; [
@@ -47,12 +50,12 @@ sudo nixos-rebuild switch --flake .#laptop
 
 ## 🔒 Adding a New Secret (SOPS Workflow)
 
-Sensitive credentials (like passwords, API keys, and environment variables) are managed using `sops-nix`.
+Sensitive credentials (like passwords, API keys, and environment variables) are managed using `sops-nix` and `age`.
 
 ### Step 1: Edit the Secrets File
-Launch `sops` inside `nix-shell` to decrypt and edit the target secrets file (e.g., [secrets.yaml](file:///home/kiskaadee/Config/hosts/server/secrets.yaml)):
+Launch `sops` inside `nix-shell` to decrypt and edit your secrets file:
 ```bash
-nix-shell -p sops --run "sops hosts/server/secrets.yaml"
+nix-shell -p sops --run "sops secrets.yaml"
 ```
 Add your key-value pair under the YAML structure:
 ```yaml
@@ -61,13 +64,12 @@ my_new_api_key: "secure_token_goes_here"
 *When you save and close your editor, SOPS automatically encrypts the file before saving it back to disk.*
 
 ### Step 2: Declare the Secret in Nix
-To make the decrypted secret available to services or applications at runtime, register it in your Nix configuration (e.g., in [hosts/server/dynu.nix](file:///home/kiskaadee/Config/hosts/server/dynu.nix)):
+To make the decrypted secret available to services or applications at runtime, register it in your Nix configuration:
 
 ```nix
 sops.secrets.my_new_api_key = {
   # (Optional) Restrict file access to specific users/groups
-  owner = "root";
-  group = "root";
+  owner = "kiskaadee";
   mode = "0400";
 };
 ```

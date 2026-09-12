@@ -117,13 +117,13 @@ Add `antigravity-nix` to your flake inputs in `flake.nix`. Ensure that you lock 
 You can inject the packages using standard package inputs in your configurations:
 
 #### Option A: Home Manager Integration (Recommended)
-This matches your system's user setup. Add the required package to your user packages module (e.g., `modules/user/apps.nix`). 
+This matches your system's user setup. Add the required package to your developer tools module (e.g., `home/dev.nix`). 
 
 > [!NOTE]
 > In this repository's default configuration, only the CLI helper (`google-antigravity-cli`) is installed. The GUI apps (`google-antigravity` and `google-antigravity-no-fhs`) are optional and omitted by default.
 
 ```nix
-# modules/user/apps.nix
+# home/dev.nix
 { inputs, pkgs, ... }:
 
 {
