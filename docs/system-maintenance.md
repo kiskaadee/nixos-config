@@ -17,13 +17,13 @@ nix flake update
 ### Step 2: Validate the Build & Formatting
 Test-build the derivation without applying it to your bootloader. This prevents dirty installations or builder failures (such as Python PEP8 style errors) from affecting system configuration state:
 ```bash
-nix build .#nixosConfigurations.desktop.config.system.build.toplevel --no-link
+nix build .#nixosConfigurations.laptop.config.system.build.toplevel --no-link
 ```
 
 ### Step 3: Switch & Apply the Update
 Once the test build completes successfully, switch to the new generation:
 ```bash
-sudo nixos-rebuild switch --flake .#desktop
+sudo nixos-rebuild switch --flake .#laptop
 ```
 
 ---

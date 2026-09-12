@@ -69,32 +69,16 @@ graph TD
 ## 🛠️ Specialized Shell & Script Automation
 
 ### 1. Smart Dynamic DNS Monitor
-The [monitor.py](hosts/server/monitor.py) daemon prevents redundant DNS updates by running a local-first check before contacting the provider API:
-
-```mermaid
-flowchart TD
-    A[Timer triggers monitor script] --> B[Fetch public IP from seq. providers]
-    B --> C{Is public IPv4 valid?}
-    C -->|No| D[Log error & try next provider]
-    C -->|Yes| E[Retrieve last successful IP from local logs]
-    E --> F{Has IP changed?}
-    F -->|No| G[Exit cleanly]
-    F -->|Yes| H[Trigger ddclient.service via systemctl]
-    H --> I{Update successful?}
-    I -->|Yes| J[Write success status to ip_history.jsonl]
-    I -->|No| K[Write failed_update status & alert user]
-```
-
-*   **Script Location:** [hosts/server/monitor.py](hosts/server/monitor.py)
-*   **Systemd Integration:** Managed via [hosts/server/dynu.nix](hosts/server/dynu.nix) which triggers the monitor service every 30 minutes.
+*   **Feature:** Smart IP monitor preventing redundant Dynu API calls by verifying WAN IP rotations locally before invoking `ddclient`.
+*   **Documentation:** Detailed flow and operational architecture are documented in the [Smart DDNS Updater Guide](docs/dynu-ip-monitor.md).
 
 ### 2. GPU-Accelerated Video Recording (`record`)
 *   **Script Location:** [modules/user/scripts/record.sh](modules/user/scripts/record.sh)
-*   **Functionality:** Uses `wf-recorder` to record Wayland outputs across both Niri and Hyprland sessions.
+*   **Functionality:** Uses `wf-recorder` to record Wayland outputs in Niri sessions.
 *   **Modes:**
     *   `area` — Manually drag and draw a target bounding box using `slurp`.
     *   `window` — Target active window or interactively select via `slurp`.
-    *   `output` — Matches coordinates of the currently active focused monitor (`niri msg` / `hyprctl`).
+    *   `output` — Matches coordinates of the currently active focused monitor (`niri msg`).
     *   `screen` — Full layout capture.
     *   `audio` flag — Parses `wpctl` to dynamically resolve output system loopback paths from PipeWire/WirePlumber to include sound.
 
