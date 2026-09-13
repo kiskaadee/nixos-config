@@ -92,14 +92,15 @@ graph TD
 
 Sensitive credentials (tokens, private keys) are managed using `sops` and `age`. Plaintext secrets are never committed to version control.
 
-For bootstrapping, key generation, and decryption workflows, consult the [Secrets Management Guide](docs/secrets-management.md).
+For bootstrapping, key generation, and decryption workflows, consult the [Secrets Management Guide](docs/secrets.md).
 
 ---
 
 ## 🚀 Quick Start / Deployment
 
-### 1. Installation
-Clone the configuration repository into your home folder:
+### 1. Installation & Bare-Metal Recovery
+For fresh machine setup and disaster recovery, follow the [Getting Started & Disaster Recovery Runbook](docs/getting-started.md).
+
 ```bash
 git clone https://github.com/kiskaadee/nixos-config.git ~/Config
 cd ~/Config
@@ -121,11 +122,18 @@ sudo nixos-rebuild switch --flake ~/Config#laptop
 
 ---
 
-## 📚 Reference Documentation
+## 📚 Workstation Operations Manual
 
-*   [Package & Secrets Workflow Guide](docs/package-and-secrets.md) — Steps for adding custom applications and managing secrets.
-*   [System Maintenance Guide](docs/system-maintenance.md) — Instructions for safe system updates, health checking, and garbage collection.
-*   [Declarative Development Environments](docs/development-environments.md) — How to use nix-shell, devShells, direnv, and uv for project isolation.
-*   [Secrets Management Guide](docs/secrets-management.md) — GitOps secrets workflow using SOPS and age for homelab Core management.
-*   [Tmux Terminal Multiplexer](docs/tmux.md) — Fast navigation bindings, layouts, and pane splits guide.
-*   [Google Antigravity Setup](docs/antigravity.md) — Technical instructions for packaging and using the Antigravity agent CLI on NixOS.
+*   [Getting Started & Disaster Recovery](docs/getting-started.md) — Bare-metal install, partition scheme, hardware config, and desktop bootstrap.
+*   [Adding Software](docs/adding-software.md) — Decision tree for package placement, `home.packages` vs `programs.foo`, and unfree packages.
+*   [Configuration Workflow](docs/configuration.md) — Day-to-day editing, dry-build validation, testing, and dotfiles management.
+*   [System Lifecycle & Rebuilds](docs/system-lifecycle.md) — Nix rebuild pipeline, generations, bootloader rollback, and garbage collection.
+*   [Desktop Environment (Niri + DMS)](docs/desktop.md) — Compositor stack, declarative vs runtime state boundary, and master shortcut reference.
+*   [Secrets Management & Homelab GitOps](docs/secrets.md) — Operator authoring tooling on laptop vs runtime decryption on Core.
+*   [Networking & Remote Access](docs/networking.md) — NetworkManager, OpenSSH client profiles, and LAN remote access.
+
+### Reference Manuals
+*   [Interactive Shell Environment](docs/reference/shell.md) — Bash configuration, Starship prompt, and modular shell scripts.
+*   [Tmux Terminal Multiplexer](docs/reference/tmux.md) — Session workflows, layouts, and navigation keybindings.
+*   [Neovim Editor Architecture](docs/reference/neovim.md) — Neovim Lua configuration, LSPs, treesitter, and formatting.
+*   [Antigravity AI Agent Setup](docs/reference/antigravity.md) — Constitution, change protocols, and tooling integration.
