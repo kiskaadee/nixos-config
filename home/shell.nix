@@ -227,7 +227,7 @@
         # Ensure Home Manager session variables and user PATH are available in non-login / SSH shells
         [[ -f /etc/profiles/per-user/$USER/etc/profile.d/hm-session-vars.sh ]] && . /etc/profiles/per-user/$USER/etc/profile.d/hm-session-vars.sh
         [[ -f ~/.profile ]] && . ~/.profile
-        export PATH="$HOME/Core/scripts:$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+        export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 
         ${builtins.readFile ./shell/wayland.sh}     # Wayland clipboard helper (wlc)
         ${builtins.readFile ./shell/git.sh}         # Git workflow automations (gacp, gitignore)

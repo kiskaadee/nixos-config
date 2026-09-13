@@ -1,6 +1,6 @@
 # 🎛️ Tmux Environment & Cheat Sheet
 
-This repository configures **Tmux** declaratively via Home Manager in [terminal.nix](file:///home/kiskaadee/Config/modules/user/terminal.nix#L30). The configuration is optimized for speed, Vim keybindings, and seamless split-pane navigation.
+This repository configures **Tmux** declaratively via Home Manager in [home/shell.nix](file:///home/kiskaadee/Config/home/shell.nix). The configuration is optimized for speed, Vim keybindings, and seamless split-pane navigation.
 
 ---
 

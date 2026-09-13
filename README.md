@@ -126,6 +126,6 @@ sudo nixos-rebuild switch --flake ~/Config#laptop
 *   [Package & Secrets Workflow Guide](docs/package-and-secrets.md) — Steps for adding custom applications and managing secrets.
 *   [System Maintenance Guide](docs/system-maintenance.md) — Instructions for safe system updates, health checking, and garbage collection.
 *   [Declarative Development Environments](docs/development-environments.md) — How to use nix-shell, devShells, direnv, and uv for project isolation.
-*   [Secrets Management Details](docs/secrets-management.md) — Secure storage bootstrapping using `sops-nix` and `age`.
+*   [Secrets Management Guide](docs/secrets-management.md) — GitOps secrets workflow using SOPS and age for homelab Core management.
 *   [Tmux Terminal Multiplexer](docs/tmux.md) — Fast navigation bindings, layouts, and pane splits guide.
 *   [Google Antigravity Setup](docs/antigravity.md) — Technical instructions for packaging and using the Antigravity agent CLI on NixOS.

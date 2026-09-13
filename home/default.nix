@@ -18,7 +18,6 @@
   home.sessionPath = [
     "$HOME/.cargo/bin"
     "$HOME/.local/bin"
-    "$HOME/Core/scripts"
   ];
 
   # Compatibility state version

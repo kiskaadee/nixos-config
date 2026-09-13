@@ -65,16 +65,7 @@ in
   home.file.".config/niri/config.kdl".source = ./config/niri/config.kdl;
   home.file.".config/niri/custom.kdl".source = ./config/niri/custom.kdl;
 
-  # Systemd user session targets for window managers
-  systemd.user.targets.hyprland-session = {
-    Unit = {
-      Description = "Hyprland graphical session";
-      Documentation = [ "man:systemd.special(7)" ];
-      BindsTo = [ "graphical-session.target" ];
-      Wants = [ "graphical-session-pre.target" ];
-      After = [ "graphical-session-pre.target" ];
-    };
-  };
+  # Systemd user session target for Niri window manager
 
   systemd.user.targets.niri-session = {
     Unit = {

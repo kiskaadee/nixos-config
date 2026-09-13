@@ -1,5 +1,5 @@
-# 🔋 Laptop Hardware, Power & Peripheral Management
-# Manages audio (PipeWire), power daemons, Bluetooth, printing, scanning, and virtualization.
+# 🔋 Machine Services, Hardware & Peripherals
+# Manages audio (PipeWire), power daemons, Bluetooth, printing, scanning, and container virtualization.
 
 { pkgs, ... }:
 

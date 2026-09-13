@@ -3,17 +3,19 @@
 
 # 1. pdf_dc: Decrypts a password-protected PDF document.
 # Uses 'qpdf' under the hood. Automatically searches for a default password
-# decrypted securely by sops-nix in `/run/secrets/pdf_decrypt_password`
+# in `$HOME/.config/pdf_decrypt_password` (or `/run/secrets/pdf_decrypt_password`)
 # if no password argument is supplied.
 pdf_dc() {
-    local secret_file="/run/secrets/pdf_decrypt_password"
+    local secret_file="${PDF_PASSWORD_FILE:-$HOME/.config/pdf_decrypt_password}"
     local input_file="$1"
     local password="$2"
 
-    # Attempt to auto-load password from sops secret if none was provided on the CLI
+    # Attempt to auto-load password from config file if none was provided on the CLI
     if [[ -z "$password" ]]; then
         if [[ -f "$secret_file" ]]; then
             password=$(cat "$secret_file")
+        elif [[ -f "/run/secrets/pdf_decrypt_password" ]]; then
+            password=$(cat "/run/secrets/pdf_decrypt_password")
         fi
     fi
 

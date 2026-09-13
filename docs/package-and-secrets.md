@@ -48,37 +48,15 @@ sudo nixos-rebuild switch --flake .#laptop
 
 ---
 
-## 🔒 Adding a New Secret (SOPS Workflow)
+## 🔒 Secrets Management (Operator Workflow)
 
-Sensitive credentials (like passwords, API keys, and environment variables) are managed using `sops-nix` and `age`.
+The laptop acts as the administrative management station for homelab credentials using `sops` and `age`. Secrets are stored encrypted in Git under the [Core](file:///home/kiskaadee/Projects/active/homelab/Core) repository.
 
-### Step 1: Edit the Secrets File
-Launch `sops` inside `nix-shell` to decrypt and edit your secrets file:
+### Editing Homelab Secrets
+To edit or rotate homelab secrets from your laptop:
 ```bash
-nix-shell -p sops --run "sops secrets.yaml"
+sops ~/Projects/active/homelab/Core/nixos/secrets.yaml
 ```
-Add your key-value pair under the YAML structure:
-```yaml
-my_new_api_key: "secure_token_goes_here"
-```
-*When you save and close your editor, SOPS automatically encrypts the file before saving it back to disk.*
+SOPS uses your personal age key at `~/.config/sops/age/keys.txt` to decrypt the file locally, and re-encrypts it for both the server and your workstation upon save.
 
-### Step 2: Declare the Secret in Nix
-To make the decrypted secret available to services or applications at runtime, register it in your Nix configuration:
-
-```nix
-sops.secrets.my_new_api_key = {
-  # (Optional) Restrict file access to specific users/groups
-  owner = "kiskaadee";
-  mode = "0400";
-};
-```
-
-### Step 3: Reference the Decrypted Path
-Once declared, `sops-nix` exposes the decrypted value under `/run/secrets/` at boot time. You can reference the file path dynamically in your Nix configuration using:
-
-```nix
-# This resolves to "/run/secrets/my_new_api_key"
-config.sops.secrets.my_new_api_key.path
-```
-Avoid hardcoding raw paths; instead, pass this dynamic path directly to service configurations (e.g., via `EnvironmentFile` or command-line flags).
+For detailed architecture diagrams and recovery steps, see the [Secrets Management Guide](docs/secrets-management.md).

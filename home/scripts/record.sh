@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# 📹 Wayland Screen Recording Utility (Niri & Hyprland compatible)
-# Leverages 'wf-recorder' for GPU-accelerated video recording and pipewire audio routing.
+# 📹 Wayland Screen Recording Utility (Niri-native)
+# Leverages 'wf-recorder' for GPU-accelerated video recording and PipeWire audio routing.
 # Supports capturing specific regions, active windows, focused monitors, or full displays.
 #
 # Usage: 
@@ -69,14 +69,8 @@ case "$MODE" in
         TYPE_DESC="Area Recording"
         ;;
     window)
-        # Try querying Hyprland active window coordinates if on Hyprland
-        if [ "$XDG_CURRENT_DESKTOP" = "Hyprland" ] && command -v hyprctl >/dev/null 2>&1; then
-            GEOM=$(hyprctl activewindow -j 2>/dev/null | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
-        fi
-        # Fallback to interactive window / region selection via slurp
-        if [ -z "$GEOM" ] || [ "$GEOM" = "null,null nullxnull" ]; then
-            GEOM=$(slurp)
-        fi
+        # Interactive window selection via slurp
+        GEOM=$(slurp)
         if [ -z "$GEOM" ]; then
             notify-send -t 2000 "Screen Recorder" "Recording cancelled"
             exit 1
@@ -84,12 +78,9 @@ case "$MODE" in
         TYPE_DESC="Window Recording"
         ;;
     output)
-        # Query focused monitor on Niri or Hyprland
-        if [ "$XDG_CURRENT_DESKTOP" = "niri" ] || command -v niri >/dev/null 2>&1; then
+        # Query focused monitor on Niri
+        if command -v niri >/dev/null 2>&1; then
             OUTPUT_TARGET=$(niri msg -j focused-output 2>/dev/null | jq -r '.name // empty')
-        fi
-        if [ -z "$OUTPUT_TARGET" ] && command -v hyprctl >/dev/null 2>&1; then
-            OUTPUT_TARGET=$(hyprctl monitors -j 2>/dev/null | jq -r '.[] | select(.focused == true) | .name // empty')
         fi
         TYPE_DESC="Monitor Recording"
         ;;

@@ -6,7 +6,7 @@ This guide shows how to run isolated project environments using `nix-shell` or `
 
 ## ⚡ DevShells and nix-shell
 
-Instead of installing packages globally in [apps.nix](file:///home/kiskaadee/Config/modules/user/apps.nix) for one-off projects, define them per-project.
+Instead of installing packages globally in [home/dev.nix](file:///home/kiskaadee/Config/home/dev.nix) for one-off projects, define them per-project.
 
 ### 1. Classic `shell.nix` (Nix Channels)
 For standard Nix projects, place a `shell.nix` in your project root:

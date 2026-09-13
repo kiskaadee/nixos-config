@@ -1,72 +1,71 @@
-# 🔒 Secrets Management via SOPS & age
+# 🔒 Homelab & Workstation Secrets Management
 
-This repository utilizes **`sops`** and **`age`** (with optional **`sops-nix`** integration) to manage sensitive information (passwords, tokens, API keys) declaratively and securely. 
-
-Secrets are stored encrypted directly in the Git repository, and decrypted dynamically into memory (`/run/secrets/`), ensuring no credentials leak into the public-readable Nix store.
+This document describes the GitOps secrets management workflow using **Mozilla SOPS** and **age**.
 
 ---
 
-## 🛠️ Bootstrapping Secrets on the Workstation
+## 🏛️ Architectural Model: Author vs Consumer
 
-To set up or re-initialize secrets encryption on the laptop:
+Secrets management follows a strict separation between **authoring** (human operator on the workstation) and **runtime consumption** (headless server):
 
-### Step 1: Generate a User age Key Pair
-To encrypt and decrypt files on your local machine, generate a native `age` key pair:
+```text
+┌─────────────────────────────────────────────────────────┐
+│ WORKSTATION (Author / Operator)                         │
+│ - Key: ~/.config/sops/age/keys.txt (&laptop)            │
+│ - Tooling: sops, age, rbw (installed in home/dev.nix)   │
+│ - Action: Decrypt, edit, and re-encrypt secrets locally │
+└───────────────────────────┬─────────────────────────────┘
+                            │
+              Git Commit (Ciphertext in repo)
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────┐
+│ SERVER (Consumer / Runtime)                             │
+│ - Key: /etc/ssh/ssh_host_ed25519_key (&server)          │
+│ - Tooling: sops-nix systemd activation service (root)   │
+│ - Action: Unattended decryption into RAM (/run/secrets) │
+└─────────────────────────────────────────────────────────┘
+```
+
+* **Why editing secrets directly on the remote server fails**: The server does not have the operator's age key. Its host SSH key is owned by `root:root` with `0600` permissions and is only read by `sops-nix` during systemd activation at boot.
+* **Why the workstation is the author**: The operator's private age key resides in `~/.config/sops/age/keys.txt` on the laptop. This allows secure local editing without exposing administrative keys on production nodes.
+
+---
+
+## 🛠️ Managing Secrets for Core
+
+Production homelab secrets are maintained in the [Core](file:///home/kiskaadee/Projects/active/homelab/Core) repository at `Core/nixos/secrets.yaml`.
+
+### 1. Edit Secrets Locally
+From your laptop, open the encrypted secrets file:
 ```bash
-# Create the standard config directory
+sops ~/Projects/active/homelab/Core/nixos/secrets.yaml
+```
+SOPS reads your local `~/.config/sops/age/keys.txt`, decrypts the file in `$EDITOR`, and automatically re-encrypts the ciphertext using the public recipient keys configured in `Core/.sops.yaml`:
+- `*server` (for server boot decryption)
+- `*laptop` (for operator editing)
+
+### 2. Commit and Deploy
+Commit the newly encrypted ciphertext and push to your git remote:
+```bash
+cd ~/Projects/active/homelab/Core
+git add nixos/secrets.yaml
+git commit -m "chore(secrets): rotate service credentials"
+git push
+```
+On the server, pulling and rebuilding will activate the updated secrets into `/run/secrets/`.
+
+---
+
+## 🔑 Workstation Key Bootstrapping
+
+If setting up a new workstation, generate your operator `age` key pair:
+```bash
 mkdir -p ~/.config/sops/age
-
-# Generate the age key pair
-nix-shell -p age --run "age-keygen -o ~/.config/sops/age/keys.txt"
-
-# Lock down key permissions
+age-keygen -o ~/.config/sops/age/keys.txt
 chmod 600 ~/.config/sops/age/keys.txt
 ```
-To print your public key for configuration, run:
+To print the public key for addition to `Core/.sops.yaml`:
 ```bash
 grep "public key" ~/.config/sops/age/keys.txt
 ```
-
-### Step 2: Convert the Host SSH Public Key to age
-To allow systemd to decrypt secrets automatically at boot time, obtain the host's SSH public key converted to `age` format:
-```bash
-nix run nixpkgs#ssh-to-age -- -i /etc/ssh/ssh_host_ed25519_key.pub
-```
-*Note: The private key counterpart `/etc/ssh/ssh_host_ed25519_key` is automatically read by `sops-nix` at boot with root privileges.*
-
-### Step 3: Configure Public Keys in `.sops.yaml`
-Add both the user `age` public key and the host `age` public key to the [.sops.yaml](file:///home/kiskaadee/Config/.sops.yaml) configuration file at the root of the repository:
-
-```yaml
-keys:
-  - &laptop age1...your_laptop_age_key...
-
-creation_rules:
-  - path_regex: secrets\.yaml$
-    key_groups:
-      - pgp: []
-        age:
-          - *laptop
-```
-
----
-
-## ✏️ Editing and Managing Secrets
-
-Because `sops` automatically reads from your local `~/.config/sops/age/keys.txt` keyfile, you can manage secrets using simple commands:
-
-### Create/Edit an Encrypted File
-```bash
-nix-shell -p sops --run "sops secrets.yaml"
-```
-This decrypts the file, opens it in your editor defined by `$EDITOR`, and automatically re-encrypts the values when you save and exit.
-
----
-
-## 🔄 Runtime Decryption
-
-At boot time, `sops-nix` performs the following steps:
-1. Systemd runs the `sops-install-secrets` activation script.
-2. The script reads `/etc/ssh/ssh_host_ed25519_key` to decrypt the encrypted secrets file.
-3. The values are exposed under `/run/secrets/` as individual files (or templates) with strict user/group ownership.
-4. Services read these paths at startup, keeping secrets secure and decoupled from the world-readable `/nix/store`.
