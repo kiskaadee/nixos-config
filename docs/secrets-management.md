@@ -41,9 +41,7 @@ From your laptop, open the encrypted secrets file:
 ```bash
 sops ~/Projects/active/homelab/Core/nixos/secrets.yaml
 ```
-SOPS reads your local `~/.config/sops/age/keys.txt`, decrypts the file in `$EDITOR`, and automatically re-encrypts the ciphertext using the public recipient keys configured in `Core/.sops.yaml`:
-- `*server` (for server boot decryption)
-- `*laptop` (for operator editing)
+SOPS uses your local age identity to decrypt the file and re-encrypts it for the recipients configured in `Core/.sops.yaml`, including the workstation operator and server runtime identities.
 
 ### 2. Commit and Deploy
 Commit the newly encrypted ciphertext and push to your git remote:
