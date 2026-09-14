@@ -3,7 +3,28 @@
 
 { pkgs, ... }:
 
+let
+  # Hermetic packaging for project-driven persistent terminal workspaces
+  tmuxSessionizer = pkgs.writeShellApplication {
+    name = "tmux-sessionizer";
+    runtimeInputs = with pkgs; [
+      bash
+      coreutils
+      gnused
+      gawk
+      gnugrep
+      fd
+      fzf
+      tmux
+    ];
+    text = builtins.readFile ./scripts/tmux-sessionizer.sh;
+  };
+in
 {
+  home.packages = [
+    tmuxSessionizer
+  ];
+
   programs = {
     # 🌟 Git Version Control Configuration
     git = {
@@ -171,6 +192,7 @@
       shellAliases = {
         zed = "zeditor";
         reload = "exec bash";
+        ts = "tmux-sessionizer";
         ff = "fastfetch --logo none";
 
         # System Navigation

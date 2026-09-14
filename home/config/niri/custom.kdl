@@ -4,9 +4,10 @@
 
 binds {
     // === Core Application Launchers ===
-    Mod+Return hotkey-overlay-title="Alacritty Terminal" { spawn "alacritty"; }
-    Mod+B      hotkey-overlay-title="Firefox Browser"   { spawn "firefox"; }
-    Mod+O      hotkey-overlay-title="Obsidian Notes"    { spawn "flatpak" "run" "md.obsidian.Obsidian"; }
+    Mod+Return hotkey-overlay-title="Alacritty Terminal (Shell)"     { spawn "alacritty"; }
+    Mod+T      hotkey-overlay-title="Workspace Terminal (Sessionizer)" { spawn "alacritty" "-e" "tmux-sessionizer"; }
+    Mod+B      hotkey-overlay-title="Firefox Browser"               { spawn "firefox"; }
+    Mod+O      hotkey-overlay-title="Obsidian Notes"                { spawn "flatpak" "run" "md.obsidian.Obsidian"; }
 
     // === Active Window Management ===
     // Force kill active window process via Niri IPC (JSON parsed)

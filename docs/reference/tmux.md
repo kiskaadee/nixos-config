@@ -1,31 +1,90 @@
-# 🪟 Tmux Reference & Workflow
+# 🪟 Terminal Workspaces & Tmux Reference
 
-This document describes the Tmux terminal multiplexer configuration declared in `home/shell.nix` and `home/config/tmux.conf`.
+This reference covers the operational controls, keybindings, and workflows for persistent workspaces and terminal multiplexing on the `laptop` workstation.
 
 ---
 
-## 1. Core Configuration
+## 1. Terminal Workflows
 
-- **Prefix Key**: `Ctrl+Space` (`C-Space`, remapped from standard `Ctrl+B`).
+| Shortcut | Action | Semantics |
+| :--- | :--- | :--- |
+| `Mod+Return` | **Alacritty Shell** | Opens a standard shell immediately. Ephemeral, isolated, non-persistent. |
+| `Mod+T` | **Workspace Selector** | Opens Alacritty running the interactive sessionizer (`ts`). Exiting `fzf` with `Esc` closes the window cleanly. |
+
+---
+
+## 2. Sessionizer CLI (`ts`)
+
+The `ts` utility (`tmux-sessionizer`) connects directly to persistent tmux workspaces:
+
+```bash
+# Interactive fuzzy selector (shows session name and path)
+ts
+
+# Open a workspace by name (exact or normalized)
+ts config
+ts brain
+ts core
+ts bitetrack-api
+
+# Open a workspace by unique substring
+ts magnet        # Resolves to MagNetFlix
+
+# Open a workspace by direct filesystem path
+ts ~/Config
+ts ~/Projects/active/nekoweb
+```
+
+### Argument Resolution Order
+When an argument is provided (`ts <arg>`), it resolves in this exact order:
+1. **Existing directory**: Canonicalizes path via `realpath`.
+2. **Exact session name**: Matches normalized session name.
+3. **Exact directory basename**: Matches directory name.
+4. **Unique substring**: Matches against names and paths.
+
+*Ambiguous matches fail safely with an error and candidate list rather than guessing.*
+
+---
+
+## 3. Workspace Discovery
+
+The sessionizer automatically indexes workspaces from:
+
+- **Explicit Workspaces**:
+  - `~/Config`
+  - `~/Brain`
+  - `~/Homelab/Core`
+- **Git Repositories**:
+  - Discovered beneath `~/Projects` and `~/Homelab` (depth 4).
+
+*Any directory passed directly as a path (`ts <path>`) works immediately without needing to be under discovery roots.*
+
+---
+
+## 4. Tmux Behavior & Persistence
+
+- **Outside Tmux**: Running `ts` creates or attaches to the session.
+- **Inside Tmux**: Running `ts` switches the active client (`switch-client`) without nesting sessions.
+- **Session State**: New sessions start in the workspace folder. Reconnecting to an existing session preserves your current working directory, open files, and terminal buffers.
+- **Persistence**: Closing an Alacritty window leaves background jobs and tmux sessions running. Reconnect at any time by pressing `Mod+T` or running `ts <name>`.
+
+---
+
+## 5. Tmux Controls & Keybindings
+
+- **Prefix Key**: `Ctrl+Space` (`C-Space`)
 - **Terminal Capabilities**: TrueColor (`tmux-256color`) with RGB support and extended keys enabled.
 - **Mouse Support**: Enabled for scrolling, pane selection, and resizing.
-- **Base Index**: Windows and panes start at index `1` (matching keyboard row `1..9`).
-- **Escape Time**: `0ms` (zero delay for responsive escape-key behavior in Vim/Neovim).
-- **Clipboard**: OSC 52 integration enabled (`set -s set-clipboard on`), syncing clipboard locally and over SSH.
-
----
-
-## 2. Keybindings & Controls
 
 ### Smart Neovim / Tmux Navigation (No Prefix Required)
-Thanks to `vim-tmux-navigator` integration, you can navigate seamlessly between Vim splits and Tmux panes without pressing the prefix key:
+Navigate between Neovim splits and Tmux panes seamlessly using `Ctrl+h/j/k/l`:
 
 | Shortcut | Action |
 | :--- | :--- |
-| `Ctrl+h` | Move to left pane / Vim split. |
-| `Ctrl+j` | Move to down pane / Vim split. |
-| `Ctrl+k` | Move to up pane / Vim split. |
-| `Ctrl+l` | Move to right pane / Vim split. |
+| `Ctrl+h` | Move to left pane / Neovim split. |
+| `Ctrl+j` | Move to down pane / Neovim split. |
+| `Ctrl+k` | Move to up pane / Neovim split. |
+| `Ctrl+l` | Move to right pane / Neovim split. |
 
 *(Fallback navigation using prefix: `Ctrl+Space h/j/k/l`)*
 
@@ -58,15 +117,14 @@ Thanks to `vim-tmux-navigator` integration, you can navigate seamlessly between 
 
 ---
 
-## 3. Persistent Sessions
+## 6. Verification Commands
 
 ```bash
-# Attach or create session named "dev":
-tmux new-session -A -s dev
+# Validate flake metadata & checks
+nix flake check
 
-# List active sessions:
-tmux ls
-
-# Detach from active session:
-Ctrl+Space d
+# Build laptop configuration without switching
+nix build .#nixosConfigurations.laptop.config.system.build.toplevel --no-link
 ```
+
+*(For architectural background, boundary models, and design principles, see `Brain/records/decisions/terminal-workspace-architecture.md`)*.
