@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # --- Word Deletion & Readline Keybindings ---
 if [[ -n "$BASH_VERSION" ]] && [[ "$-" == *i* ]]; then
     # Ctrl+W: Delete entire word under cursor (backward-word + kill-word)

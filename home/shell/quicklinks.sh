@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # 🚀 Quicklinks Launcher Utility
 # Sourced in .bashrc to provide an interactive bookmarks and command-launcher interface.
 # Parses a pipe-separated config file (`~/.quicklinks`) containing custom CLI commands or URLs.

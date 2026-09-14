@@ -56,7 +56,48 @@
   };
 
   # --- System Outputs ---
-  outputs = { self, nixpkgs, home-manager, dms, dgop, dank-greeter, dankcalendar, danksearch, zen-browser, antigravity, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, dms, dgop, dank-greeter, dankcalendar, danksearch, zen-browser, antigravity, ... }@inputs:
+  let
+    system = "x86_64-linux";
+    pkgs = nixpkgs.legacyPackages.${system};
+  in
+  {
+    # --- Linting, Formatting & Static Analysis Checks ---
+    # Executed via `nix flake check` or `nix build .#checks.<system>.<check>`
+    checks.${system} = {
+      # Python linting via ruff
+      ruff-lint = pkgs.runCommand "check-ruff-lint" {
+        nativeBuildInputs = [ pkgs.ruff ];
+      } ''
+        ruff check --no-cache ${self}
+        touch $out
+      '';
+
+      # Python formatting check via ruff
+      ruff-format = pkgs.runCommand "check-ruff-format" {
+        nativeBuildInputs = [ pkgs.ruff ];
+      } ''
+        ruff format --check ${self}
+        touch $out
+      '';
+
+      # Python static type analysis via pyright
+      pyright = pkgs.runCommand "check-pyright" {
+        nativeBuildInputs = [ pkgs.pyright ];
+      } ''
+        pyright ${self}
+        touch $out
+      '';
+
+      # Shell script linting via ShellCheck
+      shellcheck = pkgs.runCommand "check-shellcheck" {
+        nativeBuildInputs = [ pkgs.shellcheck ];
+      } ''
+        find ${self} -type f -name "*.sh" -exec shellcheck -s bash {} +
+        touch $out
+      '';
+    };
+
     nixosConfigurations = {
       # 💻 LAPTOP HOST (Mobile Workstation)
       laptop = nixpkgs.lib.nixosSystem {

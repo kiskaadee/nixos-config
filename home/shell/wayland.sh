@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # 📋 Custom Wayland Desktop Utilities
 # Sourced in .bashrc to provide command-line utilities optimized for Wayland compositor environments.
 

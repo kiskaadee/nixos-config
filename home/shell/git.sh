@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # 🌟 Custom Git Automation & Helper Utilities
 # Sourced in .bashrc to streamline gitignore modifications, commit-push workflows, and new repo setups.
 
@@ -10,7 +11,8 @@ gitignore() {
     fi
 
     # Find the top-level repository directory path
-    local GIT_ROOT=$(git rev-parse --show-toplevel 2> /dev/null)
+    local GIT_ROOT
+    GIT_ROOT=$(git rev-parse --show-toplevel 2> /dev/null)
     if [ -z "$GIT_ROOT" ]; then
         echo "Error: Not a Git repository."
         return 1
@@ -63,7 +65,8 @@ gacp() {
     fi
     git add -A 
     git commit -m "$1"
-    local branch_name=$(git branch --show-current)
+    local branch_name
+    branch_name=$(git branch --show-current)
     git push origin "${branch_name}"   
     echo "Pushed to origin/${branch_name}"
 }

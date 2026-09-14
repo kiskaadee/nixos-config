@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # 📄 Command Line PDF Utilities
 # Sourced in .bashrc to provide quick file operations on PDF documents.
 
@@ -30,7 +31,7 @@ pdf_dc() {
     # Handle file overwrite prompts
     if [[ -f "$output_file" ]]; then
         echo "Error: Output file '$output_file' already exists."
-        read -p "Do you want to overwrite it? (y/n): " overwrite
+        read -r -p "Do you want to overwrite it? (y/n): " overwrite
         if [[ "$overwrite" != "y" ]]; then
             echo "Operation cancelled."
             return 1

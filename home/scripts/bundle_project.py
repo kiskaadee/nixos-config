@@ -29,7 +29,7 @@ def is_binary(file_path: Path) -> bool:
 def create_bundle(target_dir: Path, output_file: Path) -> None:
     """
     Creates a single text bundle of a directory structure and its file contents.
-    
+
     Args:
         target_dir: The directory to bundle.
         output_file: The path to write the bundled text file to.
@@ -114,8 +114,7 @@ def main() -> None:
     """
     parser = argparse.ArgumentParser(
         description=(
-            "Bundle a directory structure and its files into "
-            "a single text document."
+            "Bundle a directory structure and its files into a single text document."
         )
     )
     parser.add_argument(

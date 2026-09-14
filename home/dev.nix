@@ -75,7 +75,7 @@
     nodejs
     prettier
 
-    # Language Servers (Zed, Neovim, General)
+    # Language Servers, Linters & Diagnostics (Zed, Neovim, General)
     nil
     nixd
     jdt-language-server
@@ -83,6 +83,7 @@
     lua-language-server
     taplo
     marksman
+    shellcheck
 
     # Cloud CLI, Git Forge & Database Management
     tea              # Gitea official CLI client

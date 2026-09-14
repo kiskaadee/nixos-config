@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # 📝 Todo.txt & Tuxedo Productivity Helper and Syntax Highlighter
 # Sourced in .bashrc to provide colorized listings and quick task management shortcuts.
 
@@ -58,7 +59,7 @@ todo() {
                 local task_id
                 task_id=$(echo "$top_task" | awk '{print $1}')
                 echo "Completing: $top_task"
-                tuxedo do "$task_id"
+                tuxedo "do" "$task_id"
             else
                 echo "No tasks found in todo.txt"
             fi

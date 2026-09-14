@@ -1,13 +1,15 @@
+# shellcheck shell=bash
 # 🗺️ Fuzzy Navigation & Directory Jump Helpers
 # Sourced in .bashrc to provide quick, interactive folder traversal using Yazi and fzf.
 
 # 1. fm: Interactive file manager wrapper using Yazi.
 # Synchronizes the active terminal shell working directory to Yazi's exit folder (sticky directory).
 fm() {
-    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+    local tmp
+    tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
     yazi "$@" --cwd-file="$tmp"
     if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-        cd -- "$cwd"
+        cd -- "$cwd" || return
     fi
     rm -f -- "$tmp"
 }
