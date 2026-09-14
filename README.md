@@ -99,7 +99,7 @@ For bootstrapping, key generation, and decryption workflows, consult the [Secret
 ## 🚀 Quick Start / Deployment
 
 ### 1. Installation & Bare-Metal Recovery
-For fresh machine setup and disaster recovery, follow the [Getting Started & Disaster Recovery Runbook](docs/getting-started.md).
+For fresh machine setup and disaster recovery, follow the [Getting Started: Fresh Installation & Recovery Runbook](docs/getting-started.md).
 
 ```bash
 git clone https://github.com/kiskaadee/nixos-config.git ~/Config
@@ -124,7 +124,7 @@ sudo nixos-rebuild switch --flake ~/Config#laptop
 
 ## 📚 Workstation Operations Manual
 
-*   [Getting Started & Disaster Recovery](docs/getting-started.md) — Bare-metal install, partition scheme, hardware config, and desktop bootstrap.
+*   [Getting Started: Fresh Installation & Recovery](docs/getting-started.md) — Bare-metal install, reference partitioning, hardware config, and desktop bootstrap.
 *   [Adding Software](docs/adding-software.md) — Decision tree for package placement, `home.packages` vs `programs.foo`, and unfree packages.
 *   [Configuration Workflow](docs/configuration.md) — Day-to-day editing, dry-build validation, testing, and dotfiles management.
 *   [System Lifecycle & Rebuilds](docs/system-lifecycle.md) — Nix rebuild pipeline, generations, bootloader rollback, and garbage collection.

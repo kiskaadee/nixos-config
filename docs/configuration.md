@@ -79,6 +79,12 @@ Used for tools that provide their own GUI settings editor or dynamic state:
 
 These directories are **deliberately unmanaged by Home Manager**. They are modified interactively through their respective applications without interference from `nixos-rebuild switch`.
 
+> [!IMPORTANT]
+> **Repository Principle: Declared Reproducibility vs. Runtime State**
+> Reproducibility in this repository means **reproducible declared system state**, not necessarily byte-for-byte reproducible runtime user state. The workstation is **declaratively reproducible, with an explicitly documented desktop bootstrap state**.
+> 
+> A runtime-mutated file must never be converted into a Home Manager-managed store symlink merely because it is important or because tracking it in Git would appear to improve reproducibility. Doing so fights the application's runtime mutation model and causes permission errors or broken symlinks.
+
 ---
 
 ## 4. Git Hygiene & Pre-Commit Checks

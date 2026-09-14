@@ -1,6 +1,6 @@
-# 🚀 Getting Started & Disaster Recovery
+# 🚀 Getting Started: Fresh Installation & Recovery
 
-This document is the operational procedure for bootstrapping the workstation host (`laptop`) from bare metal or recovering after a catastrophic drive failure.
+This document is the operational procedure for bootstrapping the workstation host (`laptop`) from bare metal or recovering after a drive replacement.
 
 ---
 
@@ -16,6 +16,10 @@ This document is the operational procedure for bootstrapping the workstation hos
 ---
 
 ## 2. Disk Partitioning & Mounting
+
+> [!NOTE]
+> **Example Reference Partitioning Layout**
+> The following partitioning recipe is a standard reference layout for a clean NVMe drive. If recovering an existing drive, or using Btrfs, ZFS, or LUKS encryption, adjust partition identifiers and mount existing subvolumes/filesystems accordingly. The actual filesystem UUIDs and mount options will be captured into `system/hardware-configuration.nix` in the next step.
 
 Assuming NVMe target drive `/dev/nvme0n1`:
 
@@ -82,15 +86,20 @@ reboot
 3. Open a terminal (`Mod+Return`).
 
 ### Desktop Initialization Phase
-On a fresh machine, DMS requires a one-time setup command to seed its mutable baseline keybindings:
+On a fresh user profile (or after recreating `$HOME`), initialize DMS's mutable baseline keybindings with:
 
 ```bash
 dms setup binds
 ```
 
-This generates `~/.config/niri/dms/binds.kdl` with standard user write permissions (`0644`). From this point forward:
-- Niri loads all standard DMS IPC shortcuts (`Mod+Space` for spotlight launcher, `Mod+V` for clipboard, `Mod+M` for task manager, `Super+X` for power menu, volume and brightness controls).
-- DMS owns, updates, and mutates `~/.config/niri/dms/` and `~/.config/DankMaterialShell/settings.json` without conflicting with the declarative Nix store.
+This generates `~/.config/niri/dms/binds.kdl` with standard user write permissions (`0644`).
+
+> [!IMPORTANT]
+> `binds.kdl` is not part of the declarative workstation configuration. It is a bootstrap-owned artifact whose initial contents are established by `dms setup binds`, establishing the DMS-managed Niri IPC integration bindings. Subsequent edits via the DMS Settings GUI or CLI mutate this file directly.
+>
+> From this point forward:
+> - Niri loads all standard DMS IPC shortcuts (`Mod+Space` for spotlight launcher, `Mod+V` for clipboard, `Mod+M` for task manager, `Super+X` for power menu, volume and brightness controls).
+> - DMS owns, updates, and mutates `~/.config/niri/dms/` and `~/.config/DankMaterialShell/settings.json` without conflicting with the declarative Nix store.
 
 ---
 

@@ -4,7 +4,7 @@
 
 This repository manages a purely declarative NixOS and Home Manager configuration for a standalone mobile workstation host (`laptop`).
 
-1. **Git is the Source of Truth for Configuration**: Every persistent configuration decision intended to be reproducible is declaratively defined within this repository. Dynamic runtime state (SSH host private keys, machine-id, user application state, caches, browser profiles, and Docker volumes) lives outside the declarative boundary.
+1. **Declarative System State vs. Mutable Runtime State**: Reproducibility in this repository means **reproducible declared system state**, not necessarily byte-for-byte reproducible runtime/user state. The workstation is **declaratively reproducible, with an explicitly documented desktop bootstrap state**. Dynamic runtime state (SSH host private keys, machine-id, DMS runtime settings and monitor layouts, browser profiles, caches, and Docker volumes) lives outside the declarative boundary. A runtime-mutated file must never be converted into a Home Manager-managed file merely because it is important or because tracking it in Git would appear to improve reproducibility.
 2. **Domain-Driven Cohesion**: Configuration is organized by functional domain (`core`, `hardware`, `desktop`, `dev`, `shell`) rather than artificial multi-machine abstractions.
 3. **Privilege Boundary Separation**:
    - **`system/` (Root/NixOS)**: Governs hardware, kernel, bootloader, base OS daemons, and system-level compositor enablement.
