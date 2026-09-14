@@ -85,10 +85,24 @@ copy_dir() {
     printf "%s" "$dir" | wl-copy
 }
 
-# 10. Shorthand Navigation Aliases
-cfg() { jump "$HOME/Config" "$1" 2; }      # Quickly jump inside ~/Config modules
-prj()  { jump "$HOME/Projects" "$1"; }     # Jump into local workspace projects
-lrn() { jump "/$HOME/Learn" "$1"; }       # Jump to ~/Learn
-dep()  { jump "$HOME/Deployments" "$1"; }  # Jump to Deployments folder
-dl()  { jump "$HOME/Downloads" "$1"; }    # Jump to Downloads
-med()  { jump "/media" "$1"; }            # Jump to /media mounted storage
+# 10. Shorthand Navigation Aliases (Dual 2-letter and mnemonic mapping)
+brain() { jump "$HOME/Brain" "$1" 2; }       # Jump into ~/Brain
+homelab() { jump "$HOME/Homelab" "$1" 2; }   # Jump into ~/Homelab
+conf()  { jump "$HOME/Config" "$1" 2; }      # Jump into ~/Config
+doc()   { jump "$HOME/Documents" "$1" 2; }   # Jump into ~/Documents
+dl()    { jump "$HOME/Downloads" "$1" 2; }   # Jump into ~/Downloads
+pic()   { jump "$HOME/Pictures" "$1" 2; }    # Jump into ~/Pictures
+pj()    { jump "$HOME/Projects" "$1" 3; }    # Jump into ~/Projects (depth 3)
+
+# 2-Letter Fast Aliases
+br()    { brain "$@"; }
+cf()    { conf "$@"; }
+dc()    { doc "$@"; }
+pi()    { pic "$@"; }
+hl()    { homelab "$@"; }
+
+# Convenience & Backward-Compatibility Aliases
+docs()  { doc "$@"; }
+pict()  { pic "$@"; }
+cfg()   { conf "$@"; }
+prj()   { pj "$@"; }

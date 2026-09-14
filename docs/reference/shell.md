@@ -37,6 +37,17 @@ The shell environment is modularized:
 | `gd` | `git diff` | Syntax-highlighted git diff via Delta. |
 | `gl` | `git log --oneline --graph --decorate` | Compact visual commit graph. |
 
+### Directory Navigation Jumps (`home/shell/jump.sh`)
+| 2-Letter | Word Alias | Target Directory | Description |
+| :--- | :--- | :--- | :--- |
+| `br` | `brain` | `~/Brain` | Second brain knowledge base. |
+| `cf` | `conf` / `cfg` | `~/Config` | Declarative NixOS configuration. |
+| `dc` | `doc` / `docs` | `~/Documents` | Personal documents. |
+| `dl` | `dl` | `~/Downloads` | Downloads folder. |
+| `pi` | `pic` / `pict` | `~/Pictures` | Wallpapers, images, screenshots. |
+| `pj` | `pj` / `prj` | `~/Projects` | Local workspace for project repositories. |
+| `hl` | `hl` / `homelab` | `~/Homelab` | Local workspace for homelab repositories. |
+
 ---
 
 ## 3. Modular Shell Scripts (`home/shell/`)
