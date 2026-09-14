@@ -99,11 +99,11 @@ def create_bundle(target_dir: Path, output_file: Path) -> None:
                         out_f.write("\n")
                     out_f.write("\n")
 
-                except Exception as e:
+                except (OSError, UnicodeDecodeError) as e:
                     out_f.write(f"[Error reading file: {e}]\n\n")
 
         print("Done!")
-    except Exception as e:
+    except OSError as e:
         print(f"Error writing output file: {e}", file=sys.stderr)
         sys.exit(1)
 
