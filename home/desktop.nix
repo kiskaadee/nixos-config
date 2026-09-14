@@ -57,6 +57,15 @@ in
     };
   };
 
+  # GTK & Icon Theme Configuration
+  gtk = {
+    enable = true;
+    iconTheme = {
+      name = "Adwaita";
+      package = pkgs.adwaita-icon-theme;
+    };
+  };
+
   # Declarative configuration files for Zed editor
   home.file.".config/zed/settings.json".source = ./config/zed/settings.json;
   home.file.".config/zed/themes".source = ./config/zed/themes;
