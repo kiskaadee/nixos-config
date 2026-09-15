@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# .githooks/pre-commit - Git pre-commit hook running automated quality checks
+set -euo pipefail
+
+# Ensure NixOS user profile binaries are in PATH
+export PATH="/etc/profiles/per-user/${USER:-kiskaadee}/bin:$HOME/.nix-profile/bin:$PATH"
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+echo "🚀 [pre-commit] Running automated verification & static analysis suite..."
+exec "$REPO_ROOT/scripts/test"

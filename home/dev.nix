@@ -81,6 +81,7 @@
     jdt-language-server
     typescript-language-server
     lua-language-server
+    luaPackages.luacheck
     taplo
     marksman
     shellcheck

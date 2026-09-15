@@ -9,11 +9,21 @@ find . -type f -name "*.sh" -not -path "./.git/*" -exec shellcheck -s bash {} +
 echo "✅ ShellCheck passed!"
 
 echo "🌙 Checking Neovim Lua configuration (luacheck)..."
-nix-shell -p luaPackages.luacheck --run "luacheck home/config/nvim --globals vim"
+if command -v luacheck &>/dev/null; then
+    luacheck home/config/nvim --globals vim
+else
+    nix-shell -p luaPackages.luacheck --run "luacheck home/config/nvim --globals vim"
+fi
 echo "✅ Lua checks passed!"
 
 echo "🐍 Running Python linters & type analysis (Ruff & Pyright)..."
-nix-shell -p ruff pyright --run "ruff check --no-cache . && ruff format --check . && pyright ."
+if command -v ruff &>/dev/null && command -v pyright &>/dev/null; then
+    ruff check --no-cache .
+    ruff format --check .
+    pyright .
+else
+    nix-shell -p ruff pyright --run "ruff check --no-cache . && ruff format --check . && pyright ."
+fi
 echo "✅ Python checks passed!"
 
 echo "❄️  Verifying NixOS flake & sandbox checks..."
