@@ -17,3 +17,13 @@ fi
 if [[ $- == *i* ]]; then
     fastfetch --logo none
 fi
+
+# --- Nix Command Ergonomics ---
+# Ensure `nix flake check` always prints build and verification logs (-L)
+nix() {
+    if [[ "${1:-}" == "flake" && "${2:-}" == "check" && "$*" != *"--log-format"* && "$*" != *"-L"* ]]; then
+        command nix flake check -L "${@:3}"
+    else
+        command nix "$@"
+    fi
+}

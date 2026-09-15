@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# scripts/test - Automated test & invariant verification runner for Workstation Config
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+echo "🐚 Running ShellCheck across shell scripts..."
+find . -type f -name "*.sh" -not -path "./.git/*" -exec shellcheck -s bash {} +
+echo "✅ ShellCheck passed!"
+
+echo "🌙 Checking Neovim Lua configuration (luacheck)..."
+nix-shell -p luaPackages.luacheck --run "luacheck home/config/nvim --globals vim"
+echo "✅ Lua checks passed!"
+
+echo "🐍 Running Python linters & type analysis (Ruff & Pyright)..."
+nix-shell -p ruff pyright --run "ruff check --no-cache . && ruff format --check . && pyright ."
+echo "✅ Python checks passed!"
+
+echo "❄️  Verifying NixOS flake & sandbox checks..."
+nix flake check -L
+
+echo "✨ All checks and static analyses passed successfully!"

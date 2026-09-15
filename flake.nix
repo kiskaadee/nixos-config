@@ -65,11 +65,33 @@
     # --- Linting, Formatting & Static Analysis Checks ---
     # Executed via `nix flake check` or `nix build .#checks.<system>.<check>`
     checks.${system} = {
+      # Shell script linting via ShellCheck
+      shellcheck = pkgs.runCommand "check-shellcheck" {
+        nativeBuildInputs = [ pkgs.shellcheck ];
+      } ''
+        echo "🐚 [ShellCheck] Checking shell scripts..."
+        find ${self} -type f -name "*.sh" -exec shellcheck -s bash {} +
+        echo "✅ [ShellCheck] All shell scripts passed!"
+        touch $out
+      '';
+
+      # Lua linting via luacheck
+      luacheck = pkgs.runCommand "check-luacheck" {
+        nativeBuildInputs = [ pkgs.luaPackages.luacheck ];
+      } ''
+        echo "🌙 [Lua] Checking Neovim Lua configuration..."
+        luacheck ${self}/home/config/nvim --globals vim
+        echo "✅ [Lua] All Lua files passed!"
+        touch $out
+      '';
+
       # Python linting via ruff
       ruff-lint = pkgs.runCommand "check-ruff-lint" {
         nativeBuildInputs = [ pkgs.ruff ];
       } ''
+        echo "🐍 [Ruff] Running Python linter (ruff check)..."
         ruff check --no-cache ${self}
+        echo "✅ [Ruff] All Python files passed linting!"
         touch $out
       '';
 
@@ -77,7 +99,9 @@
       ruff-format = pkgs.runCommand "check-ruff-format" {
         nativeBuildInputs = [ pkgs.ruff ];
       } ''
+        echo "🎨 [Ruff] Checking Python formatting (ruff format)..."
         ruff format --check ${self}
+        echo "✅ [Ruff] All Python files properly formatted!"
         touch $out
       '';
 
@@ -85,15 +109,9 @@
       pyright = pkgs.runCommand "check-pyright" {
         nativeBuildInputs = [ pkgs.pyright ];
       } ''
+        echo "🔬 [Pyright] Running Python type analysis..."
         pyright ${self}
-        touch $out
-      '';
-
-      # Shell script linting via ShellCheck
-      shellcheck = pkgs.runCommand "check-shellcheck" {
-        nativeBuildInputs = [ pkgs.shellcheck ];
-      } ''
-        find ${self} -type f -name "*.sh" -exec shellcheck -s bash {} +
+        echo "✅ [Pyright] All Python type checks passed!"
         touch $out
       '';
     };

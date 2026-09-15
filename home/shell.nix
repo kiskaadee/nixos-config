@@ -193,6 +193,8 @@ in
         zed = "zeditor";
         reload = "exec bash";
         ts = "tmux-sessionizer";
+        check = "~/Config/scripts/test";
+        nfc = "nix flake check -L";
         ff = "fastfetch --logo none";
 
         # System Navigation
