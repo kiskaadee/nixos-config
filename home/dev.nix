@@ -53,8 +53,9 @@
 
   # Developer packages & Toolchains
   home.packages = with pkgs; [
-    # AI Assistant Companion
+    # AI Assistant Companion & Agent Orchestration
     inputs.antigravity.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-cli
+    herdr
 
     # Rust Toolchain & Language Server
     cargo
