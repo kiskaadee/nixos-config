@@ -191,7 +191,7 @@ in
 
       shellAliases = {
         zed = "zeditor";
-        reload = "exec bash";
+        reload = "exec $SHELL";
         ts = "tmux-sessionizer";
         check = "~/Config/scripts/test";
         nfc = "nix flake check -L";
