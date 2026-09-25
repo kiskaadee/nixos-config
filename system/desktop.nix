@@ -13,7 +13,6 @@
     package = inputs.dms.packages.${pkgs.stdenv.hostPlatform.system}.default;
     systemd.enable = true;
     systemd.restartIfChanged = true;
-    enableDynamicTheming = true;
   };
 
   # DMS Greeter (dank-greeter + greetd)
