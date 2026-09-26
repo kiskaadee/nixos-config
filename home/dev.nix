@@ -66,7 +66,9 @@
     gcc
 
     # Python Toolchain & Language Server
-    python3
+    (python3.withPackages (ps: [
+      ps.pyyaml
+    ]))
     uv
     ruff
     mypy
