@@ -36,8 +36,13 @@ created: YYYY-MM-DD
 
 ## 3. Toolchains & Local Binaries
 
-Antigravity executes in an interactive development environment with access to:
-- `agy` CLI binary installed via `home/dev.nix`.
+The workstation uses the community-maintained `github:jacopone/antigravity-nix` flake input, which tracks and bundles the three Antigravity surfaces with regular upstream updates:
+- `agy` CLI binary (`google-antigravity-cli`) declared in [`home/dev.nix`](file:///home/kiskaadee/Config/home/dev.nix).
+- Antigravity 2.0 Desktop GUI (`google-antigravity`) declared in [`home/desktop.nix`](file:///home/kiskaadee/Config/home/desktop.nix).
+- Antigravity IDE (`google-antigravity-ide`) available from the same flake package set.
+
+Antigravity operates in an interactive development environment with access to:
+- Installed Antigravity tools and editors.
 - Python runtime, Ruff, and Pyright.
 - Git, ripgrep (`rg`), and fd (`find_by_name`).
 - Nix CLI (`nix flake check`, `nix build`, `nix eval`).

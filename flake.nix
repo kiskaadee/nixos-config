@@ -48,7 +48,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Antigravity CLI - coding companion and local AI agent helper
+    # Antigravity Suite (CLI, Desktop GUI, IDE) - community flake providing automated updates
     antigravity = {
       url = "github:jacopone/antigravity-nix";
       inputs.nixpkgs.follows = "nixpkgs";

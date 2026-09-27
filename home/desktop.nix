@@ -17,7 +17,11 @@ in
     # Modern Web Browser
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
 
+    # AI Assistants & Desktop GUI
+    inputs.antigravity.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity
+
     # Graphical Applications & Editors
+    vscode
     zed-editor
     obsidian
     libreoffice
