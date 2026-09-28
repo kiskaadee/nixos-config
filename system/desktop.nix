@@ -39,6 +39,9 @@
     };
   };
 
+  # Unlock GNOME Keyring on login via greetd
+  security.pam.services.greetd.enableGnomeKeyring = true;
+
   # Clean boot configuration for the greeter (suppresses tty1 diagnostic messages)
   systemd.services.greetd.serviceConfig = {
     Type = "idle";

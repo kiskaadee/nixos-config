@@ -21,7 +21,6 @@ in
     inputs.antigravity.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity
 
     # Graphical Applications & Editors
-    vscode
     zed-editor
     obsidian
     libreoffice
@@ -58,6 +57,19 @@ in
         "extensions.pocket.enabled" = false;
         "datareporting.healthreport.uploadEnabled" = false;
       };
+    };
+  };
+
+  # Visual Studio Code declarative configuration
+  programs.vscode = {
+    enable = true;
+    profiles.default = {
+      extensions = with pkgs.vscode-extensions; [
+        vscodevim.vim
+      ];
+    };
+    argvSettings = {
+      "password-store" = "gnome-libsecret";
     };
   };
 
