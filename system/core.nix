@@ -52,6 +52,22 @@
     ];
   };
 
+  # 🧠 Memory & Swap Management
+  # Compressed in-RAM swap prevents synchronous page thrashing and lockups under high memory pressure.
+  zramSwap = {
+    enable = true;
+  };
+
+  # 🛡️ Early OOM Killer Daemon
+  # Intervenes proactively before the kernel freezes, protecting compositor and core session services.
+  services.earlyoom = {
+    enable = true;
+    enableNotifications = true;
+    extraArgs = [
+      "--avoid" "^(niri|dms|systemd|sshd)$"
+    ];
+  };
+
   # System-wide administrative tools
   environment.systemPackages = with pkgs; [
     cups-pk-helper
