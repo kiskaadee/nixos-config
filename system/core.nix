@@ -19,6 +19,56 @@
   networking.hostName = "laptop";
   networking.networkmanager.enable = true;
 
+  # 🛡️ Dynamic Firewall for Trusted Home Wi-Fi
+  # Automatically marks the Wi-Fi interface as fully trusted (accepting all incoming ports)
+  # ONLY when connected to the trusted home Wi-Fi network ("VICTORIA"), removing the friction of
+  # managing arbitrary development ports. Restores the strict default firewall immediately upon
+  # disconnecting or connecting to any public / untrusted network.
+  networking.firewall.extraCommands = ''
+    iptables -N nixos-fw-home 2>/dev/null || true
+    iptables -C nixos-fw -j nixos-fw-home 2>/dev/null || iptables -I nixos-fw 1 -j nixos-fw-home
+    ip6tables -N nixos-fw-home 2>/dev/null || true
+    ip6tables -C nixos-fw -j nixos-fw-home 2>/dev/null || ip6tables -I nixos-fw 1 -j nixos-fw-home
+  '';
+
+  networking.networkmanager.dispatcherScripts = [
+    {
+      source = pkgs.writeShellScript "nm-trusted-wifi-firewall" ''
+        IFACE="$1"
+        ACTION="$2"
+        TRUSTED_SSID="VICTORIA"
+
+        IPT="${pkgs.iptables}/bin/iptables"
+        IP6T="${pkgs.iptables}/bin/ip6tables"
+        LOGGER="${pkgs.util-linux}/bin/logger"
+
+        manage_chain() {
+          local cmd="$1"
+          $cmd -N nixos-fw-home 2>/dev/null || true
+          $cmd -C nixos-fw -j nixos-fw-home 2>/dev/null || $cmd -I nixos-fw 1 -j nixos-fw-home
+        }
+
+        manage_chain "$IPT"
+        manage_chain "$IP6T"
+
+        if [ "$ACTION" = "up" ] && [ "$CONNECTION_ID" = "$TRUSTED_SSID" ]; then
+          $IPT -F nixos-fw-home
+          $IPT -A nixos-fw-home -i "$IFACE" -j ACCEPT
+
+          $IP6T -F nixos-fw-home
+          $IP6T -A nixos-fw-home -i "$IFACE" -j ACCEPT
+
+          $LOGGER -t nm-firewall "Connected to trusted network $TRUSTED_SSID: trusted interface $IFACE (all incoming ports accepted)"
+        elif [ "$ACTION" = "down" ] || [ -n "$CONNECTION_ID" -a "$CONNECTION_ID" != "$TRUSTED_SSID" ]; then
+          $IPT -F nixos-fw-home
+          $IP6T -F nixos-fw-home
+          $LOGGER -t nm-firewall "Untrusted or disconnected network ($CONNECTION_ID): restored strict firewall"
+        fi
+      '';
+      type = "basic";
+    }
+  ];
+
   # Regional and language settings
   time.timeZone = "America/Bogota";
   i18n.defaultLocale = "en_US.UTF-8";
