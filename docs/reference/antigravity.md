@@ -21,7 +21,7 @@ Autonomous agents must **never** execute `nixos-rebuild switch`, `boot`, `test`,
 Whenever an agent produces an artifact (`UserFacing: true`) or substantial analysis, a copy must be preserved in the Second Brain staging inbox:
 
 ```text
-/home/kiskaadee/Brain/inbox/<descriptive-name>.md
+/home/kiskaadee/Brain/00-inbox/<descriptive-name>.md
 ```
 
 With frontmatter:
