@@ -7,3 +7,6 @@ result-*
 
 
 .ruff_cache/
+
+# Graphify knowledge graph outputs & caches
+graphify-out/
