@@ -57,6 +57,7 @@
     inputs.antigravity.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-cli
     herdr
     graphify
+    codex
 
     # Rust Toolchain & Language Server
     cargo
