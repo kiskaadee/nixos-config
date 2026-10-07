@@ -30,6 +30,8 @@ in
     gimp
     imagemagick
     eyed3
+    ffmpeg
+    mkvtoolnix
 
     # Wayland Clipboard, Screenshot & Screen Capture Utilities
     wl-clipboard

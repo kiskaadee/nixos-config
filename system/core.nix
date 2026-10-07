@@ -118,6 +118,11 @@
     ];
   };
 
+  # 🦠 ClamAV Antivirus Database Updater
+  # Automatically keeps virus definitions updated in /var/lib/clamav via systemd timer
+  # without running the continuous memory-heavy scanner daemon in RAM. Provides clamscan system-wide.
+  services.clamav.updater.enable = true;
+
   # System-wide administrative tools
   environment.systemPackages = with pkgs; [
     cups-pk-helper
