@@ -244,6 +244,7 @@ in
         gfo = "git fetch origin";
         gcheck = "git checkout";
         gadc = "git add -A && git diff --staged | wl-copy";
+        ght = "gh-token";
       };
 
       # Inject modular shell helper scripts directly into .bashrc
@@ -256,6 +257,7 @@ in
         ${builtins.readFile ./shell/wayland.sh}     # Wayland clipboard helper (wlc)
         ${builtins.readFile ./shell/git.sh}         # Git workflow automations (gacp, gitignore)
         ${builtins.readFile ./shell/pdf.sh}         # Command line PDF decryption helper
+        ${builtins.readFile ./shell/secrets.sh}     # SOPS secret extraction helper (gh-token)
         ${builtins.readFile ./shell/quicklinks.sh}   # Interactive fzf web launcher
         ${builtins.readFile ./shell/jump.sh}        # Directory jumper & interactive fuzzy navigation
         ${builtins.readFile ./shell/todo.sh}        # Todo.txt & tuxedo shortcuts and syntax highlighter

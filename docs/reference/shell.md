@@ -13,8 +13,9 @@ The shell environment is modularized:
   - `jump.sh`: Directory navigation and quick jumping.
   - `pdf.sh`: PDF compilation, viewing, and OCR helpers.
   - `quicklinks.sh`: Shortcuts to primary project directories.
+  - `secrets.sh`: SOPS secret retrieval and Wayland clipboard extraction (`gh-token`).
   - `todo.sh`: Lightweight terminal task tracking.
-  - `wayland.sh`: Wayland session environment variables.
+  - `wayland.sh`: Wayland session environment variables and clipboard helpers.
 
 ---
 
@@ -36,6 +37,7 @@ The shell environment is modularized:
 | `gs` | `git status` | Quick working tree status. |
 | `gd` | `git diff` | Syntax-highlighted git diff via Delta. |
 | `gl` | `git log --oneline --graph --decorate` | Compact visual commit graph. |
+| `ght` | `gh-token` | Copy GitHub repo token from SOPS into Wayland clipboard. |
 
 ### Directory Navigation Jumps (`home/shell/jump.sh`)
 | 2-Letter | Word Alias | Target Directory | Description |
