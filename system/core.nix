@@ -99,6 +99,7 @@
       stdenv.cc.cc.lib
       zlib
       glib
+      openssl
     ];
   };
 

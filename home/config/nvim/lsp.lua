@@ -44,6 +44,14 @@ if vim.lsp.config then
     root_markers = { '.git' },
   })
   vim.lsp.enable('kdl_lsp')
+
+  -- HTML LSP: vscode-html-language-server
+  vim.lsp.config('html', {})
+  vim.lsp.enable('html')
+
+  -- XML LSP: LemMinX
+  vim.lsp.config('lemminx', {})
+  vim.lsp.enable('lemminx')
 end
 
 

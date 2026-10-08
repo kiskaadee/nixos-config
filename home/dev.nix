@@ -90,6 +90,8 @@
     taplo
     marksman
     shellcheck
+    vscode-langservers-extracted
+    lemminx
 
     # Cloud CLI, Git Forge & Database Management
     tea              # Gitea official CLI client

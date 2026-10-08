@@ -111,6 +111,11 @@
       "binary": {
         "path_lookup": true
       }
+    },
+    "vscode-html-language-server": {
+      "binary": {
+        "path_lookup": true
+      }
     }
   },
   "languages": {
