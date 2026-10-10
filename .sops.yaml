@@ -1,0 +1,9 @@
+keys:
+  - &laptop age1pln9sxy5j93lklqklfwp3qepx7x4cs4y2w63n9y3ykt68qgra5ysqleesg
+
+creation_rules:
+  - path_regex: secrets\.yaml$
+    key_groups:
+      - pgp: []
+        age:
+          - *laptop
