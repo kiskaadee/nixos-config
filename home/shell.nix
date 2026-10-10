@@ -268,4 +268,10 @@ in
 
   # Link fastfetch config
   home.file.".config/fastfetch/config.jsonc".source = ./config/fastfetch/config.jsonc;
+
+  # Declarative workstation scripts
+  home.file.".local/bin/new-repo" = {
+    source = ./scripts/new-repo.py;
+    executable = true;
+  };
 }

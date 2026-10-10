@@ -71,19 +71,3 @@ gacp() {
     echo "Pushed to origin/${branch_name}"
 }
 
-# 3. new-repo: Initializes a new directory, git repository, and pushes it to GitHub via 'gh' CLI.
-new-repo() {
-    if [ -z "$1" ]; then
-        echo "Usage: new-repo <repository-name>"
-        return 1
-    fi
-    local repo_name="$1"
-    mkdir -p "$repo_name"
-    cd "$repo_name" || return 1
-    git init -b main 
-    echo "# $repo_name" > README.md
-    touch .gitignore LICENSE
-    git add -A && git commit -m "Initial commit"
-    # Call the GitHub CLI tool to create the repository on GitHub
-    gh repo create "$repo_name" --public --source=. --remote=origin --push
-}
