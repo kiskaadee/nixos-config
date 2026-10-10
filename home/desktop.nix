@@ -71,6 +71,7 @@ in
       ];
     };
     argvSettings = {
+      "enable-crash-reporter" = true;
       "password-store" = "gnome-libsecret";
     };
   };
