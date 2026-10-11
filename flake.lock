@@ -248,6 +248,22 @@
         "type": "github"
       }
     },
+    "new-repo": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791671941,
+        "narHash": "sha256-fi7ZpV/VqPlXeDQB38ueIzpgek5NeyqnniXyquN+N3Q=",
+        "owner": "kiskaadee",
+        "repo": "new-repo",
+        "rev": "75a09f2ad87dab673dcbcd84c4c966da2e69560a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "kiskaadee",
+        "repo": "new-repo",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1791594108,
@@ -270,6 +286,7 @@
         "dgop": "dgop",
         "dms": "dms",
         "home-manager": "home-manager",
+        "new-repo": "new-repo",
         "nixpkgs": "nixpkgs",
         "zen-browser": "zen-browser"
       }

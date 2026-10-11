@@ -1,7 +1,7 @@
 # 🐚 User Shell, Terminal Multiplexing & Git Environment
 # Bash aliases, modular shell scripts, Git, Delta, Gh, Direnv, SSH client, Tmux, Starship, and Fastfetch.
 
-{ pkgs, ... }:
+{ inputs, pkgs, ... }:
 
 let
   # Hermetic packaging for project-driven persistent terminal workspaces
@@ -19,10 +19,21 @@ let
     ];
     text = builtins.readFile ./scripts/tmux-sessionizer.sh;
   };
+
+  # Declarative provisioning CLI packaged hermetically from remote flake input
+  newRepo = pkgs.runCommand "new-repo" {
+    nativeBuildInputs = [ pkgs.python3 ];
+  } ''
+    mkdir -p $out/bin
+    cp ${inputs.new-repo}/new_repo.py $out/bin/new-repo
+    chmod +x $out/bin/new-repo
+    patchShebangs $out/bin/new-repo
+  '';
 in
 {
   home.packages = [
     tmuxSessionizer
+    newRepo
   ];
 
   programs = {
@@ -269,9 +280,4 @@ in
   # Link fastfetch config
   home.file.".config/fastfetch/config.jsonc".source = ./config/fastfetch/config.jsonc;
 
-  # Declarative workstation scripts
-  home.file.".local/bin/new-repo" = {
-    source = ./scripts/new-repo.py;
-    executable = true;
-  };
 }

@@ -53,6 +53,12 @@
       url = "github:jacopone/antigravity-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # new-repo - Automated repository provisioning CLI across Gitea and GitHub
+    new-repo = {
+      url = "github:kiskaadee/new-repo";
+      flake = false;
+    };
   };
 
   # --- System Outputs ---
