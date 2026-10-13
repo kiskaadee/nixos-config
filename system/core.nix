@@ -11,6 +11,17 @@
   # Allow installation of unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  # Temporary upstream fix: correct stale pnpmDeps hash in nixpkgs 7fd4004
+  nixpkgs.overlays = [
+    (final: prev: {
+      typescript-language-server = prev.typescript-language-server.overrideAttrs (old: {
+        pnpmDeps = old.pnpmDeps.overrideAttrs (_: {
+          outputHash = "sha256-xR/EF60lVBsITKgH7wCM2wHM46PFQevD51KfCENSUH4=";
+        });
+      });
+    })
+  ];
+
   # EFI bootloader configuration
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
