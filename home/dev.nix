@@ -58,6 +58,7 @@
     herdr
     graphify
     codex
+    pi-coding-agent
 
     # Rust Toolchain & Language Server
     cargo
