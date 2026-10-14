@@ -100,7 +100,7 @@ pj()    { jump "$HOME/Projects" "$1" 3; }    # Jump into ~/Projects (depth 3)
 br()    { brain "$@"; }
 cf()    { conf "$@"; }
 dc()    { doc "$@"; }
-pi()    { pic "$@"; }
+pc()    { pic "$@"; }
 hl()    { homelab "$@"; }
 
 # Convenience & Backward-Compatibility Aliases
