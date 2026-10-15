@@ -103,6 +103,17 @@ This ensures `~/.config/niri/dms/binds.kdl` is created with proper user write pe
 | `Mod+Alt+Right / Left` | Expand / Shrink Column Width (+/- 100px) | Custom (`custom.kdl`) |
 | `Mod+Alt+Down / Up` | Expand / Shrink Window Height (+/- 100px) | Custom (`custom.kdl`) |
 
+### Monitor & Workspace Navigation
+| Shortcut | Action | Source | Precedence Note |
+| :--- | :--- | :--- | :--- |
+| `Mod+\`` | Focus Next Monitor | Custom (`custom.kdl`) | Orientation-agnostic toggle between displays. |
+| `Mod+Shift+\`` | Move Focused Column to Next Monitor | Custom (`custom.kdl`) | Orientation-agnostic window transfer across displays. |
+| `Mod+Ctrl+Left / Right` | Focus Monitor Left / Right | DMS IPC (`binds.kdl`) | Directional monitor switching. |
+| `Mod+Ctrl+Down / Up` | Focus Monitor Down / Up | Custom (`custom.kdl`) | Overrides DMS workspace move to allow vertical monitor switching. |
+| `Mod+Shift+Ctrl+Arrow / HJKL` | Move Column to Monitor (Directional) | DMS IPC (`binds.kdl`) | Directional window transfer across displays. |
+| `Mod+Ctrl+Page_Down / Page_Up` | Move Column to Workspace Down / Up | Custom (`custom.kdl`) | Relocated from `Mod+Ctrl+Down/Up` for arrow/page users. |
+| `Mod+Ctrl+U / Mod+Ctrl+I` | Move Column to Workspace Down / Up | DMS IPC (`binds.kdl`) | Directional workspace column transfer. |
+
 ### Screenshots, Screen Recording & Utilities
 | Shortcut | Action | Source |
 | :--- | :--- | :--- |

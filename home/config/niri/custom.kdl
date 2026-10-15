@@ -44,6 +44,16 @@ binds {
     Mod+Alt+M hotkey-overlay-title="Cast: Target Focused Monitor" { set-dynamic-cast-monitor; }
     Mod+Alt+C hotkey-overlay-title="Cast: Clear Target"          { clear-dynamic-cast-target; }
 
+    // === Monitor Navigation (Orientation-Agnostic & Directional) ===
+    Mod+grave       hotkey-overlay-title="Focus Next Monitor"             { focus-monitor-next; }
+    Mod+Shift+grave hotkey-overlay-title="Move Column to Next Monitor"    { move-column-to-monitor-next; }
+    Mod+Ctrl+Down   hotkey-overlay-title="Focus Monitor Down"             { focus-monitor-down; }
+    Mod+Ctrl+Up     hotkey-overlay-title="Focus Monitor Up"               { focus-monitor-up; }
+
+    // === Workspace Movement Relocation ===
+    Mod+Ctrl+Page_Down hotkey-overlay-title="Move Column to Workspace Down" { move-column-to-workspace-down; }
+    Mod+Ctrl+Page_Up   hotkey-overlay-title="Move Column to Workspace Up"   { move-column-to-workspace-up; }
+
     // === Config Management ===
     Mod+Ctrl+Shift+R hotkey-overlay-title="Reload Niri Config" {
         spawn "bash" "-c" "niri msg action load-config-file && notify-send -a 'Niri' 'Configuration' 'Niri config reloaded successfully'";
