@@ -231,6 +231,13 @@ animations {
 // Window rules let you adjust behavior for individual windows.
 // Find more information on the wiki:
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Window-Rules
+
+// Dim unfocused windows slightly for depth and focus awareness
+window-rule {
+    match is-focused=false
+    opacity 0.95
+}
+
 // Work around WezTerm's initial configure bug
 // by setting an empty default-column-width.
 window-rule {
@@ -281,6 +288,7 @@ window-rule {
     match app-id=r#"chromium|google-chrome|brave-browser"# title="^Picture in picture$"
     open-floating true
     default-floating-position x=20 y=20 relative-to="bottom-right"
+    opacity 1.0
 }
 window-rule {
     match app-id="zoom"
