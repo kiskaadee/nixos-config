@@ -43,18 +43,27 @@ _todo_color() {
     }'
 }
 
+_todo_active_tasks() {
+    tuxedo --json ls 2>/dev/null | jq -r '
+        map(select(.done | not))
+        | sort_by([ (if .priority then 0 else 1 end), .priority, .n ])
+        | .[]
+        | "\(.n) \(.raw)"
+    ' 2>/dev/null
+}
+
 todo() {
     case "$1" in
         # todo next [N] / todo n [N] -> show top N priority tasks (default: 1)
         next|n)
             shift
             local count="${1:-1}"
-            tuxedo 2>/dev/null ls | head -n "$count" | _todo_color
+            _todo_active_tasks | head -n "$count" | _todo_color
             ;;
         # todo check-next / todo do-next / todo dn -> complete top priority task
         check-next|do-next|dn)
             local top_task
-            top_task=$(tuxedo 2>/dev/null ls | head -n 1)
+            top_task=$(_todo_active_tasks | head -n 1)
             if [[ -n "$top_task" ]]; then
                 local task_id
                 task_id=$(echo "$top_task" | awk '{print $1}')
