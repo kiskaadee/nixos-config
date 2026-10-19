@@ -236,6 +236,7 @@ in
         v = "nvim";
         clock = "tty-clock";
         ql = "quicklinks";
+        sql-highlight = "bat --language=sql --style=plain";
 
         # Interactive Jump helper
         zi = "zoxide query -i --preview 'eza --tree --level 2 --color=always {}'";
