@@ -24,10 +24,13 @@ The following language servers are installed globally via `home/dev.nix` and att
 | :--- | :--- | :--- |
 | **Nix** | `nil` | `nixfmt-rfc-style` |
 | **Rust** | `rust-analyzer` | `rustfmt` |
-| **Python** | `pyright` | `ruff` |
+| **Python** | `pyright` *(devshell / venv)* | `ruff` *(devshell / venv)* |
 | **JavaScript / TypeScript** | `typescript-language-server` | `prettier` |
 | **Go** | `gopls` | `gofmt` |
 | **Markdown / Documentation** | `marksman` | `prettier` |
+
+> [!NOTE]
+> Python language tooling (`pyright`, `ruff`) is resolved dynamically via `direnv` from individual project devshells or virtualenvs rather than global system packages.
 
 ---
 

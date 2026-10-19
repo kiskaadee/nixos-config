@@ -32,7 +32,7 @@ Is it a compiler, LSP, language runtime, or dev tool?
 | **`system/hardware.nix`** | Hardware daemons & root services | PipeWire, Docker, Bluetooth (`bluez`), Power management (`tlp`), CUPS printing |
 | **`system/desktop.nix`** | Display server & greeter | Niri compositor enablement, DMS greeter, greetd, system typography/fonts |
 | **`home/desktop.nix`** | User graphical applications | Zen Browser, Zed, Obsidian, LibreOffice, GIMP, MPV, grim/slurp, DankSearch |
-| **`home/dev.nix`** | Toolchains & development | Rust, Python, Node, Go, language servers (pyright, rust-analyzer), Antigravity, sops/age CLI |
+| **`home/dev.nix`** | Toolchains & development | Rust, uv, Node, Go, language servers (nil, rust-analyzer), Antigravity, sops/age CLI |
 | **`home/shell.nix`** | Interactive shell & CLI tools | Bash, Tmux, Git, Starship, Delta, Fastfetch, ripgrep, fzf, bat, jq, eza |
 
 ---

@@ -122,6 +122,18 @@
       '';
     };
 
+    # Declarative dev shell for editing the configuration repository
+    devShells.${system} = {
+      default = pkgs.mkShell {
+        packages = with pkgs; [
+          shellcheck
+          luaPackages.luacheck
+          ruff
+          pyright
+        ];
+      };
+    };
+
     nixosConfigurations = {
       # 💻 LAPTOP HOST (Mobile Workstation)
       laptop = nixpkgs.lib.nixosSystem {

@@ -232,10 +232,6 @@ in
         # Network Diagnostics
         pgoog = "ping google.com -c 3";
 
-        # Python / Py5
-        p5 = "uv run py5-run-sketch";
-        p5w = "uv run watchfiles \"py5-run-sketch main.py\"";
-
         # Editor Shorthand
         v = "nvim";
         clock = "tty-clock";

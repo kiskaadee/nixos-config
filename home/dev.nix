@@ -68,14 +68,11 @@
     rust-analyzer
     gcc
 
-    # Python Toolchain & Language Server
+    # Python Package Runner & Toolchain (LSPs/linters managed per-project)
     (python3.withPackages (ps: [
       ps.pyyaml
     ]))
     uv
-    ruff
-    mypy
-    pyright
 
     # Node.js, Web & Formatter Tooling
     nodejs
