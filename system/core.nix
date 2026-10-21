@@ -30,6 +30,22 @@
   networking.hostName = "laptop";
   networking.networkmanager.enable = true;
 
+  # 🌐 Temporary homelab local DNS override during upstream Dynu DNS outage
+  networking.hosts = {
+    "192.168.1.36" = [
+      "roadtotech.me"
+      "gitea.roadtotech.me"
+      "dashboard.roadtotech.me"
+      "docs.roadtotech.me"
+      "mail.roadtotech.me"
+      "mermaid.roadtotech.me"
+      "jellyfin.roadtotech.me"
+      "armonia.roadtotech.me"
+      "demos.roadtotech.me"
+      "learning.roadtotech.me"
+    ];
+  };
+
   # 🛡️ Dynamic Firewall for Trusted Home Wi-Fi
   # Automatically marks the Wi-Fi interface as fully trusted (accepting all incoming ports)
   # ONLY when connected to the trusted home Wi-Fi network ("VICTORIA"), removing the friction of
