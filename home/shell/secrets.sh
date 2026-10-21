@@ -37,3 +37,25 @@ gh-token() {
 
     echo "GitHub repo token copied to clipboard (marked sensitive)."
 }
+
+
+flarectl() {
+    local secrets_file="$HOME/Config/secrets.yaml"
+    if [[ -f "$secrets_file" ]] && command -v sops >/dev/null 2>&1; then
+        CF_API_TOKEN=$(sops -d --extract '["cloudflare"]["api_token"]' "$secrets_file" 2>/dev/null) \
+        CF_ACCOUNT_ID=$(sops -d --extract '["cloudflare"]["account_id"]' "$secrets_file" 2>/dev/null) \
+        command flarectl "$@"
+    else
+        command flarectl "$@"
+    fi
+}
+
+hostinger() {
+    local secrets_file="$HOME/Config/secrets.yaml"
+    if [[ -f "$secrets_file" ]] && command -v sops >/dev/null 2>&1; then
+        HOSTINGER_API_TOKEN=$(sops -d --extract '["hostinger"]["api_token"]' "$secrets_file" 2>/dev/null) \
+        command hostinger "$@"
+    else
+        command hostinger "$@"
+    fi
+}
