@@ -28,6 +28,31 @@ let
       mainProgram = "cargo-agents";
     };
   };
+
+  hostinger-cli = pkgs.stdenv.mkDerivation rec {
+    pname = "hostinger-cli";
+    version = "4.1.4";
+
+    src = pkgs.fetchurl {
+      url = "https://github.com/hostinger/api-cli/releases/download/v${version}/hostinger-${version}-linux-amd64.tar.gz";
+      hash = "sha256-DGliGk9wuSnf2HbCkQDcEbSv1TWmV9W4Jw7LWqCcj4E=";
+    };
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      install -Dm755 hostinger $out/bin/hostinger
+      install -Dm644 completions/hostinger.bash $out/share/bash-completion/completions/hostinger
+    '';
+
+    meta = with pkgs.lib; {
+      description = "Official Hostinger API Command Line Interface";
+      homepage = "https://github.com/hostinger/api-cli";
+      license = licenses.mit;
+      platforms = [ "x86_64-linux" ];
+      mainProgram = "hostinger";
+    };
+  };
 in
 {
   # Neovim CLI & IDE Editor Configuration
@@ -121,6 +146,8 @@ in
     # Cloud CLI, Git Forge & Database Management
     tea              # Gitea official CLI client
     google-cloud-sdk # GCP administration utilities
+    flarectl         # Cloudflare official CLI client
+    hostinger-cli    # Hostinger official API CLI
     turso-cli        # Turso libSQL management CLI
     postgresql       # PostgreSQL client utilities (psql, pg_dump)
     pgcli            # Postgres client with auto-completion
@@ -131,6 +158,7 @@ in
     websocat         # WebSocket client
     grpcurl          # gRPC command-line tool
     bind.dnsutils    # DNS lookup tools (dig, nslookup)
+    doggo            # Modern, human-friendly DNS client with DoH/DoT
     openssh          # SSH client tools
     sshfs            # FUSE-based SSH filesystem mount
     nmap             # Network scanner
