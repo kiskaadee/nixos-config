@@ -81,6 +81,21 @@ flarectl() {
 * **Security**: Decryption occurs strictly in RAM (~17ms overhead).
 * **Isolation**: The environment variables exist only for the life of `flarectl "$@"` and do not persist in the parent interactive shell.
 
+### Autonomous Agent Secrets (`Config/anne-secrets.yaml`)
+To prevent autonomous agents from having access to personal operator tokens (Cloudflare, Hostinger, personal GitHub), agent credentials live in dedicated, firewalled secret files:
+
+```yaml
+# Config/anne-secrets.yaml (encrypted for both *laptop and *anne)
+gitea:
+  token: "..."
+github:
+  token: "..."
+```
+
+* **Multi-Recipient Encryption**: Encrypted for both `*laptop` (`keys.txt`) and `*anne` (`anne_keys.txt`).
+* **Operator Convenience**: The workstation operator can view and edit `anne-secrets.yaml` seamlessly using `sops anne-secrets.yaml` without switching keys.
+* **Cryptographic Firewall**: When running in an isolated container or subagent environment with only `anne_keys.txt`, the agent physically cannot decrypt `Config/secrets.yaml`.
+
 ---
 
 ## 3. Homelab Server Runtime Secrets (`Core/nixos/secrets.yaml`)
