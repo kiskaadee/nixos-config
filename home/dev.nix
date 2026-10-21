@@ -3,6 +3,32 @@
 
 { inputs, pkgs, ... }:
 
+let
+  symposium = pkgs.stdenv.mkDerivation rec {
+    pname = "symposium";
+    version = "0.5.1";
+
+    src = pkgs.fetchurl {
+      url = "https://github.com/symposium-dev/symposium/releases/download/symposium-v${version}/cargo-agents-x86_64-unknown-linux-musl.tar.gz";
+      hash = "sha256-/YhTLS/Rmp4tx6xhL/awYDAiebH9+4dssfL0lRmtzHk=";
+    };
+
+    sourceRoot = ".";
+
+    installPhase = ''
+      install -Dm755 cargo-agents $out/bin/cargo-agents
+      ln -s $out/bin/cargo-agents $out/bin/symposium
+    '';
+
+    meta = with pkgs.lib; {
+      description = "Collaborative AI toolset for Rust projects (cargo-agents)";
+      homepage = "https://symposium.dev";
+      license = with licenses; [ mit asl20 ];
+      platforms = [ "x86_64-linux" ];
+      mainProgram = "cargo-agents";
+    };
+  };
+in
 {
   # Neovim CLI & IDE Editor Configuration
   programs.neovim = {
@@ -59,6 +85,7 @@
     graphify
     codex
     pi-coding-agent
+    symposium
 
     # Rust Toolchain & Language Server
     cargo
