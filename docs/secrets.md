@@ -32,19 +32,58 @@ graph LR
     end
 ```
 
-### Roles & Boundaries
-1. **Workstation (`Config`)**:
-   - Holds **zero** declarative system secrets (`sops-nix` is not imported).
-   - Provides operator CLI packages (`sops`, `age`, `rbw`) in `home/dev.nix`.
-   - Stores the operator's personal age identity in `~/.config/sops/age/keys.txt`.
-2. **Server (`Core`)**:
-   - Headless consumer running Docker containers, databases, and Traefik.
-   - Decrypts secrets at boot into a secure ramfs (`/run/secrets/`) using `/etc/ssh/ssh_host_ed25519_key`.
-   - Unprivileged SSH sessions cannot edit secrets directly on the server.
+### Two-Tier Secrets Architecture
+
+The infrastructure enforces a strict separation between **Operator Secrets** (workstation) and **Runtime Workload Secrets** (server):
+
+| Attribute | Workstation Operator Secrets (`Config`) | Server Runtime Secrets (`Core`) |
+| :--- | :--- | :--- |
+| **Ciphertext File** | `Config/secrets.yaml` | `Core/nixos/secrets.yaml` |
+| **Scope** | Personal operator tokens (Cloudflare, Hostinger, GitHub) | Service runtime credentials (Traefik, DBs, Docker daemons) |
+| **Tenancy** | Multi-project across account domains | Scoped strictly to homelab infrastructure workloads |
+| **Decryption Model** | In-memory on-demand via `sops -d --extract` in shell wrappers | Automated boot-time ramfs mount via `sops-nix` (`/run/secrets/`) |
+| **Key Identity** | Personal age identity (`~/.config/sops/age/keys.txt`) | Server host SSH key (`/etc/ssh/ssh_host_ed25519_key`) |
+| **Daemon Overhead** | **Zero** (`sops-nix` module intentionally omitted) | Managed via root systemd units |
 
 ---
 
-## 2. Operator Workflow: Authoring & Rotating Secrets
+## 2. Workstation Operator Secrets (`Config/secrets.yaml`)
+
+Operator CLI tools (such as `flarectl` and `hostinger`) manage cloud infrastructure across multiple projects. To maintain least-privilege for the server, these credentials are kept on the workstation:
+
+```yaml
+# Config/secrets.yaml (encrypted with operator age key)
+cloudflare:
+  api_token: "..."
+  account_id: "..."
+
+hostinger:
+  api_token: "..."
+```
+
+### Process-Scoped In-Memory Decryption
+Rather than exporting tokens into global interactive shells or writing plaintext config files to disk, shell wrappers in `home/shell/secrets.sh` extract credentials into the child process environment on demand:
+
+```bash
+# Example: flarectl wrapper in home/shell/secrets.sh
+flarectl() {
+    local secrets_file="$HOME/Config/secrets.yaml"
+    if [[ -f "$secrets_file" ]] && command -v sops >/dev/null 2>&1; then
+        CF_API_TOKEN=$(sops -d --extract '["cloudflare"]["api_token"]' "$secrets_file" 2>/dev/null) \
+        CF_ACCOUNT_ID=$(sops -d --extract '["cloudflare"]["account_id"]' "$secrets_file" 2>/dev/null) \
+        command flarectl "$@"
+    else
+        command flarectl "$@"
+    fi
+}
+```
+
+* **Security**: Decryption occurs strictly in RAM (~17ms overhead).
+* **Isolation**: The environment variables exist only for the life of `flarectl "$@"` and do not persist in the parent interactive shell.
+
+---
+
+## 3. Homelab Server Runtime Secrets (`Core/nixos/secrets.yaml`)
 
 To rotate or add a secret for homelab services:
 
@@ -74,7 +113,7 @@ The server evaluates the new ciphertext, decrypts it into `/run/secrets/`, and r
 
 ---
 
-## 3. Backing Up & Restoring the Operator Age Key
+## 4. Backing Up & Restoring the Operator Age Key
 
 The operator key is your cryptographic identity for managing homelab infrastructure:
 

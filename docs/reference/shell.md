@@ -13,7 +13,7 @@ The shell environment is modularized:
   - `jump.sh`: Directory navigation and quick jumping.
   - `pdf.sh`: PDF compilation, viewing, and OCR helpers.
   - `quicklinks.sh`: Shortcuts to primary project directories.
-  - `secrets.sh`: SOPS secret retrieval and Wayland clipboard extraction (`gh-token`).
+  - `secrets.sh`: SOPS secret retrieval (`gh-token` clipboard utility, transparent `flarectl` and `hostinger` process wrappers).
   - `todo.sh`: Lightweight terminal task tracking.
   - `wayland.sh`: Wayland session environment variables and clipboard helpers.
 
@@ -38,6 +38,15 @@ The shell environment is modularized:
 | `gd` | `git diff` | Syntax-highlighted git diff via Delta. |
 | `gl` | `git log --oneline --graph --decorate` | Compact visual commit graph. |
 | `ght` | `gh-token` | Copy GitHub repo token from SOPS into Wayland clipboard. |
+
+### Operator CLI Secret Wrappers (`home/shell/secrets.sh`)
+| Command / Function | Injected Environment Variables | Source Secret Key (`~/Config/secrets.yaml`) |
+| :--- | :--- | :--- |
+| `flarectl` | `CF_API_TOKEN`, `CF_ACCOUNT_ID` | `["cloudflare"]["api_token"]`, `["cloudflare"]["account_id"]` |
+| `hostinger` | `HOSTINGER_API_TOKEN` | `["hostinger"]["api_token"]` |
+| `gh-token` (`ght`) | *(Copies directly to Wayland clipboard)* | `["system"]["gh_repo_token"]` (from Homelab `Core`) |
+
+*Note: Environment variables are set exclusively for the child process lifecycle and do not persist in your interactive shell.*
 
 ### Directory Navigation Jumps (`home/shell/jump.sh`)
 | 2-Letter | Word Alias | Target Directory | Description |
