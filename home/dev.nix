@@ -181,6 +181,8 @@ in
     sqlite
     bc
     qpdf
+    poppler-utils
+    pandoc
     tty-clock
     curl
     parallel
