@@ -251,11 +251,11 @@
     "new-repo": {
       "flake": false,
       "locked": {
-        "lastModified": 1792328438,
-        "narHash": "sha256-KyYt221mst8wSPKToX3uNNWS42Uft/N8s/E2uV85uWE=",
+        "lastModified": 1792718622,
+        "narHash": "sha256-RjmmEmWgorCD2vFHHxnnU/FQtr/ziTuHvlh7P9MP+Sg=",
         "owner": "kiskaadee",
         "repo": "new-repo",
-        "rev": "06cc3254c0e3c44a8ce8fc68361ee780a4dab9e5",
+        "rev": "c950ff2e73c77a943c1d350f4bd2ecf3485d8142",
         "type": "github"
       },
       "original": {
