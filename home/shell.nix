@@ -29,11 +29,28 @@ let
     chmod +x $out/bin/new-repo
     patchShebangs $out/bin/new-repo
   '';
+
+  # Hermetic packaging for local audio transcription via whisper-cpp
+  transcribeCli = pkgs.writeShellApplication {
+    name = "transcribe";
+    runtimeInputs = with pkgs; [
+      bash
+      coreutils
+      gnused
+      gnugrep
+      ffmpeg-headless
+      whisper-cpp
+      wl-clipboard
+      curl
+    ];
+    text = builtins.readFile ./scripts/transcribe.sh;
+  };
 in
 {
   home.packages = [
     tmuxSessionizer
     newRepo
+    transcribeCli
   ];
 
   programs = {
