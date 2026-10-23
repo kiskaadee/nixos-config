@@ -109,6 +109,7 @@ in
     herdr
     graphify
     codex
+    opencode
     bubblewrap       # Unprivileged sandboxing tool
     pi-coding-agent
     symposium
