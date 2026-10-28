@@ -19,6 +19,7 @@ in
 
     # AI Assistants & Desktop GUI
     inputs.antigravity.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity
+    inputs.antigravity.packages.${pkgs.stdenv.hostPlatform.system}.google-antigravity-ide
     opencode-desktop
 
     # Graphical Applications & Editors

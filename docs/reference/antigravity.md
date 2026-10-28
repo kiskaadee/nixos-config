@@ -39,7 +39,7 @@ created: YYYY-MM-DD
 The workstation uses the community-maintained `github:jacopone/antigravity-nix` flake input, which tracks and bundles the three Antigravity surfaces with regular upstream updates:
 - `agy` CLI binary (`google-antigravity-cli`) declared in [`home/dev.nix`](file:///home/kiskaadee/Config/home/dev.nix).
 - Antigravity 2.0 Desktop GUI (`google-antigravity`) declared in [`home/desktop.nix`](file:///home/kiskaadee/Config/home/desktop.nix).
-- Antigravity IDE (`google-antigravity-ide`) available from the same flake package set.
+- Antigravity IDE (`google-antigravity-ide`) declared in [`home/desktop.nix`](file:///home/kiskaadee/Config/home/desktop.nix).
 
 Antigravity operates in an interactive development environment with access to:
 - Installed Antigravity tools and editors.
