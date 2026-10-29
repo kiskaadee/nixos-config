@@ -95,6 +95,10 @@ in
   home.file.".config/niri/config.kdl".source = ./config/niri/config.kdl;
   home.file.".config/niri/custom.kdl".source = ./config/niri/custom.kdl;
 
+  # Declarative configuration files for Antigravity IDE
+  home.file.".antigravity-ide/User/settings.json".source = ./config/antigravity-ide/settings.json;
+  home.file.".antigravity-ide/User/keybindings.json".source = ./config/antigravity-ide/keybindings.json;
+
   # Systemd user session target for Niri window manager
 
   systemd.user.targets.niri-session = {

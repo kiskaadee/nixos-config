@@ -1,0 +1,15 @@
+{
+  "workbench.colorTheme": "GitHub Dark Colorblind (Beta)",
+  "terminal.integrated.fontFamily": "'FiraCode Nerd Font Mono', 'FiraCode Nerd Font', monospace",
+  "editor.fontFamily": "'FiraCode Nerd Font', monospace",
+  "editor.fontLigatures": true,
+  "vim.useSystemClipboard": true,
+  "vim.hlsearch": true,
+  "terminal.integrated.allowChords": true,
+  "terminal.integrated.commandsToSkipShell": [
+    "workbench.action.focusActiveEditorGroup",
+    "workbench.action.terminal.focus",
+    "antigravity.toggleChatFocus",
+    "workbench.view.explorer"
+  ]
+}

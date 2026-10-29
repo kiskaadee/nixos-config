@@ -1,0 +1,18 @@
+[
+  {
+    "key": "ctrl+space e",
+    "command": "workbench.action.focusActiveEditorGroup"
+  },
+  {
+    "key": "ctrl+space t",
+    "command": "workbench.action.terminal.focus"
+  },
+  {
+    "key": "ctrl+space c",
+    "command": "antigravity.toggleChatFocus"
+  },
+  {
+    "key": "ctrl+space f",
+    "command": "workbench.view.explorer"
+  }
+]
