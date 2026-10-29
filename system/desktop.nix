@@ -7,8 +7,8 @@
   # Graphical Compositor (Niri window manager)
   programs.niri.enable = true;
 
-  # DankMaterialShell (DMS) graphical helper/shell daemon
-  programs.dms-shell = {
+  # DankMaterialShell / Dux shell daemon
+  programs.dux-shell = {
     enable = true;
     package = inputs.dms.packages.${pkgs.stdenv.hostPlatform.system}.default;
     systemd.enable = true;
