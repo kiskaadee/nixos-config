@@ -45,12 +45,28 @@ let
     ];
     text = builtins.readFile ./scripts/transcribe.sh;
   };
+
+  # Quick manual/automation DDNS updater for Cloudflare homelab domain
+  cfDdns = pkgs.writeShellApplication {
+    name = "cf-ddns";
+    runtimeInputs = with pkgs; [
+      bash
+      coreutils
+      curl
+      jq
+      sops
+      flarectl
+      bind.dnsutils
+    ];
+    text = builtins.readFile ./scripts/cf-ddns.sh;
+  };
 in
 {
   home.packages = [
     tmuxSessionizer
     newRepo
     transcribeCli
+    cfDdns
   ];
 
   programs = {
