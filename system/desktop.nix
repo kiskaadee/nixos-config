@@ -25,6 +25,10 @@
   # DankCalendar Daemon & UI
   programs.dank-calendar = {
     enable = true;
+    # Temporary upstream fix: correct stale vendorHash in dux-calendar 2.1.0 flake
+    package = (inputs.dankcalendar.packages.${pkgs.stdenv.hostPlatform.system}.default).overrideAttrs (_: {
+      vendorHash = "sha256-JT6mHK52mIJh4lzVWYVpqNY2S2oeinSWBIKaI3TiY34=";
+    });
     systemd.enable = true;
     systemd.target = "graphical-session.target";
   };
