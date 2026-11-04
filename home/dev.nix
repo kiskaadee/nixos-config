@@ -53,6 +53,38 @@ let
       mainProgram = "hostinger";
     };
   };
+
+  gitea-cli = pkgs.stdenv.mkDerivation rec {
+    pname = "gitea-cli";
+    version = "1.0.0";
+
+    src = pkgs.fetchurl {
+      url = "https://gitea.com/gitea/cli/releases/download/v${version}/gitea-cli-${version}-linux-amd64";
+      hash = "sha256-f/q+QV0F380YtJfVe0nIJHZLq5vvCUrPiQyWRZNsM8E=";
+    };
+
+    dontUnpack = true;
+
+    nativeBuildInputs = [ pkgs.installShellFiles ];
+
+    installPhase = ''
+      install -Dm755 $src $out/bin/gt
+
+      # Generate and install shell completions
+      installShellCompletion --cmd gt \
+        --bash <($out/bin/gt completion bash) \
+        --fish <($out/bin/gt completion fish) \
+        --zsh <($out/bin/gt completion zsh)
+    '';
+
+    meta = with pkgs.lib; {
+      description = "Official command-line tool for Gitea (successor to tea)";
+      homepage = "https://gitea.com/gitea/cli";
+      license = licenses.mit;
+      platforms = [ "x86_64-linux" ];
+      mainProgram = "gt";
+    };
+  };
 in
 {
   # Neovim CLI & IDE Editor Configuration
@@ -146,7 +178,7 @@ in
     lemminx
 
     # Cloud CLI, Git Forge & Database Management
-    tea              # Gitea official CLI client
+    gitea-cli        # Gitea official CLI client (gt, successor to tea)
     google-cloud-sdk # GCP administration utilities
     flarectl         # Cloudflare official CLI client
     hostinger-cli    # Hostinger official API CLI
