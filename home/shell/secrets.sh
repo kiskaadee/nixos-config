@@ -59,3 +59,13 @@ hostinger() {
         command hostinger "$@"
     fi
 }
+
+# 4. _get_nix_gh_token: Extracts and caches the GitHub repo token in memory for Nix invocations.
+# Decrypts only on first use and caches in the shell session variable __NIX_GH_TOKEN to avoid repeated SOPS latency.
+_get_nix_gh_token() {
+    local secrets_file="${CONFIG_SECRETS_FILE:-$HOME/Config/secrets.yaml}"
+    if [[ -z "${__NIX_GH_TOKEN:-}" ]] && [[ -f "$secrets_file" ]] && command -v sops >/dev/null 2>&1; then
+        __NIX_GH_TOKEN=$(sops -d --extract '["github"]["gh_repo_token"]' "$secrets_file" 2>/dev/null) || true
+    fi
+    printf "%s" "${__NIX_GH_TOKEN:-}"
+}

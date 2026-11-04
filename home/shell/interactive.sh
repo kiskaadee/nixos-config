@@ -19,11 +19,25 @@ if [[ $- == *i* ]]; then
 fi
 
 # --- Nix Command Ergonomics ---
-# Ensure `nix flake check` always prints build and verification logs (-L)
+# Ensure `nix flake check` always prints build and verification logs (-L),
+# and inject GitHub personal access token via NIX_CONFIG on-demand to prevent API rate limiting.
 nix() {
-    if [[ "${1:-}" == "flake" && "${2:-}" == "check" && "$*" != *"--log-format"* && "$*" != *"-L"* ]]; then
-        command nix flake check -L "${@:3}"
+    local token=""
+    if declare -F _get_nix_gh_token >/dev/null 2>&1; then
+        token=$(_get_nix_gh_token)
+    fi
+
+    if [[ -n "$token" ]]; then
+        if [[ "${1:-}" == "flake" && "${2:-}" == "check" && "$*" != *"--log-format"* && "$*" != *"-L"* ]]; then
+            NIX_CONFIG="access-tokens = github.com=${token}${NIX_CONFIG:+ $NIX_CONFIG}" command nix flake check -L "${@:3}"
+        else
+            NIX_CONFIG="access-tokens = github.com=${token}${NIX_CONFIG:+ $NIX_CONFIG}" command nix "$@"
+        fi
     else
-        command nix "$@"
+        if [[ "${1:-}" == "flake" && "${2:-}" == "check" && "$*" != *"--log-format"* && "$*" != *"-L"* ]]; then
+            command nix flake check -L "${@:3}"
+        else
+            command nix "$@"
+        fi
     fi
 }
