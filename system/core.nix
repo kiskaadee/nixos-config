@@ -11,12 +11,21 @@
   # Allow installation of unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # Temporary upstream fix: correct stale pnpmDeps hash in nixpkgs 7fd4004
+  # Upstream fixes & package hash corrections
   nixpkgs.overlays = [
     (final: prev: {
-      typescript-language-server = prev.typescript-language-server.overrideAttrs (old: {
-        pnpmDeps = old.pnpmDeps.overrideAttrs (_: {
-          outputHash = "sha256-xR/EF60lVBsITKgH7wCM2wHM46PFQevD51KfCENSUH4=";
+      # Temporary upstream fix: AnyDesk vendor re-released 8.1.0 tarball in-place
+      anydesk = prev.anydesk.overrideAttrs (old: {
+        src = prev.fetchurl {
+          inherit (old.src) url;
+          hash = "sha256-zS5P2eyTHZY7cBW8mQ2Q6M0lXcx9VZZTtpG3Bb6u7IQ=";
+        };
+      });
+
+      # Temporary upstream fix: opencode node_modules hash correction for nixpkgs 1d06008
+      opencode = prev.opencode.overrideAttrs (old: {
+        node_modules = old.node_modules.overrideAttrs (_: {
+          outputHash = "sha256-prx9dX7kUvs/E3zopkaPk5LXh3xJAy5sZeum/W8L7cA=";
         });
       });
     })
