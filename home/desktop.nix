@@ -23,8 +23,10 @@ in
     opencode-desktop
 
     # Graphical Applications & Editors
+    anydesk
     zed-editor
     obsidian
+    inkscape
     libreoffice
     nautilus
     yazi
