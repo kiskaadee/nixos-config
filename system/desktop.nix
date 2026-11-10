@@ -73,6 +73,9 @@
     };
   };
 
-  # Wayland execution flags for Electron / Chromium applications
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+  # Wayland & Desktop Integration session flags
+  environment.sessionVariables = {
+    NIXOS_OZONE_WL = "1";
+    QT_QPA_PLATFORMTHEME = "xdgdesktopportal";
+  };
 }
