@@ -26,6 +26,7 @@ in
     anydesk
     zed-editor
     obsidian
+    kdePackages.okular
     inkscape
     libreoffice
     nautilus
