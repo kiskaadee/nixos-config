@@ -179,6 +179,14 @@ in
           Port = 2223;
           User = "git";
         };
+        "webos-tv" = {
+          HostName = "192.168.1.11";
+          User = "prisoner";
+          Port = 9922;
+          IdentityFile = "~/.ssh/webos_rsa";
+          HostKeyAlgorithms = "+ssh-rsa";
+          PubkeyAcceptedAlgorithms = "+ssh-rsa";
+        };
       };
     };
 
