@@ -240,6 +240,7 @@ in
         check = "~/Config/scripts/test";
         nfc = "nix flake check -L";
         ff = "fastfetch --logo none";
+        p3 = "python3";
 
         # System Navigation
         ".." = "cd ..";

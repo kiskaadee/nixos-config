@@ -2,8 +2,7 @@
 # 🌟 Custom Git Automation & Helper Utilities
 # Sourced in .bashrc to streamline gitignore modifications, commit-push workflows, and new repo setups.
 
-# 1. gitignore: Quickly appends patterns to the repository's root .gitignore file
-# then automatically commits and pushes the change.
+# 1. gitignore: Quickly appends patterns to the repository's root .gitignore file.
 gitignore() {
     if [ $# -eq 0 ]; then
         echo "Usage: gitignore <pattern> [pattern...]"
@@ -30,7 +29,6 @@ gitignore() {
     fi
 
     local added_count=0
-    local commit_msg_list=""
 
     for pattern in "$@"; do
         # Check if the pattern is already present in the .gitignore file
@@ -40,18 +38,10 @@ gitignore() {
             echo "$pattern" >> "$GIT_IGNORE_FILE"
             echo "Added '$pattern'"
             ((added_count++))
-            commit_msg_list+="${pattern}, "
         fi
     done
 
-    # If any patterns were added, commit and push them automatically
-    if [ $added_count -gt 0 ]; then
-        commit_msg_list="${commit_msg_list%, }"
-        echo "Committing and pushing changes..."
-        git add "$GIT_IGNORE_FILE"
-        git commit -m "Add to .gitignore: $commit_msg_list"
-        git push
-    else
+    if [ "$added_count" -eq 0 ]; then
         echo "No new patterns were added."
     fi
 }
