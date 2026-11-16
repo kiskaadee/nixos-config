@@ -158,12 +158,12 @@ in
       enableDefaultConfig = false;
       settings = {
         "*" = {
-          User = "kiskaadee";
           ServerAliveInterval = 15;
           ServerAliveCountMax = 3;
         };
         laptop = {
           HostName = "192.168.1.32";
+          User = "kiskaadee";
           Port = 22;
         };
         server-local = {
