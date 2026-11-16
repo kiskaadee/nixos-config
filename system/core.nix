@@ -21,13 +21,6 @@
           hash = "sha256-zS5P2eyTHZY7cBW8mQ2Q6M0lXcx9VZZTtpG3Bb6u7IQ=";
         };
       });
-
-      # Temporary upstream fix: opencode node_modules hash correction for nixpkgs 1d06008
-      opencode = prev.opencode.overrideAttrs (old: {
-        node_modules = old.node_modules.overrideAttrs (_: {
-          outputHash = "sha256-prx9dX7kUvs/E3zopkaPk5LXh3xJAy5sZeum/W8L7cA=";
-        });
-      });
     })
   ];
 
