@@ -148,6 +148,9 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.backupFileExtension = "backup";
+            # ~/.ssh/config is kept as a user-owned regular file (see the
+            # de-symlink workaround), so HM hits an occupied .backup path.
+            home-manager.overwriteBackup = true;
             home-manager.extraSpecialArgs = { inherit inputs; };
             home-manager.users.kiskaadee = {
               imports = [
