@@ -167,10 +167,12 @@ in
           Port = 22;
         };
         server-local = {
+          User = "operator";
           HostName = "192.168.1.36";
           Port = 22;
         };
         server-remote = {
+          User = "operator";
           HostName = "roadtotech.me";
           Port = 2222;
         };
