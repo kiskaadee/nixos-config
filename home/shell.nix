@@ -189,6 +189,13 @@ in
           HostKeyAlgorithms = "+ssh-rsa";
           PubkeyAcceptedAlgorithms = "+ssh-rsa";
         };
+        tablet = {
+          HostName = "192.168.1.5";
+          User = "u0_a259";
+          Port = 8022;
+          IdentityFile = "~/.ssh/id_ed25519";
+          IdentitiesOnly = true;
+        };
       };
     };
 
