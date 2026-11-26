@@ -45,7 +45,12 @@
 
   hardware.sane = {
     enable = true;
-    extraBackends = [ pkgs.epsonscan2 ];
+    extraBackends = [
+      (pkgs.epsonscan2.override {
+        withNonFreePlugins = true;
+      })
+      pkgs.sane-airscan
+    ];
   };
 
   # 🐳 Virtualisation / Docker container daemon
