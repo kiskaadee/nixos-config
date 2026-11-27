@@ -227,4 +227,34 @@ in
     sops             # Mozilla SOPS CLI
     age              # File encryption tool
   ];
+
+  # Background two-way sync for corazoncp shared Google Drive repository
+  systemd.user.services.corazoncp-drive-sync = {
+    Unit = {
+      Description = "Two-way sync between corazoncp/drive and Google Drive";
+      After = [ "network-online.target" "graphical-session.target" ];
+      Wants = [ "network-online.target" ];
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash /home/kiskaadee/Projects/active/corazoncp/drive/sync-drive.sh";
+      Environment = [
+        "PATH=${pkgs.lib.makeBinPath [ pkgs.rclone pkgs.git pkgs.openssh pkgs.libnotify pkgs.util-linux pkgs.findutils pkgs.coreutils ]}"
+      ];
+    };
+  };
+
+  systemd.user.timers.corazoncp-drive-sync = {
+    Unit = {
+      Description = "Poll corazoncp shared Google Drive every 15 minutes";
+    };
+    Timer = {
+      OnBootSec = "2m";
+      OnUnitActiveSec = "15m";
+      Persistent = true;
+    };
+    Install = {
+      WantedBy = [ "timers.target" ];
+    };
+  };
 }
